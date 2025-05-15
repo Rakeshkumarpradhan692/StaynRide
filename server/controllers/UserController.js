@@ -47,7 +47,6 @@ exports.signup = async (req, res) => {
   }
 };
 
-// Login
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -58,9 +57,7 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid password" });
 
-    const token = jwt.sign({ user: user }, JWT_SECRET, { expiresIn: "7d" });
-
-    res.status(200).json({ message: "Login successful", token, user });
+    res.status(200).json({ message: "Login successful", user });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -68,7 +65,7 @@ exports.login = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await Users.find().select("-password");
+    const users = await Users.find();
     res.status(200).json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -88,7 +85,7 @@ exports.updateUser = async (req, res) => {
     const updatedUser = await Users.findByIdAndUpdate(_id, updateData, {
       new: true,
       runValidators: true,
-    }).select("-password");
+    });
 
     if (!updatedUser)
       return res.status(404).json({ message: "User not found" });

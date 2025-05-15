@@ -34,7 +34,7 @@ exports.getBannerById = async (req, res) => {
 
 exports.updateBanner = async (req, res) => {
   try {
-    const { id, updateData } = req.body;
+    const { id, ...updateData } = req.body;
     const updatedBanner = await Banner.findByIdAndUpdate(
       id,
       { $set: updateData },
@@ -53,8 +53,8 @@ exports.updateBanner = async (req, res) => {
 
 exports.deleteBanner = async (req, res) => {
   try {
-    const { _id } = req.body;
-    const deletedBanner = await Banner.findByIdAndDelete(_id);
+    const { id } = req.body;
+    const deletedBanner = await Banner.findByIdAndDelete(id);
     if (!deletedBanner)
       return res.status(404).json({ message: "Banner not found" });
 

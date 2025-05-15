@@ -20,29 +20,29 @@ Admin Login:
 Banner APIs:
 
 * Create Banner – `POST http://localhost:5000/api/admin/create-banner`
-* Get All Banners – `POST http://localhost:5000/api/admin/all-banners`
-* Get Banner by ID – `POST http://localhost:5000/api/admin/banner`
+* Get All Banners – `POST http://localhost:5000/api/public/all-banners`
+* Get Banner by ID – `POST http://localhost:5000/api/public/banner`
 * Update Banner – `POST http://localhost:5000/api/admin/update-banner`
 * Delete Banner – `POST http://localhost:5000/api/admin/delete-banner`
 
 Cab APIs:
 
 * Create Cab – `POST http://localhost:5000/api/admin/create-cab`
-* Get All Cabs – `POST http://localhost:5000/api/admin/all-cabs`
-* Get Cab by ID – `POST http://localhost:5000/api/admin/cab`
+* Get All Cabs – `POST http://localhost:5000/api/public/all-cabs`
+* Get Cab by ID – `POST http://localhost:5000/api/public/cab`
 * Update Cab – `POST http://localhost:5000/api/admin/update-cab`
 * Delete Cab – `POST http://localhost:5000/api/admin/delete-cab`
 
 Hotel APIs:
 
 * Create Hotel – `POST http://localhost:5000/api/admin/create-hotel`
-* Get All Hotels – `POST http://localhost:5000/api/admin/all-hotels`
-* Get Hotel by ID – `POST http://localhost:5000/api/admin/hotel`
+* Get All Hotels – `POST http://localhost:5000/api/public/all-hotels`
+* Get Hotel by ID – `POST http://localhost:5000/api/public/hotel`
 * Update Hotel – `POST http://localhost:5000/api/admin/update-hotel`
 * Delete Hotel – `POST http://localhost:5000/api/admin/delete-hotel`
 
 User APIs (for Admin):
-
+*create user - 'post  http://localhost:5000/api/admin/create-user
 * Get All Users – `GET http://localhost:5000/api/admin/all-users`
 * Update a User – `PATCH http://localhost:5000/api/admin/update-user`
 * Delete a User – `DELETE http://localhost:5000/api/admin/delete-user`

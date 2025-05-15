@@ -2,33 +2,31 @@ const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema(
   {
-    user: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
-      required: true,
+      required: [true, "User ID is required"],
     },
-
-    hotel: {
+    hotelBooking: {
+      isHotelBooked: {
+        type: Boolean,
+        default: false,
+      },
       hotelId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Hotel",
       },
-      checkInDate: Date,
-      checkOutDate: Date,
-      checkInTime: {
-        type: String,
-        default: "12:00 PM",
+      roomID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Room",
       },
-      checkOutTime: {
-        type: String,
-        default: "10:00 AM",
-      },
-      persons: Number,
-      roomsBooked: Number,
-      Price: Number,
+      totalGuests: Number,
     },
 
-    cab: {
+    cabBooking: {
+      isCabBooked: {
+        type: Boolean,
+      },
       cabId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Cab",
@@ -36,16 +34,18 @@ const bookingSchema = new mongoose.Schema(
       pickupLocation: String,
       dropLocation: String,
       travelDate: Date,
-      cabFare: Number,
     },
 
-    paymentStatus: {
+    totalPrice: {
+      type: Number,
+      required: [true, "Total price is required"],
+    },
+    status: {
       type: String,
-      enum: ["pending", "completed", "failed"],
+      enum: ["success", "pending", "reject"],
       default: "pending",
-      required: true,
+      rrequired: [true, "status is required"],
     },
-
     createdAt: {
       type: Date,
       default: Date.now,

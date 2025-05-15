@@ -11,6 +11,10 @@ const cabSchema = new mongoose.Schema(
       type: String,
       required: [true, "Car model is required"],
     },
+    price: {
+      type: Number,
+      required: true,
+    },
     address: {
       country: {
         type: String,

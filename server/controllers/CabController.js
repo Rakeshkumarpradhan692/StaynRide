@@ -23,8 +23,8 @@ exports.getAllCabs = async (req, res) => {
 
 exports.getCabById = async (req, res) => {
   try {
-    const { _id } = req.body;
-    const cab = await Cab.findById(_id);
+    const { id } = req.params;
+    const cab = await Cab.findById(id);
     if (!cab) return res.status(404).json({ message: "Cab not found" });
     res.status(200).json(cab);
   } catch (err) {
@@ -34,7 +34,7 @@ exports.getCabById = async (req, res) => {
 
 exports.updateCab = async (req, res) => {
   try {
-    const { _id, updateData } = req.body;
+    const { id, ...updateData } = req.body;
     const updatedCab = await Cab.findByIdAndUpdate(
       id,
       { $set: updateData },
@@ -46,13 +46,15 @@ exports.updateCab = async (req, res) => {
       .status(200)
       .json({ message: "Cab updated successfully", cab: updatedCab });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res
+      .status(400)
+      .json({ meessage: "somthing is wrong trty again", error: err.message });
   }
 };
 
 exports.deleteCab = async (req, res) => {
   try {
-    const { _id } = req.body;
+    const { id } = req.body;
     const deletedCab = await Cab.findByIdAndDelete(id);
     if (!deletedCab) return res.status(404).json({ message: "Cab not found" });
 
