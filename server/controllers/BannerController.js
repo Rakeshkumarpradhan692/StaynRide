@@ -6,16 +6,16 @@ exports.createBanner = async (req, res) => {
     const savedBanner = await banner.save();
     res
       .status(201)
-      .json({ message: "Banner created successfully", banner: savedBanner });
+      .json({ message: "Banner created successfully", success: true });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: err });
   }
 };
 
 exports.getAllBanners = async (req, res) => {
   try {
     const banners = await Banner.find();
-    res.status(200).json(banners);
+    res.status(200).json({ banners: banners, message: "all banner fetched" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -53,7 +53,9 @@ exports.updateBanner = async (req, res) => {
 
 exports.deleteBanner = async (req, res) => {
   try {
+    console.log(req.body);
     const { id } = req.body;
+
     const deletedBanner = await Banner.findByIdAndDelete(id);
     if (!deletedBanner)
       return res.status(404).json({ message: "Banner not found" });

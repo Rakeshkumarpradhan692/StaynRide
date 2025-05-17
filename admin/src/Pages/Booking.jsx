@@ -1,54 +1,16 @@
 import React, { useState } from "react";
 import { Pencil, Trash2, Plus, Minus } from "lucide-react";
-
-const dummyBooking = {
-  userName: "Jitu Pradhan",
-  hotelBooking: {
-    isHotelBooked: true,
-    hotelId: "h987",
-    roomID: "r321",
-    totalGuests: 3,
-  },
-  cabBooking: {
-    isCabBooked: false,
-    cabId: null,
-    pickupLocation: "",
-    dropLocation: "",
-    travelDate: null,
-  },
-  totalPrice: 8500,
-  status: "success",
-  createdAt: new Date("2025-05-12"),
-};
-
-const bookings = Array.from({ length: 10 }, (_, i) => ({
-  id: i + 1,
-  ...dummyBooking,
-  status: i % 2 === 0 ? "pending" : "success",
-  hotelBooking:
-    i % 2 === 0
-      ? dummyBooking.hotelBooking
-      : {
-          isHotelBooked: false,
-          hotelId: null,
-          roomID: null,
-          totalGuests: 0,
-        },
-  cabBooking:
-    i % 2 !== 0
-      ? {
-          isCabBooked: true,
-          cabId: `cab00${i}`,
-          pickupLocation: "Station",
-          dropLocation: "Hotel",
-          travelDate: new Date("2025-05-15"),
-        }
-      : dummyBooking.cabBooking,
-}));
-
+import axios from "axios";
 function Booking() {
+  const server_url = process.env.REACT_APP_SERVER_URL;
   const [expandedRows, setExpandedRows] = useState([]);
-
+  const [bookings, setbookings] = useState([]);
+  const fetchBooking = async () => {
+    const records = await axios.get(`${server_url}admin/all-booking`);
+    if (records.data) {
+      setbookings(records.data.data);
+    }
+  };
   const toggleRow = (id) => {
     setExpandedRows((prev) =>
       prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]
@@ -80,8 +42,8 @@ function Booking() {
           </thead>
           <tbody>
             {bookings.map((booking) => {
-              const isExpanded = expandedRows.includes(booking.id);
-              const isHotel = booking.hotelBooking?.isHotelBooked;
+              const isExpanded = expandedRows.includes(booking._id);
+              const isHotel = booking?.hotelId?._id;
               const isCab = booking.cabBooking?.isCabBooked;
 
               let type = "-";

@@ -30,8 +30,6 @@ function Dashboard() {
   return (
     <div className="p-5">
       <h3 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h3>
-
-      {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {carts.map((item, i) => (
           <div
