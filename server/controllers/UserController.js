@@ -16,8 +16,8 @@ exports.signup = async (req, res) => {
       district,
       city,
       address,
-    } = req.body;
-
+    } = req.body.formData;
+    console.log(req.body);
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new Users({
@@ -43,7 +43,7 @@ exports.signup = async (req, res) => {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    res.status(500).json({ error: "Server Error: " + err.message });
+    res.status(500).json({ error: "Server Error: " + err });
   }
 };
 
@@ -66,7 +66,7 @@ exports.login = async (req, res) => {
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await Users.find();
-    res.status(200).json(users);
+    res.status(200).json({ sucess: true, users: users });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -74,7 +74,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { _id, password, ...rest } = req.body;
+    const { id, password, ...rest } = req.body;
 
     const updateData = { ...rest };
 
@@ -82,7 +82,7 @@ exports.updateUser = async (req, res) => {
       updateData.password = await bcrypt.hash(password, 10);
     }
 
-    const updatedUser = await Users.findByIdAndUpdate(_id, updateData, {
+    const updatedUser = await Users.findByIdAndUpdate(id, updateData, {
       new: true,
       runValidators: true,
     });
@@ -91,6 +91,7 @@ exports.updateUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
 
     res.status(200).json({
+      success: true,
       message: "User updated successfully",
       user: updatedUser,
     });
@@ -101,10 +102,13 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const { _id } = req.body;
-    const deleted = await Users.findByIdAndDelete(_id);
+    console.log(req.body);
+    const { id } = req.body;
+    const deleted = await Users.findByIdAndDelete({ _id: id });
     if (!deleted) return res.status(404).json({ message: "User not found" });
-    res.status(200).json({ message: "User deleted successfully" });
+    res
+      .status(200)
+      .json({ success: true, message: "User deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

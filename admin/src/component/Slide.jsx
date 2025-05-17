@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import logo from "../assets/images/logo.png";
 import {
   Home,
   Users,
@@ -8,7 +9,6 @@ import {
   Car,
   MessageCircle,
   Hotel,
-  LogOut,
 } from "lucide-react";
 
 function Slide() {
@@ -21,12 +21,17 @@ function Slide() {
     { label: "Cabs", icon: <Car />, path: "/cabs" },
     { label: "Feedbacks", icon: <MessageCircle />, path: "/feedbacks" },
     { label: "Hotels", icon: <Hotel />, path: "/hotels" },
-    { label: "Logout", icon: <LogOut />, path: "/logout" },
   ];
 
   return (
     <div className="h-screen p-4 bg-white shadow-md min-w-[200px]">
-      <h2 className="text-2xl font-bold mb-6 text-blue-600">StayNRide</h2>
+      <h1 className="text-2xl mb-5 font-serif flex font-bold text-blue-800">
+        Wel
+        <span>
+          <img src={logo} alt="Logo" className="h-8 w-8 object-contain" />
+        </span>
+        Come
+      </h1>
       <ul className="space-y-2">
         {menuItems.map((item) => (
           <li key={item.label}>

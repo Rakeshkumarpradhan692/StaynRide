@@ -1,25 +1,120 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Plus, Minus, Pencil, Trash2 } from "lucide-react";
-
-const dummyUser = {
-  name: "John Roy",
-  email: "john@example.com",
-  number: 9876543210,
-  country: "India",
-  state: "Odisha",
-  district: "Cuttack",
-  city: "Bhubaneswar",
-  address: "123 Main Street",
-};
-
-// 20 dummy users
-const users = Array.from({ length: 20 }, (_, i) => ({
-  id: i + 1,
-  ...dummyUser,
-}));
+import toast from "react-hot-toast";
+import axios from "axios";
 
 function Users() {
+  const [users, setUsers] = useState([]);
+  const [editUserId, setEditUserId] = useState(null);
+  const [editFormData, setEditFormData] = useState({});
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    number: "",
+    password: "",
+    country: "",
+    state: "",
+    district: "",
+    city: "",
+    address: "",
+  });
   const [expandedRows, setExpandedRows] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+
+  const server_url = process.env.REACT_APP_SERVER_URL;
+
+  const fetchUser = useCallback(async () => {
+    try {
+      const results = await axios.get(`${server_url}admin/all-users`);
+      if (results.data?.users) {
+        setUsers(results.data.users);
+      }
+    } catch (err) {
+      console.log("Error occurred while fetching user details", err);
+    }
+  }, [server_url]);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(`${server_url}admin/create-user`, {
+        formData,
+      });
+      if (res.data?.success) {
+        toast.success("User created");
+        fetchUser();
+      }
+      setFormData({
+        name: "",
+        email: "",
+        number: "",
+        password: "",
+        country: "",
+        state: "",
+        district: "",
+        city: "",
+        address: "",
+      });
+      setShowForm(false);
+    } catch (error) {
+      console.log(
+        "Failed to create user: " +
+          (error.response?.data?.message || error.message)
+      );
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      }
+    }
+  };
+
+  const deleteUser = async (e, id) => {
+    e.preventDefault();
+    try {
+      const res = await axios.delete(`${server_url}admin/delete-user`, {
+        data: { id },
+      });
+      if (res.data?.success) {
+        toast.success("User deleted");
+        fetchUser();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleUpdateUser = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.put(`${server_url}admin/update-user`, {
+        id: editUserId,
+        ...editFormData,
+      });
+      if (res.data?.success) {
+        toast.success("User updated successfully");
+        fetchUser();
+        setEditUserId(null);
+        setShowEditForm(false);
+      }
+    } catch (err) {
+      console.error("Update failed:", err);
+      toast.error("Failed to update user");
+    }
+  };
 
   const toggleRow = (id) => {
     setExpandedRows((prev) =>
@@ -27,22 +122,30 @@ function Users() {
     );
   };
 
+  const handleEditClick = (user) => {
+    setEditUserId(user._id);
+    setEditFormData({ ...user });
+    setShowEditForm(true);
+  };
+
   return (
-    <div className="p-4 w-full">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+    <div className="relative p-4 w-full">
+      <div className="flex flex-row justify-between items-start sm:items-center mb-4">
         <h2 className="text-xl font-semibold mb-2 sm:mb-0">Users</h2>
-        <button className="px-4 py-2 border border-gray-400 rounded-md text-sm hover:bg-gray-100">
+        <button
+          onClick={() => setShowForm(true)}
+          className="px-4 py-2 border border-gray-400 rounded-md text-sm hover:bg-gray-100"
+        >
           + Create User
         </button>
       </div>
-
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-300 text-sm">
           <thead className="bg-gray-100">
             <tr>
               <th className="p-2 text-left w-8"></th>
               <th className="p-2 text-left">Name</th>
-              <th className="p-2 text-left">Email</th>
+              <th className="p-2 text-left hidden sm:block">Email</th>
               <th className="p-2 text-left">Number</th>
               <th className="p-2 text-left hidden md:table-cell">Country</th>
               <th className="p-2 text-left hidden md:table-cell">State</th>
@@ -54,20 +157,20 @@ function Users() {
           </thead>
           <tbody>
             {users.map((user) => {
-              const isExpanded = expandedRows.includes(user.id);
+              const isExpanded = expandedRows.includes(user._id);
               return (
-                <React.Fragment key={user.id}>
+                <React.Fragment key={user._id}>
                   <tr className="border-b hover:bg-gray-50">
                     <td className="p-2 align-top">
                       <button
-                        onClick={() => toggleRow(user.id)}
+                        onClick={() => toggleRow(user._id)}
                         className="md:hidden"
                       >
                         {isExpanded ? <Minus size={18} /> : <Plus size={18} />}
                       </button>
                     </td>
                     <td className="p-2">{user.name}</td>
-                    <td className="p-2">{user.email}</td>
+                    <td className="p-2 hidden sm:block">{user.email}</td>
                     <td className="p-2">{user.number}</td>
                     <td className="p-2 hidden md:table-cell">{user.country}</td>
                     <td className="p-2 hidden md:table-cell">{user.state}</td>
@@ -77,18 +180,22 @@ function Users() {
                     <td className="p-2 hidden lg:table-cell">{user.city}</td>
                     <td className="p-2 hidden xl:table-cell">{user.address}</td>
                     <td className="p-2 space-x-2">
-                      <button className="px-2 py-1 border border-gray-400 rounded text-xs hover:bg-gray-100">
+                      <button
+                        onClick={() => handleEditClick(user)}
+                        className="px-2 py-1 border border-gray-400 rounded text-xs hover:bg-gray-100"
+                      >
                         <Pencil size={14} className="inline-block mr-1" />
-                        Edit
+                        <span className="hidden sm:inline-block">Edit</span>
                       </button>
-                      <button className="px-2 py-1 border border-gray-400 rounded text-xs hover:bg-gray-100">
+                      <button
+                        onClick={(e) => deleteUser(e, user._id)}
+                        className="px-2 py-1 border border-gray-400 rounded text-xs hover:bg-gray-100"
+                      >
                         <Trash2 size={14} className="inline-block mr-1" />
-                        Delete
+                        <span className="hidden sm:inline-block">Delete</span>
                       </button>
                     </td>
                   </tr>
-
-                  {/* Expanded row for small screens only */}
                   {isExpanded && (
                     <tr className="bg-gray-50 md:hidden">
                       <td colSpan="10" className="p-3">
@@ -118,6 +225,96 @@ function Users() {
           </tbody>
         </table>
       </div>
+
+      {showForm && (
+        <UserForm
+          formData={formData}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+          onClose={() => setShowForm(false)}
+          title="Create New User"
+        />
+      )}
+      {showEditForm && (
+        <UserForm
+          formData={editFormData}
+          handleInputChange={handleEditChange}
+          handleSubmit={handleUpdateUser}
+          onClose={() => {
+            setShowEditForm(false);
+            setEditUserId(null);
+          }}
+          title="Edit User"
+        />
+      )}
+    </div>
+  );
+}
+
+function UserForm({
+  formData,
+  handleInputChange,
+  handleSubmit,
+  onClose,
+  title,
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-3xl bg-white bg-opacity-90 backdrop-blur-lg shadow-xl rounded-3xl p-6 sm:p-8 space-y-4 overflow-y-auto max-h-[90vh]"
+      >
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-center text-blue-700">
+          {title}
+        </h2>
+        <p className="text-center text-sm text-gray-500">Fill in the details</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 *:outline-none *:p-3 *:px-2 *:py-1 *:rounded-sm">
+          {[
+            "name",
+            "email",
+            "number",
+            "password",
+            "country",
+            "state",
+            "district",
+            "city",
+          ].map((field) => (
+            <input
+              key={field}
+              type={field === "email" ? "email" : "text"}
+              name={field}
+              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+              required
+              value={formData[field] || ""}
+              onChange={handleInputChange}
+            />
+          ))}
+        </div>
+        <textarea
+          name="address"
+          placeholder="Full Address"
+          rows="3"
+          required
+          className="w-full rounded-sm outline-none"
+          value={formData.address || ""}
+          onChange={handleInputChange}
+        />
+        <div className="flex justify-between items-center mt-4">
+          <button
+            type="submit"
+            className="bg-blue-600 text-white font-semibold px-6 py-2 rounded hover:bg-blue-700"
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-gray-600 hover:text-red-500"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Pencil, Trash2, Plus, Minus } from "lucide-react";
 
 const dummyBooking = {
-  userId: "u123456",
+  userName: "Jitu Pradhan",
   hotelBooking: {
     isHotelBooked: true,
     hotelId: "h987",
@@ -68,10 +68,10 @@ function Booking() {
         <table className="min-w-full border border-gray-300 text-sm">
           <thead className="bg-gray-100">
             <tr>
-              <th className="p-2 text-left w-8"></th>
-              <th className="p-2 text-left">User ID</th>
-              <th className="p-2 text-left">Booking Type</th>
-              <th className="p-2 text-left">Type ID</th>
+              <th className="p-2 text-left w-8 lg:hidden"></th>
+              <th className="p-2 text-left">User Name</th>
+              <th className="p-2 text-left">Type</th>
+              <th className="p-2 text-left">ID</th>
               <th className="p-2 text-left">Price</th>
               <th className="p-2 text-left">Status</th>
               <th className="p-2 text-left">Date</th>
@@ -98,12 +98,12 @@ function Booking() {
               return (
                 <React.Fragment key={booking.id}>
                   <tr className="border-b hover:bg-gray-50">
-                    <td className="p-2">
+                    <td className="p-2 lg:hidden">
                       <button onClick={() => toggleRow(booking.id)}>
                         {isExpanded ? <Minus size={18} /> : <Plus size={18} />}
                       </button>
                     </td>
-                    <td className="p-2">{booking.userId}</td>
+                    <td className="p-2">{booking.userName}</td>
                     <td className="p-2">{type}</td>
                     <td className="p-2">{typeId}</td>
                     <td className="p-2">₹{booking.totalPrice}</td>
@@ -111,7 +111,7 @@ function Booking() {
                     <td className="p-2">
                       {new Date(booking.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="p-2 space-x-2">
+                    <td className="p-2 sm:space-x-2">
                       <button className="px-2 py-1 border border-gray-400 rounded text-xs hover:bg-gray-100">
                         <Pencil size={14} className="inline-block mr-1" />
                         Edit
