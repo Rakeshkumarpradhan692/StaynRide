@@ -20,7 +20,8 @@ exports.createBooking = async (req, res) => {
 
 exports.updateBooking = async (req, res) => {
   try {
-    const { id, ...updatedata } = req.body;
+    console.log(req.body.payload);
+    const { id, ...updatedata } = req.body.payload;
 
     const result = await Booking.findByIdAndUpdate(id, updatedata, {
       new: true,

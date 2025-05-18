@@ -10,7 +10,6 @@ const bookingSchema = new mongoose.Schema(
     hotelBooking: {
       isHotelBooked: {
         type: Boolean,
-        default: false,
       },
       hotelId: {
         type: mongoose.Schema.Types.ObjectId,
