@@ -38,9 +38,10 @@ exports.getHotelById = async (req, res) => {
 
 exports.updateHotel = async (req, res) => {
   try {
-    const { id, ...updateData } = req.body;
+    console.log(req.body);
+    const { _id, ...updateData } = req.body;
     const updatedHotel = await Hotel.findByIdAndUpdate(
-      id,
+      _id,
       { $set: updateData },
       { new: true, runValidators: true }
     );

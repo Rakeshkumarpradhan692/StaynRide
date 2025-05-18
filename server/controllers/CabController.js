@@ -34,6 +34,7 @@ exports.getCabById = async (req, res) => {
 
 exports.updateCab = async (req, res) => {
   try {
+    console.log(req.body);
     const { id, ...updateData } = req.body;
     const updatedCab = await Cab.findByIdAndUpdate(
       id,

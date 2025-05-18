@@ -1,83 +1,180 @@
-import React from "react";
-import { Edit2, Trash2 } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { Edit2, Trash2, X } from "lucide-react";
 import cabimg from "../assets/images/cab.jpg";
+import axios from "axios";
+import toast from "react-hot-toast";
+import CloudinaryUpload from "../utils/UploadCloudinary";
 function Cabs() {
-  const cabs = [
-    {
-      id: 1,
-      name: "City Cab",
-      model: "Swift",
-      images: "https://via.placeholder.com/300x180?text=City+Cab",
-      price: 1200,
-      address: {
-        country: "India",
-        state: "Odisha",
-        district: "Cuttack",
-        city: "Cuttack",
-        pincode: "753001",
-        fullAddress: "Link Road, Near Bus Stand",
-      },
-      createdAt: new Date(),
+  const { uploadImage } = CloudinaryUpload();
+  const [cabs, setCabs] = useState([]);
+  const [selectedCab, setSelectedCab] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [formModalOpen, setFormModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    model: "",
+    price: "",
+    image: null,
+    address: {
+      city: "",
+      district: "",
+      state: "",
+      country: "",
+      pincode: "",
+      fullAddress: "",
     },
-    {
-      id: 2,
-      name: "Airport Taxi",
-      model: "Innova",
-      images: "https://via.placeholder.com/300x180?text=Airport+Taxi",
-      price: 1800,
-      address: {
-        country: "India",
-        state: "Delhi",
-        district: "New Delhi",
-        city: "Delhi",
-        pincode: "110001",
-        fullAddress: "Airport Road, Terminal 3",
-      },
-      createdAt: new Date(),
-    },
-  ];
+  });
 
-  const handleEdit = (id) => {
-    alert(`Edit cab with id ${id}`);
+  const server_url = process.env.REACT_APP_SERVER_URL;
+
+  const fetchCabs = useCallback(async () => {
+    try {
+      const result = await axios.get(`${server_url}public/all-cabs`);
+      if (result.data) setCabs(result.data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [server_url]);
+
+  useEffect(() => {
+    fetchCabs();
+  }, [fetchCabs]);
+
+  const openCreateModal = () => {
+    setEditMode(false);
+    setFormData({
+      name: "",
+      model: "",
+      price: "",
+      address: {
+        city: "",
+        district: "",
+        state: "",
+        country: "",
+        pincode: "",
+        fullAddress: "",
+      },
+    });
+    setFormModalOpen(true);
+  };
+  useEffect(() => {
+    console.log(cabs);
+  }, [cabs]);
+  const openEditModal = (cab) => {
+    setEditMode(true);
+    setFormData({
+      id: cab._id,
+      name: cab.name || "",
+      model: cab.model || "",
+      price: cab.price || "",
+      address: cab.address || {
+        city: "",
+        district: "",
+        state: "",
+        country: "",
+        pincode: "",
+        fullAddress: "",
+      },
+    });
+    setFormModalOpen(true);
   };
 
-  const handleDelete = (id) => {
-    alert(`Delete cab with id ${id}`);
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    if (name.startsWith("address.")) {
+      const addressField = name.split(".")[1];
+      setFormData((prev) => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          [addressField]: value,
+        },
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      let updatedFormData = { ...formData };
+
+      if (formData.image && typeof formData.image !== "string") {
+        const uploadedUrl = await uploadImage(formData.image);
+        if (!uploadedUrl) {
+          toast.error("Image upload failed");
+          return;
+        }
+        updatedFormData.image = uploadedUrl;
+      }
+
+      if (editMode) {
+        await axios.put(`${server_url}admin/update-cab`, updatedFormData);
+        toast.success("Updated successfully");
+      } else {
+        await axios.post(`${server_url}admin/create-cab`, updatedFormData);
+        toast.success("Created successfully");
+      }
+
+      fetchCabs();
+      setFormModalOpen(false);
+    } catch (err) {
+      console.error("Submit failed:", err);
+      toast.error("Something went wrong, try again later");
+    }
+  };
+
+  const deleteCabs = async (id) => {
+    try {
+      const deleted = await axios.delete(`${server_url}admin/delete-cab`, {
+        data: { id },
+      });
+      toast.success("cab deleted");
+      fetchCabs();
+    } catch (err) {
+      if (err.response?.data?.message) {
+        toast.error(err.response?.data?.message);
+      }
+      console.log(err);
+    }
+  };
+  const handleViewMore = (cab) => setSelectedCab(cab);
+  const closeViewModal = () => setSelectedCab(null);
 
   return (
     <div className="p-6 font-sans bg-gray-50 min-h-screen">
-      <div className=" flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Cab Listings</h2>
-        <p>
-          <button className=" px-2 py-1 rounded-md bg-gray-100">
-            + create cab
-          </button>
-        </p>
+        <button
+          onClick={openCreateModal}
+          className="px-3 py-1 rounded-md bg-blue-600 text-white"
+        >
+          + Create Cab
+        </button>
       </div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {cabs.map((cab) => (
           <div
-            key={cab.id}
+            key={cab._id}
             className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 relative"
           >
             <img
-              src={
-                cabimg || "https://via.placeholder.com/300x180?text=No+Image"
-              }
+              src={cab.image != null ? cab.image : cabimg}
               alt={cab.name}
               className="w-full h-44 object-cover"
             />
             <div className="absolute top-2 right-2 flex space-x-2">
               <button
-                onClick={() => handleEdit(cab.id)}
+                onClick={() => openEditModal(cab)}
                 className="p-1 bg-gray-300 rounded hover:bg-gray-400"
                 aria-label="Edit"
               >
                 <Edit2 size={20} />
               </button>
               <button
-                onClick={() => handleDelete(cab.id)}
+                onClick={() => deleteCabs(cab._id)}
                 className="p-1 bg-gray-400 rounded hover:bg-gray-500"
                 aria-label="Delete"
               >
@@ -91,10 +188,196 @@ function Cabs() {
               </h3>
               <p className="text-sm text-gray-600">Model: {cab.model}</p>
               <p className="text-sm text-gray-600">Price: ₹{cab.price}</p>
+              <button
+                onClick={() => handleViewMore(cab)}
+                className="mt-2 text-sm text-blue-600 hover:underline"
+              >
+                View More
+              </button>
             </div>
           </div>
         ))}
       </div>
+
+      {/* View More Modal */}
+      {selectedCab && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white w-full max-w-lg rounded-lg shadow-lg p-6 relative">
+            <button
+              onClick={closeViewModal}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+            >
+              <X size={24} />
+            </button>
+            <h3 className="text-xl font-bold mb-4">{selectedCab.name}</h3>
+            <img
+              src={cabimg}
+              alt={selectedCab.name}
+              className="w-full h-48 object-cover rounded mb-4"
+            />
+            <div className="space-y-2 text-sm text-gray-700">
+              <p>
+                <strong>Model:</strong> {selectedCab.model}
+              </p>
+              <p>
+                <strong>Price:</strong> ₹{selectedCab.price}
+              </p>
+              <p>
+                <strong>Created At:</strong>{" "}
+                {new Date(selectedCab.createdAt).toLocaleString()}
+              </p>
+              {selectedCab.address && (
+                <>
+                  <p>
+                    <strong>City:</strong> {selectedCab.address.city}
+                  </p>
+                  <p>
+                    <strong>District:</strong> {selectedCab.address.district}
+                  </p>
+                  <p>
+                    <strong>State:</strong> {selectedCab.address.state}
+                  </p>
+                  <p>
+                    <strong>Country:</strong> {selectedCab.address.country}
+                  </p>
+                  <p>
+                    <strong>Pincode:</strong> {selectedCab.address.pincode}
+                  </p>
+                  <p>
+                    <strong>Full Address:</strong>{" "}
+                    {selectedCab.address.fullAddress}
+                  </p>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      {formModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white w-full max-w-xl rounded-lg shadow-lg p-6 relative">
+            <button
+              onClick={() => setFormModalOpen(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+            >
+              <X size={24} />
+            </button>
+            <h3 className="text-xl font-bold mb-4">
+              {editMode ? "Edit Cab" : "Create Cab"}
+            </h3>
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              <div>
+                <label className="block mb-1 font-medium text-sm">
+                  Cab Image
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      image: e.target.files[0],
+                    }))
+                  }
+                  className="block w-full text-sm border rounded px-3 py-2"
+                />
+                {formData.image && (
+                  <img
+                    src={
+                      typeof formData.image === "string"
+                        ? formData.image
+                        : URL.createObjectURL(formData.image)
+                    }
+                    alt="Preview"
+                    className="mt-2 h-32 object-cover rounded border"
+                  />
+                )}
+              </div>
+
+              <input
+                type="text"
+                name="name"
+                placeholder="Cab Name"
+                value={formData.name}
+                onChange={handleFormChange}
+                className="w-full border px-3 py-2 rounded"
+              />
+              <input
+                type="text"
+                name="model"
+                placeholder="Model"
+                value={formData.model}
+                onChange={handleFormChange}
+                className="w-full border px-3 py-2 rounded"
+              />
+              <input
+                type="number"
+                name="price"
+                placeholder="Price"
+                value={formData.price}
+                onChange={handleFormChange}
+                className="w-full border px-3 py-2 rounded"
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  name="address.city"
+                  placeholder="City"
+                  value={formData.address.city}
+                  onChange={handleFormChange}
+                  className="border px-3 py-2 rounded"
+                />
+                <input
+                  type="text"
+                  name="address.district"
+                  placeholder="District"
+                  value={formData.address.district}
+                  onChange={handleFormChange}
+                  className="border px-3 py-2 rounded"
+                />
+                <input
+                  type="text"
+                  name="address.state"
+                  placeholder="State"
+                  value={formData.address.state}
+                  onChange={handleFormChange}
+                  className="border px-3 py-2 rounded"
+                />
+                <input
+                  type="text"
+                  name="address.country"
+                  placeholder="Country"
+                  value={formData.address.country}
+                  onChange={handleFormChange}
+                  className="border px-3 py-2 rounded"
+                />
+                <input
+                  type="text"
+                  name="address.pincode"
+                  placeholder="Pincode"
+                  value={formData.address.pincode}
+                  onChange={handleFormChange}
+                  className="border px-3 py-2 rounded"
+                />
+                <input
+                  type="text"
+                  name="address.fullAddress"
+                  placeholder="Full Address"
+                  value={formData.address.fullAddress}
+                  onChange={handleFormChange}
+                  className="col-span-2 border px-3 py-2 rounded"
+                />
+              </div>
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-4 py-2 rounded"
+              >
+                {editMode ? "Update Cab" : "Create Cab"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

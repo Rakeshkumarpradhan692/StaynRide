@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 function CloudinaryUpload() {
   const uploadImage = async (file) => {
     if (!file) {
@@ -14,6 +15,7 @@ function CloudinaryUpload() {
       );
       return response.data?.secure_url;
     } catch (err) {
+      toast.error("file size maxium 10Mb");
       console.log("error accur in cloudinary", err);
       return null;
     }

@@ -7,6 +7,11 @@ const cabSchema = new mongoose.Schema(
       required: [true, "Cab name is required"],
       trim: true,
     },
+    image: {
+      type: String,
+      required: [true, "Car model is required"],
+      default: null,
+    },
     model: {
       type: String,
       required: [true, "Car model is required"],

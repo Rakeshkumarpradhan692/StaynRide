@@ -20,8 +20,9 @@ exports.createFeedback = async (req, res) => {
 
 exports.updateFeedback = async (req, res) => {
   try {
-    const { id } = req.body;
-    const updatedFeedback = await Feedback.findByIdAndUpdate(id, req.body, {
+    console.log(req.body);
+    const { _id } = req.body;
+    const updatedFeedback = await Feedback.findByIdAndUpdate(_id, req.body, {
       new: true,
       runValidators: true,
     });
@@ -66,6 +67,7 @@ exports.getFeedback = async (req, res) => {
 };
 exports.deleteFeedback = async (req, res) => {
   try {
+    console.log(req.body);
     const { id } = req.body;
     const deletedFeedback = await Feedback.findByIdAndDelete(id);
 

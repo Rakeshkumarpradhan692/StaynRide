@@ -83,9 +83,13 @@ function Booking() {
     seteditdata(data);
   };
   const fetchBooking = useCallback(async () => {
-    const records = await axios.get(`${server_url}admin/all-booking`);
-    if (records.data) {
-      setbookingdata(records.data.data);
+    try {
+      const records = await axios.get(`${server_url}admin/all-booking`);
+      if (records.data) {
+        setbookingdata(records.data.data);
+      }
+    } catch (err) {
+      console.log(err);
     }
   }, []);
 
@@ -119,9 +123,6 @@ function Booking() {
     <div className=" relative p-4 w-full h-full overflow-hidden">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Bookings</h2>
-        <button className="px-4 py-2 border border-gray-400 rounded-md text-sm hover:bg-gray-100">
-          + Create Booking
-        </button>
       </div>
 
       <div className="overflow-x-auto">
