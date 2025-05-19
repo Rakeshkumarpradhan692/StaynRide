@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import CloudinaryUpload from "../utils/UploadCloudinary";
+import SkelitonLoader from "../component/SkelitonLoader";
+import Swal from "sweetalert2";
 
 function Banner() {
   const server_url = process.env.REACT_APP_SERVER_URL;
@@ -25,6 +27,7 @@ function Banner() {
       if (result.data?.banners) {
         setBanners(result.data.banners);
       }
+      setloading(false);
     } catch (err) {
       console.log(err);
     } finally {
@@ -91,18 +94,57 @@ function Banner() {
   };
 
   const handleDelete = async (id) => {
-    try {
-      const result = await axios.delete(`${server_url}admin/delete-banner`, {
-        data: { id },
-      });
+    const swalWithTailwindButtons = Swal.mixin({
+      customClass: {
+        confirmButton:
+          "bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mr-2",
+        cancelButton:
+          "bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded",
+      },
+      buttonsStyling: false,
+    });
 
-      if (result.data?.message) {
-        toast.success(result.data.message);
-        fetchbanner();
+    const result = await swalWithTailwindButtons.fire({
+      title: "Are you sure?",
+      text: "This banner will be permanently deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await axios.delete(
+          `${server_url}admin/delete-banner`,
+          {
+            data: { id },
+          }
+        );
+
+        if (response.data?.message) {
+          swalWithTailwindButtons.fire({
+            title: "Deleted!",
+            text: response.data.message,
+            icon: "success",
+          });
+          fetchbanner();
+        }
+      } catch (err) {
+        console.error("Delete error:", err);
+        swalWithTailwindButtons.fire({
+          title: "Error",
+          text: "Failed to delete banner. Please try again.",
+          icon: "error",
+        });
       }
-    } catch (err) {
-      console.error("Delete error:", err);
-      toast.error("Failed to delete banner");
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      swalWithTailwindButtons.fire({
+        title: "Cancelled",
+        text: "The banner is safe.",
+        icon: "error",
+      });
     }
   };
 
@@ -154,54 +196,55 @@ function Banner() {
 
   return (
     <div className=" bg-gray-100 p-6 pb-20 ">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold">Our Banners</h2>
-        <button
-          onClick={openCreateForm}
-          disabled={loading}
-          className="px-3 cursor-pointer py-2 rounded-md border bg-gray-200 text-gray-700"
-        >
-          {loading ? "Createing..." : "+ Create Banner"}
-        </button>
-      </div>
-      {loading ? (
-        <div className="text-center col-span-full py-10 text-lg font-semibold text-gray-500">
-          Loading banners...
-        </div>
+      {loading === true ? (
+        <SkelitonLoader />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {banners.map((banner) => (
-            <div
-              key={banner._id}
-              className="bg-white rounded-2xl shadow-md hover:shadow-lg transition duration-300 overflow-hidden"
+        <div>
+          {" "}
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-3xl font-bold">Our Banners</h2>
+            <button
+              onClick={openCreateForm}
+              disabled={loading}
+              className="px-3 cursor-pointer py-2 rounded-md border bg-gray-200 text-gray-700"
             >
-              <img
-                src={banner.image}
-                alt={banner.name}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="text-xl font-semibold">{banner.name}</h3>
-                <p className="text-gray-600 mt-2 text-sm">
-                  {banner.description}
-                </p>
-                <div className="flex justify-between mt-4">
-                  <button
-                    onClick={() => openEditForm(banner)}
-                    className="px-4 py-1 bg-gray-400 rounded text-sm text-white"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(banner._id)}
-                    className="px-4 py-1 bg-red-500 rounded text-sm text-white"
-                  >
-                    Delete
-                  </button>
+              {loading ? "Createing..." : "+ Create Banner"}
+            </button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {banners.map((banner) => (
+              <div
+                key={banner._id}
+                className="bg-white rounded-2xl shadow-md hover:shadow-lg transition duration-300 overflow-hidden"
+              >
+                <img
+                  src={banner.image}
+                  alt={banner.name}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-xl font-semibold">{banner.name}</h3>
+                  <p className="text-gray-600 mt-2 text-sm">
+                    {banner.description}
+                  </p>
+                  <div className="flex justify-between mt-4">
+                    <button
+                      onClick={() => openEditForm(banner)}
+                      className="px-4 py-1 bg-gray-400 rounded text-sm text-white"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(banner._id)}
+                      className="px-4 py-1 bg-red-500 rounded text-sm text-white"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 

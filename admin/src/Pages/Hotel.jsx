@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Edit2, Trash2, X, Plus } from "lucide-react";
 import axios from "axios";
+import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import CloudinaryUpload from "../utils/UploadCloudinary";
 import hotelimg from "../assets/images/hotels.jpg";
-
+import SkelitonLoader from "../component/SkelitonLoader";
 export default function Hotels() {
   const { uploadImage } = CloudinaryUpload();
+  const [isloading, setisloading] = useState(false);
   const server_url = process.env.REACT_APP_SERVER_URL;
   const [hotels, setHotels] = useState([]);
   const [formOpen, setFormOpen] = useState(false);
@@ -28,15 +30,17 @@ export default function Hotels() {
     checkOutTime: "",
     rating: "",
     availability: true,
-    images: [], // array of URLs or File objects
+    images: [],
   });
-
-  // Fetch all hotels from backend
   const fetchHotels = useCallback(async () => {
+    setisloading(true);
     try {
       const res = await axios.get(`${server_url}public/all-hotels`);
       setHotels(res.data || []);
+      console.log(res.data);
+      setisloading(false);
     } catch (err) {
+      setisloading(false);
       console.error(err);
       toast.error("Failed to load hotels");
     }
@@ -45,8 +49,6 @@ export default function Hotels() {
   useEffect(() => {
     fetchHotels();
   }, [fetchHotels]);
-
-  // Open the create modal
   const openCreate = () => {
     setEditMode(false);
     setFormData({
@@ -69,8 +71,6 @@ export default function Hotels() {
     });
     setFormOpen(true);
   };
-
-  // Open the edit modal with pre-filled data
   const openEdit = (hotel) => {
     setEditMode(true);
     setFormData({
@@ -79,15 +79,9 @@ export default function Hotels() {
     });
     setFormOpen(true);
   };
-
-  // Close create/edit form modal
   const closeForm = () => setFormOpen(false);
-
-  // Open the details modal
   const openDetails = (hotel) => setSelectedHotel(hotel);
   const closeDetails = () => setSelectedHotel(null);
-
-  // Handle regular input change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -95,8 +89,6 @@ export default function Hotels() {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-
-  // Handle image file selection
   const handleImageSelect = (e) => {
     const files = Array.from(e.target.files);
     setFormData((prev) => ({
@@ -104,21 +96,16 @@ export default function Hotels() {
       images: [...prev.images, ...files],
     }));
   };
-
-  // Remove an image from the array by index
   const removeImageAt = (idx) => {
     setFormData((prev) => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== idx),
     }));
   };
-
-  // Handle create or update submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // Upload all File objects to Cloudinary, leave existing URLs untouched
       const uploaded = await Promise.all(
         formData.images.map((img) =>
           typeof img === "string" ? img : uploadImage(img)
@@ -146,83 +133,122 @@ export default function Hotels() {
       toast.error("Failed to save hotel");
     }
   };
-
-  // Handle hotel deletion
   const deleteHotel = async (_id) => {
-    if (!window.confirm("Delete this hotel?")) return;
-    try {
-      await axios.delete(`${server_url}admin/delete-hotel`, {
-        data: { id: _id },
+    const swalWithTailwindButtons = Swal.mixin({
+      customClass: {
+        confirmButton:
+          "bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mr-2",
+        cancelButton:
+          "bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded",
+      },
+      buttonsStyling: false,
+    });
+
+    const result = await swalWithTailwindButtons.fire({
+      title: "Are you sure?",
+      text: "This hotel will be permanently deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${server_url}admin/delete-hotel`, {
+          data: { id: _id },
+        });
+
+        swalWithTailwindButtons.fire({
+          title: "Deleted!",
+          text: "Hotel has been deleted.",
+          icon: "success",
+        });
+
+        fetchHotels();
+      } catch (err) {
+        console.error(err);
+
+        swalWithTailwindButtons.fire({
+          title: "Error",
+          text: "Failed to delete hotel.",
+          icon: "error",
+        });
+      }
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      swalWithTailwindButtons.fire({
+        title: "Cancelled",
+        text: "Hotel deletion has been cancelled.",
+        icon: "error",
       });
-      toast.success("Hotel deleted");
-      fetchHotels();
-    } catch (err) {
-      console.error(err);
-      toast.error("Delete failed");
     }
   };
 
   return (
     <div className="p-5">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-3xl font-semibold">Hotels</h1>
-        <button
-          onClick={openCreate}
-          className="flex items-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded"
-        >
-          <Plus size={16} /> Create Hotel
-        </button>
-      </div>
-
-      {/* Hotel Cards */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {hotels.map((hotel) => (
-          <div
-            key={hotel._id}
-            className="bg-white border rounded shadow overflow-hidden cursor-pointer"
-            onClick={() => openDetails(hotel)}
-          >
-            <div className="relative">
-              <img
-                src={hotel.images[0] || hotelimg}
-                alt={hotel.name}
-                className="w-full h-40 object-cover"
-              />
-              <div className="absolute top-2 right-2 flex gap-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openEdit(hotel);
-                  }}
-                  className="p-1 bg-white rounded shadow"
-                >
-                  <Edit2 size={18} />
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteHotel(hotel._id);
-                  }}
-                  className="p-1 bg-white rounded shadow"
-                >
-                  <Trash2 size={18} />
-                </button>
-              </div>
-            </div>
-            <div className="p-3 space-y-1">
-              <h2 className="font-semibold">{hotel.name}</h2>
-              <p className="text-sm text-gray-600">{hotel.hotelType}</p>
-              <p className="text-sm">₹{hotel.ratePerNight ?? "—"}/night</p>
-              <p className="text-xs text-gray-500">
-                {hotel.city}, {hotel.state}
-              </p>
-            </div>
+      {isloading === true ? (
+        <SkelitonLoader />
+      ) : (
+        <div>
+          {" "}
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-3xl font-semibold">Hotels</h1>
+            <button
+              onClick={openCreate}
+              className="flex items-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded"
+            >
+              <Plus size={16} /> Create Hotel
+            </button>
           </div>
-        ))}
-      </div>
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            {hotels.map((hotel) => (
+              <div
+                key={hotel._id}
+                className="bg-white border rounded-2xl shadow overflow-hidden cursor-pointer"
+                onClick={() => openDetails(hotel)}
+              >
+                <div className="relative">
+                  <img
+                    src={hotel.images[0] || hotelimg}
+                    alt={hotel.name}
+                    className="w-full h-48 object-cover"
+                  />
+                </div>
+                <div className="p-3 space-y-3">
+                  <h2 className="font-semibold">
+                    {hotel.name.toUpperCase()}-{hotel.hotelType}
+                  </h2>
+                  <p className="text-xs text-gray-500">
+                    {hotel.city}, {hotel.state}
+                  </p>
+                  <div className=" flex justify-between gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openEdit(hotel);
+                      }}
+                      className="px-4 py-1 bg-gray-400 rounded text-sm text-white"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteHotel(hotel._id);
+                      }}
+                      className="px-4 py-1 bg-red-500 rounded text-sm text-white"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-      {/* Create/Edit Modal */}
       {formOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-2xl p-6 rounded shadow-lg overflow-auto max-h-[90vh] relative">
@@ -236,7 +262,6 @@ export default function Hotels() {
               {editMode ? "Edit Hotel" : "Create Hotel"}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Name & Type */}
               <div className="grid grid-cols-2 gap-4">
                 <input
                   name="name"
@@ -255,8 +280,6 @@ export default function Hotels() {
                   required
                 />
               </div>
-
-              {/* Description */}
               <textarea
                 name="description"
                 placeholder="Description"
@@ -265,8 +288,6 @@ export default function Hotels() {
                 onChange={handleChange}
                 className="border px-3 py-2 rounded w-full"
               />
-
-              {/* Address Fields */}
               <div className="grid grid-cols-2 gap-4">
                 <input
                   name="country"
@@ -311,8 +332,6 @@ export default function Hotels() {
                   className="border px-3 py-2 rounded col-span-2"
                 />
               </div>
-
-              {/* Contact & Times */}
               <div className="grid grid-cols-3 gap-4">
                 <input
                   name="contactNumber"
@@ -336,8 +355,6 @@ export default function Hotels() {
                   className="border px-3 py-2 rounded"
                 />
               </div>
-
-              {/* Rating & Availability */}
               <div className="flex items-center gap-4">
                 <input
                   name="rating"
@@ -358,8 +375,6 @@ export default function Hotels() {
                   Available
                 </label>
               </div>
-
-              {/* Images */}
               <div>
                 <label className="block mb-1">Hotel Images</label>
                 <input
@@ -402,8 +417,6 @@ export default function Hotels() {
           </div>
         </div>
       )}
-
-      {/* Details Modal */}
       {selectedHotel && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-2xl p-6 rounded shadow-lg overflow-auto max-h-[90vh] relative">

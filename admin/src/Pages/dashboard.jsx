@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import axios from "axios";
 import { Users, Hotel, Car, CalendarCheck } from "lucide-react";
 import HotelAndCab from "../component/charts/HotelAndCab";
 import UserChrts from "../component/charts/UserChrts";
 
-export default function Dashboard() {
+function Dashboard() {
   const server_url = process.env.REACT_APP_SERVER_URL;
 
   const [stats, setStats] = useState({
@@ -99,3 +99,4 @@ export default function Dashboard() {
     </div>
   );
 }
+export default memo(Dashboard);

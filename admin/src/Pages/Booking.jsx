@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Pencil, Trash2, Plus, Minus } from "lucide-react";
+import Swal from "sweetalert2";
 import axios from "axios";
 import toast from "react-hot-toast";
 function Booking() {
@@ -95,17 +96,58 @@ function Booking() {
 
   const deleteBokking = async (e, id) => {
     e.preventDefault();
-    try {
-      const result = await axios.delete(`${server_url}admin/delete-booking`, {
-        data: { id },
-      });
 
-      if (result.data) {
-        toast.success("record deleted");
-        fetchBooking();
+    const swalWithTailwindButtons = Swal.mixin({
+      customClass: {
+        confirmButton:
+          "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mr-2",
+        cancelButton:
+          "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded",
+      },
+      buttonsStyling: false,
+    });
+
+    const result = await swalWithTailwindButtons.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await axios.delete(
+          `${server_url}admin/delete-booking`,
+          {
+            data: { id },
+          }
+        );
+
+        if (response.data) {
+          swalWithTailwindButtons.fire({
+            title: "Deleted!",
+            text: "Your file has been deleted.",
+            icon: "success",
+          });
+          fetchBooking();
+        }
+      } catch (err) {
+        console.log(err.response?.data?.message);
+        swalWithTailwindButtons.fire({
+          title: "Error!",
+          text: err.response?.data?.message || "Something went wrong.",
+          icon: "error",
+        });
       }
-    } catch (err) {
-      console.log(err.response?.data?.message);
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      swalWithTailwindButtons.fire({
+        title: "Cancelled",
+        text: "Your file is safe :)",
+        icon: "error",
+      });
     }
   };
 
@@ -257,7 +299,7 @@ const BookingCoponent = ({
   handlesubmit,
 }) => {
   return (
-    <div className="bg-black inset-0 flex justify-center items-center bg-opacity-80 absolute w-full h-full">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <form
         onSubmit={handlesubmit}
         className="bg-white  p-6 px-10 rounded-lg w-[80%] lg:w-1/2 h-[80%] overflow-hidden overflow-y-scroll  space-y-4 hide-scrollbar"

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Plus, Minus, Pencil, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
-
+import Swal from "sweetalert2";
 function Users() {
   const [users, setUsers] = useState([]);
   const [editUserId, setEditUserId] = useState(null);
@@ -84,16 +84,55 @@ function Users() {
 
   const deleteUser = async (e, id) => {
     e.preventDefault();
-    try {
-      const res = await axios.delete(`${server_url}admin/delete-user`, {
-        data: { id },
-      });
-      if (res.data?.success) {
-        toast.success("User deleted");
-        fetchUser();
+
+    const swalWithTailwindButtons = Swal.mixin({
+      customClass: {
+        confirmButton:
+          "bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mr-2",
+        cancelButton:
+          "bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded",
+      },
+      buttonsStyling: false,
+    });
+
+    const result = await swalWithTailwindButtons.fire({
+      title: "Are you sure?",
+      text: "This action will permanently delete the user.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await axios.delete(`${server_url}admin/delete-user`, {
+          data: { id },
+        });
+
+        if (res.data?.success) {
+          swalWithTailwindButtons.fire({
+            title: "Deleted!",
+            text: "User has been deleted.",
+            icon: "success",
+          });
+          fetchUser();
+        }
+      } catch (err) {
+        console.log(err);
+        swalWithTailwindButtons.fire({
+          title: "Error",
+          text: "Failed to delete user. Please try again.",
+          icon: "error",
+        });
       }
-    } catch (err) {
-      console.log(err);
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      swalWithTailwindButtons.fire({
+        title: "Cancelled",
+        text: "User deletion has been cancelled.",
+        icon: "error",
+      });
     }
   };
 

@@ -19,8 +19,8 @@ function Slide() {
     { label: "Banners", icon: <Image />, path: "/banners" },
     { label: "Booking", icon: <CalendarCheck />, path: "/booking" },
     { label: "Cabs", icon: <Car />, path: "/cabs" },
-    { label: "Feedbacks", icon: <MessageCircle />, path: "/feedbacks" },
     { label: "Hotels", icon: <Hotel />, path: "/hotels" },
+    { label: "Feedbacks", icon: <MessageCircle />, path: "/feedbacks" },
   ];
 
   return (

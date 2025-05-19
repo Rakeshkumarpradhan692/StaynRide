@@ -1,11 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Edit2, Trash2, X } from "lucide-react";
+import Swal from "sweetalert2";
 import cabimg from "../assets/images/cab.jpg";
 import axios from "axios";
 import toast from "react-hot-toast";
+import SkelitonLoader from "../component/SkelitonLoader";
 import CloudinaryUpload from "../utils/UploadCloudinary";
 function Cabs() {
   const { uploadImage } = CloudinaryUpload();
+  const [isloading, setisloading] = useState(false);
   const [cabs, setCabs] = useState([]);
   const [selectedCab, setSelectedCab] = useState(null);
   const [editMode, setEditMode] = useState(false);
@@ -28,10 +31,13 @@ function Cabs() {
   const server_url = process.env.REACT_APP_SERVER_URL;
 
   const fetchCabs = useCallback(async () => {
+    setisloading(true);
     try {
       const result = await axios.get(`${server_url}public/all-cabs`);
       if (result.data) setCabs(result.data);
+      setisloading(false);
     } catch (err) {
+      setisloading(false);
       console.log(err);
     }
   }, [server_url]);
@@ -126,78 +132,137 @@ function Cabs() {
   };
 
   const deleteCabs = async (id) => {
-    try {
-      const deleted = await axios.delete(`${server_url}admin/delete-cab`, {
-        data: { id },
-      });
-      toast.success("cab deleted");
-      fetchCabs();
-    } catch (err) {
-      if (err.response?.data?.message) {
-        toast.error(err.response?.data?.message);
+    const swalWithTailwindButtons = Swal.mixin({
+      customClass: {
+        confirmButton:
+          "bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mr-2",
+        cancelButton:
+          "bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded",
+      },
+      buttonsStyling: false,
+    });
+
+    const result = await swalWithTailwindButtons.fire({
+      title: "Are you sure?",
+      text: "This cab will be permanently deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const deleted = await axios.delete(`${server_url}admin/delete-cab`, {
+          data: { id },
+        });
+
+        swalWithTailwindButtons.fire({
+          title: "Deleted!",
+          text: "Cab has been deleted.",
+          icon: "success",
+        });
+
+        fetchCabs();
+      } catch (err) {
+        console.log(err);
+
+        swalWithTailwindButtons.fire({
+          title: "Error",
+          text: err.response?.data?.message || "Failed to delete the cab.",
+          icon: "error",
+        });
       }
-      console.log(err);
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      swalWithTailwindButtons.fire({
+        title: "Cancelled",
+        text: "The cab was not deleted.",
+        icon: "error",
+      });
     }
   };
+
   const handleViewMore = (cab) => setSelectedCab(cab);
   const closeViewModal = () => setSelectedCab(null);
 
   return (
     <div className="p-6 font-sans bg-gray-50 min-h-screen">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Cab Listings</h2>
-        <button
-          onClick={openCreateModal}
-          className="px-3 py-1 rounded-md bg-blue-600 text-white"
-        >
-          + Create Cab
-        </button>
-      </div>
-
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {cabs.map((cab) => (
-          <div
-            key={cab._id}
-            className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 relative"
-          >
-            <img
-              src={cab.image != null ? cab.image : cabimg}
-              alt={cab.name}
-              className="w-full h-44 object-cover"
-            />
-            <div className="absolute top-2 right-2 flex space-x-2">
-              <button
-                onClick={() => openEditModal(cab)}
-                className="p-1 bg-gray-300 rounded hover:bg-gray-400"
-                aria-label="Edit"
-              >
-                <Edit2 size={20} />
-              </button>
-              <button
-                onClick={() => deleteCabs(cab._id)}
-                className="p-1 bg-gray-400 rounded hover:bg-gray-500"
-                aria-label="Delete"
-              >
-                <Trash2 size={20} />
-              </button>
-            </div>
-
-            <div className="p-4 space-y-2">
-              <h3 className="text-lg font-semibold text-gray-900">
-                {cab.name}
-              </h3>
-              <p className="text-sm text-gray-600">Model: {cab.model}</p>
-              <p className="text-sm text-gray-600">Price: ₹{cab.price}</p>
-              <button
-                onClick={() => handleViewMore(cab)}
-                className="mt-2 text-sm text-blue-600 hover:underline"
-              >
-                View More
-              </button>
-            </div>
+      {isloading === true ? (
+        <SkelitonLoader />
+      ) : (
+        <div>
+          {" "}
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold mb-6 text-gray-800">
+              Cab Listings
+            </h2>
+            <button
+              onClick={openCreateModal}
+              className="px-3 py-1 rounded-md bg-blue-600 text-white"
+            >
+              + Create Cab
+            </button>
           </div>
-        ))}
-      </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {cabs.map((cab) => (
+              <div
+                key={cab._id}
+                className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 relative"
+              >
+                <img
+                  src={cab.image != null ? cab.image : cabimg}
+                  alt={cab.name}
+                  className="w-full h-44 object-cover"
+                />
+                <div className="absolute top-2 right-2 flex space-x-2">
+                  <button
+                    onClick={() => openEditModal(cab)}
+                    className="p-1 bg-gray-300 rounded hover:bg-gray-400"
+                    aria-label="Edit"
+                  >
+                    <Edit2 size={20} />
+                  </button>
+                  <button
+                    onClick={() => deleteCabs(cab._id)}
+                    className="p-1 bg-gray-400 rounded hover:bg-gray-500"
+                    aria-label="Delete"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                </div>
+
+                <div
+                  onClick={() => handleViewMore(cab)}
+                  className="p-4 space-y-2"
+                >
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {cab.name}
+                  </h3>
+                  <p className="text-sm text-gray-600">Model: {cab.model}</p>
+                  <p className="text-sm text-gray-600">Price: ₹{cab.price}</p>
+                  <div className=" flex justify-between items-center">
+                    <button
+                      onClick={() => openEditModal(cab)}
+                      className="px-4 py-1 bg-gray-400 rounded text-sm text-white"
+                      aria-label="Edit"
+                    >
+                      delete
+                    </button>
+                    <button
+                      onClick={() => deleteCabs(cab._id)}
+                      className="px-4 py-1 bg-red-500 rounded text-sm text-white"
+                      aria-label="Delete"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* View More Modal */}
       {selectedCab && (
