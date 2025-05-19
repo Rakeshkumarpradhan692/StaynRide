@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Pencil, Trash2, Plus, Minus } from "lucide-react";
 import Swal from "sweetalert2";
+import TableSkeliton from "../component/TableSkeliton";
 import axios from "axios";
 import toast from "react-hot-toast";
 function Booking() {
   const server_url = process.env.REACT_APP_SERVER_URL;
   const [expandedRows, setExpandedRows] = useState([]);
   const [bookingdata, setbookingdata] = useState([]);
+  const [isloading, setisloading] = useState(false);
   const [isactive, setisactive] = useState(false);
   const [editdata, seteditdata] = useState({
     _id: "",
@@ -84,12 +86,15 @@ function Booking() {
     seteditdata(data);
   };
   const fetchBooking = useCallback(async () => {
+    setisloading(true);
     try {
       const records = await axios.get(`${server_url}admin/all-booking`);
       if (records.data) {
         setbookingdata(records.data.data);
       }
+      setisloading(false);
     } catch (err) {
+      setisloading(false);
       console.log(err);
     }
   }, []);
@@ -100,9 +105,9 @@ function Booking() {
     const swalWithTailwindButtons = Swal.mixin({
       customClass: {
         confirmButton:
-          "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mr-2",
+          "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded ml-2",
         cancelButton:
-          "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded",
+          "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mr-2",
       },
       buttonsStyling: false,
     });
@@ -163,121 +168,135 @@ function Booking() {
 
   return (
     <div className=" relative p-4 w-full h-full overflow-hidden">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Bookings</h2>
-      </div>
+      {isloading === true ? (
+        <TableSkeliton />
+      ) : (
+        <div>
+          {" "}
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Bookings</h2>
+            <button className="px-3 py-1 rounded-md bg-blue-600 text-white">
+              + Create Cab
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-300 text-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="p-2 text-left w-8 lg:hidden"></th>
+                  <th className="p-2 text-left">User Name</th>
+                  <th className="p-2 text-left">Type</th>
+                  <th className="p-2 text-left">ID</th>
+                  <th className="p-2 text-left">Price</th>
+                  <th className="p-2 text-left">Status</th>
+                  <th className="p-2 text-left">Date</th>
+                  <th className="p-2 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {bookingdata.map((booking) => {
+                  const isExpanded = expandedRows.includes(booking._id);
+                  const isHotel = booking?.hotelBooking?.hotelId?._id;
+                  const isCab = booking?.cabBooking?.cabId?._id;
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300 text-sm">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-2 text-left w-8 lg:hidden"></th>
-              <th className="p-2 text-left">User Name</th>
-              <th className="p-2 text-left">Type</th>
-              <th className="p-2 text-left">ID</th>
-              <th className="p-2 text-left">Price</th>
-              <th className="p-2 text-left">Status</th>
-              <th className="p-2 text-left">Date</th>
-              <th className="p-2 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bookingdata.map((booking) => {
-              const isExpanded = expandedRows.includes(booking._id);
-              const isHotel = booking?.hotelBooking?.hotelId?._id;
-              const isCab = booking?.cabBooking?.cabId?._id;
+                  let type = "-";
+                  let typeId = "-";
 
-              let type = "-";
-              let typeId = "-";
+                  if (isHotel) {
+                    type = "Hotel";
+                    typeId = booking?.hotelBooking?.hotelId?._id;
+                  } else if (isCab) {
+                    type = "Cab";
+                    typeId = booking?.cabBooking?.cabId?._id;
+                  }
 
-              if (isHotel) {
-                type = "Hotel";
-                typeId = booking?.hotelBooking?.hotelId?._id;
-              } else if (isCab) {
-                type = "Cab";
-                typeId = booking?.cabBooking?.cabId?._id;
-              }
+                  return (
+                    <React.Fragment key={booking._id}>
+                      <tr className="border-b bg-white hover:bg-gray-50">
+                        <td className="p-2 lg:hidden">
+                          <button onClick={() => toggleRow(booking._id)}>
+                            {isExpanded ? (
+                              <Minus size={18} />
+                            ) : (
+                              <Plus size={18} />
+                            )}
+                          </button>
+                        </td>
+                        <td className="p-2">{booking.userId.name}</td>
+                        <td className="p-2">{type}</td>
+                        <td className="p-2">{typeId}</td>
+                        <td className="p-2">₹{booking.totalPrice}</td>
+                        <td className="p-2 capitalize">{booking.status}</td>
+                        <td className="p-2">
+                          {new Date(booking.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="p-2 sm:space-x-2 flex ">
+                          <button
+                            onClick={(e) => {
+                              handleEdit(e, booking);
+                            }}
+                            className="px-2 py-1 lg:flex border border-gray-400 rounded text-xs hover:bg-gray-100"
+                          >
+                            <Pencil size={14} className="inline-block mr-1" />
+                            <span className=" hidden lg:block"> Edit</span>
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              deleteBokking(e, booking._id);
+                            }}
+                            className="px-2 lg:flex py-1 border border-gray-400 rounded text-xs hover:bg-gray-100"
+                          >
+                            <Trash2 size={14} className="inline-block mr-1" />
+                            <span className=" hidden lg:block">Delete</span>
+                          </button>
+                        </td>
+                      </tr>
 
-              return (
-                <React.Fragment key={booking._id}>
-                  <tr className="border-b hover:bg-gray-50">
-                    <td className="p-2 lg:hidden">
-                      <button onClick={() => toggleRow(booking._id)}>
-                        {isExpanded ? <Minus size={18} /> : <Plus size={18} />}
-                      </button>
-                    </td>
-                    <td className="p-2">{booking.userId.name}</td>
-                    <td className="p-2">{type}</td>
-                    <td className="p-2">{typeId}</td>
-                    <td className="p-2">₹{booking.totalPrice}</td>
-                    <td className="p-2 capitalize">{booking.status}</td>
-                    <td className="p-2">
-                      {new Date(booking.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="p-2 sm:space-x-2">
-                      <button
-                        onClick={(e) => {
-                          handleEdit(e, booking);
-                        }}
-                        className="px-2 py-1 border border-gray-400 rounded text-xs hover:bg-gray-100"
-                      >
-                        <Pencil size={14} className="inline-block mr-1" />
-                        <span className=" hidden lg:block"> Edit</span>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          deleteBokking(e, booking._id);
-                        }}
-                        className="px-2 py-1 border border-gray-400 rounded text-xs hover:bg-gray-100"
-                      >
-                        <Trash2 size={14} className="inline-block mr-1" />
-                        <span className=" hidden lg:block">Delete</span>
-                      </button>
-                    </td>
-                  </tr>
+                      {isExpanded && (
+                        <tr className="bg-white">
+                          <td colSpan="8" className="p-3 text-gray-700 text-sm">
+                            {isHotel && (
+                              <div className="space-y-1">
+                                <div>
+                                  <strong>Room ID:</strong>{" "}
+                                  {booking.hotelBooking.roomID._id}
+                                </div>
+                                <div>
+                                  <strong>Total Guests:</strong>{" "}
+                                  {booking.hotelBooking.totalGuests}
+                                </div>
+                              </div>
+                            )}
+                            {isCab && (
+                              <div className="space-y-1">
+                                <div>
+                                  <strong>Pickup:</strong>{" "}
+                                  {booking.cabBooking.pickupLocation}
+                                </div>
+                                <div>
+                                  <strong>Drop:</strong>{" "}
+                                  {booking.cabBooking.dropLocation}
+                                </div>
+                                <div>
+                                  <strong>Travel Date:</strong>{" "}
+                                  {new Date(
+                                    booking.cabBooking.travelDate
+                                  ).toLocaleDateString()}
+                                </div>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
-                  {isExpanded && (
-                    <tr className="bg-gray-50">
-                      <td colSpan="8" className="p-3 text-gray-700 text-sm">
-                        {isHotel && (
-                          <div className="space-y-1">
-                            <div>
-                              <strong>Room ID:</strong>{" "}
-                              {booking.hotelBooking.roomID._id}
-                            </div>
-                            <div>
-                              <strong>Total Guests:</strong>{" "}
-                              {booking.hotelBooking.totalGuests}
-                            </div>
-                          </div>
-                        )}
-                        {isCab && (
-                          <div className="space-y-1">
-                            <div>
-                              <strong>Pickup:</strong>{" "}
-                              {booking.cabBooking.pickupLocation}
-                            </div>
-                            <div>
-                              <strong>Drop:</strong>{" "}
-                              {booking.cabBooking.dropLocation}
-                            </div>
-                            <div>
-                              <strong>Travel Date:</strong>{" "}
-                              {new Date(
-                                booking.cabBooking.travelDate
-                              ).toLocaleDateString()}
-                            </div>
-                          </div>
-                        )}
-                      </td>
-                    </tr>
-                  )}
-                </React.Fragment>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
       {isactive && (
         <BookingCoponent
           editdata={editdata}
