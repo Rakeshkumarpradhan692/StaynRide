@@ -154,7 +154,7 @@ function Cabs() {
 
     if (result.isConfirmed) {
       try {
-        const deleted = await axios.delete(`${server_url}admin/delete-cab`, {
+        await axios.delete(`${server_url}admin/delete-cab`, {
           data: { id },
         });
 

@@ -10,6 +10,7 @@ const bookingSchema = new mongoose.Schema(
     hotelBooking: {
       isHotelBooked: {
         type: Boolean,
+        default: false,
       },
       hotelId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -25,6 +26,7 @@ const bookingSchema = new mongoose.Schema(
     cabBooking: {
       isCabBooked: {
         type: Boolean,
+        default: false,
       },
       cabId: {
         type: mongoose.Schema.Types.ObjectId,

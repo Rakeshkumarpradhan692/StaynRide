@@ -3,6 +3,7 @@ import { Plus, Minus, Pencil, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import Swal from "sweetalert2";
+import TableSkeliton from "../component/TableSkeliton";
 function Users() {
   const [users, setUsers] = useState([]);
   const [editUserId, setEditUserId] = useState(null);
@@ -21,16 +22,19 @@ function Users() {
   const [expandedRows, setExpandedRows] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
-
+  const [isloading, setisloading] = useState(false);
   const server_url = process.env.REACT_APP_SERVER_URL;
 
   const fetchUser = useCallback(async () => {
+    setisloading(true);
     try {
       const results = await axios.get(`${server_url}admin/all-users`);
       if (results.data?.users) {
         setUsers(results.data.users);
       }
+      setisloading(false);
     } catch (err) {
+      setisloading(false);
       console.log("Error occurred while fetching user details", err);
     }
   }, [server_url]);
@@ -169,101 +173,128 @@ function Users() {
 
   return (
     <div className="relative p-4 w-full">
-      <div className="flex flex-row justify-between items-start sm:items-center mb-4">
-        <h2 className="text-xl font-semibold mb-2 sm:mb-0">Users</h2>
-        <button
-          onClick={() => setShowForm(true)}
-          className="px-4 py-2 border border-gray-400 rounded-md text-sm hover:bg-gray-100"
-        >
-          + Create User
-        </button>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300 text-sm">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-2 text-left w-8"></th>
-              <th className="p-2 text-left">Name</th>
-              <th className="p-2 text-left hidden sm:block">Email</th>
-              <th className="p-2 text-left">Number</th>
-              <th className="p-2 text-left hidden md:table-cell">Country</th>
-              <th className="p-2 text-left hidden md:table-cell">State</th>
-              <th className="p-2 text-left hidden lg:table-cell">District</th>
-              <th className="p-2 text-left hidden lg:table-cell">City</th>
-              <th className="p-2 text-left hidden xl:table-cell">Address</th>
-              <th className="p-2 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => {
-              const isExpanded = expandedRows.includes(user._id);
-              return (
-                <React.Fragment key={user._id}>
-                  <tr className="border-b hover:bg-gray-50">
-                    <td className="p-2 align-top">
-                      <button
-                        onClick={() => toggleRow(user._id)}
-                        className="md:hidden"
-                      >
-                        {isExpanded ? <Minus size={18} /> : <Plus size={18} />}
-                      </button>
-                    </td>
-                    <td className="p-2">{user.name}</td>
-                    <td className="p-2 hidden sm:block">{user.email}</td>
-                    <td className="p-2">{user.number}</td>
-                    <td className="p-2 hidden md:table-cell">{user.country}</td>
-                    <td className="p-2 hidden md:table-cell">{user.state}</td>
-                    <td className="p-2 hidden lg:table-cell">
-                      {user.district}
-                    </td>
-                    <td className="p-2 hidden lg:table-cell">{user.city}</td>
-                    <td className="p-2 hidden xl:table-cell">{user.address}</td>
-                    <td className="p-2 space-x-2">
-                      <button
-                        onClick={() => handleEditClick(user)}
-                        className="px-2 py-1 border border-gray-400 rounded text-xs hover:bg-gray-100"
-                      >
-                        <Pencil size={14} className="inline-block mr-1" />
-                        <span className="hidden sm:inline-block">Edit</span>
-                      </button>
-                      <button
-                        onClick={(e) => deleteUser(e, user._id)}
-                        className="px-2 py-1 border border-gray-400 rounded text-xs hover:bg-gray-100"
-                      >
-                        <Trash2 size={14} className="inline-block mr-1" />
-                        <span className="hidden sm:inline-block">Delete</span>
-                      </button>
-                    </td>
-                  </tr>
-                  {isExpanded && (
-                    <tr className="bg-gray-50 md:hidden">
-                      <td colSpan="10" className="p-3">
-                        <div className="text-gray-600 text-sm space-y-1">
-                          <div>
-                            <strong>Country:</strong> {user.country}
-                          </div>
-                          <div>
-                            <strong>State:</strong> {user.state}
-                          </div>
-                          <div>
-                            <strong>District:</strong> {user.district}
-                          </div>
-                          <div>
-                            <strong>City:</strong> {user.city}
-                          </div>
-                          <div>
-                            <strong>Address:</strong> {user.address}
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </React.Fragment>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      {isloading === true ? (
+        <TableSkeliton />
+      ) : (
+        <div>
+          {" "}
+          <div className="flex flex-row justify-between items-start sm:items-center mb-4">
+            <h2 className="text-xl font-semibold mb-2 sm:mb-0">Users</h2>
+            <button
+              onClick={() => setShowForm(true)}
+              className="px-4 py-2 border border-gray-400 rounded-md text-sm hover:bg-gray-100"
+            >
+              + Create User
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-300 text-sm">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="p-2 text-left w-8"></th>
+                  <th className="p-2 text-left">Name</th>
+                  <th className="p-2 text-left hidden sm:block">Email</th>
+                  <th className="p-2 text-left">Number</th>
+                  <th className="p-2 text-left hidden md:table-cell">
+                    Country
+                  </th>
+                  <th className="p-2 text-left hidden md:table-cell">State</th>
+                  <th className="p-2 text-left hidden lg:table-cell">
+                    District
+                  </th>
+                  <th className="p-2 text-left hidden lg:table-cell">City</th>
+                  <th className="p-2 text-left hidden xl:table-cell">
+                    Address
+                  </th>
+                  <th className="p-2 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => {
+                  const isExpanded = expandedRows.includes(user._id);
+                  return (
+                    <React.Fragment key={user._id}>
+                      <tr className="border-b hover:bg-gray-50">
+                        <td className="p-2 align-top">
+                          <button
+                            onClick={() => toggleRow(user._id)}
+                            className="md:hidden"
+                          >
+                            {isExpanded ? (
+                              <Minus size={18} />
+                            ) : (
+                              <Plus size={18} />
+                            )}
+                          </button>
+                        </td>
+                        <td className="p-2">{user.name}</td>
+                        <td className="p-2 hidden sm:block">{user.email}</td>
+                        <td className="p-2">{user.number}</td>
+                        <td className="p-2 hidden md:table-cell">
+                          {user.country}
+                        </td>
+                        <td className="p-2 hidden md:table-cell">
+                          {user.state}
+                        </td>
+                        <td className="p-2 hidden lg:table-cell">
+                          {user.district}
+                        </td>
+                        <td className="p-2 hidden lg:table-cell">
+                          {user.city}
+                        </td>
+                        <td className="p-2 hidden xl:table-cell">
+                          {user.address}
+                        </td>
+                        <td className="p-2 space-x-2">
+                          <button
+                            onClick={() => handleEditClick(user)}
+                            className="px-2 py-1 border border-gray-400 rounded text-xs hover:bg-gray-100"
+                          >
+                            <Pencil size={14} className="inline-block mr-1" />
+                            <span className="hidden sm:inline-block">Edit</span>
+                          </button>
+                          <button
+                            onClick={(e) => deleteUser(e, user._id)}
+                            className="px-2 py-1 border border-gray-400 rounded text-xs hover:bg-gray-100"
+                          >
+                            <Trash2 size={14} className="inline-block mr-1" />
+                            <span className="hidden sm:inline-block">
+                              Delete
+                            </span>
+                          </button>
+                        </td>
+                      </tr>
+                      {isExpanded && (
+                        <tr className="bg-gray-50 md:hidden">
+                          <td colSpan="10" className="p-3">
+                            <div className="text-gray-600 text-sm space-y-1">
+                              <div>
+                                <strong>Country:</strong> {user.country}
+                              </div>
+                              <div>
+                                <strong>State:</strong> {user.state}
+                              </div>
+                              <div>
+                                <strong>District:</strong> {user.district}
+                              </div>
+                              <div>
+                                <strong>City:</strong> {user.city}
+                              </div>
+                              <div>
+                                <strong>Address:</strong> {user.address}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {showForm && (
         <UserForm

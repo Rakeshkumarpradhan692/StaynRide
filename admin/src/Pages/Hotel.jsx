@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Edit2, Trash2, X, Plus } from "lucide-react";
+import { X, Plus } from "lucide-react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
