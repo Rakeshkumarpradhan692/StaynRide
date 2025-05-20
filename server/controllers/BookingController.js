@@ -2,7 +2,8 @@ const Booking = require("../models/Bookingmodel.js");
 
 exports.createBooking = async (req, res) => {
   try {
-    const booking = new Booking(req.body);
+    console.log(req.body);
+    const booking = new Booking(req.body.payload);
     await booking.save();
     res.status(201).json({
       success: true,

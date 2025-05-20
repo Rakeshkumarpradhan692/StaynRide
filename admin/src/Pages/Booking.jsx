@@ -9,82 +9,156 @@ function Booking() {
   const [expandedRows, setExpandedRows] = useState([]);
   const [bookingdata, setbookingdata] = useState([]);
   const [isloading, setisloading] = useState(false);
-  const [isactive, setisactive] = useState(false);
-  const [editdata, seteditdata] = useState({
-    _id: "",
+  const [isactiveedit, setisactiveedit] = useState(false);
+  const [isactivecreate, setisactivecreate] = useState(false);
+
+  const dataFormat = {
+    username: "",
+    useremail: "",
     userId: "",
+    isHotelBooked: "",
     hotelId: "",
     roomID: "",
     totalGuests: "",
+    isCabBooked: "",
     cabId: "",
     pickupLocation: "",
     dropLocation: "",
     travelDate: "",
     totalPrice: "",
     status: "",
-  });
+    bookingType: "",
+  };
+  const [createdata, setcreatedata] = useState({ ...dataFormat });
+  const [editdata, seteditdata] = useState({});
   const handlechage = (e) => {
     const { name, value } = e.target;
-    seteditdata((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (isactivecreate) {
+      setcreatedata((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+    if (isactiveedit) {
+      seteditdata((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
+
   useEffect(() => {
     console.log(bookingdata);
   }, [bookingdata]);
-  const convertToMongooseFormat = (editdata) => {
-    const isHotelBooking = editdata?.hotelBooking?.hotelId ? true : false;
 
-    return {
-      id: editdata._id,
-      userId: editdata.userId,
-
-      hotelBooking: {
-        isHotelBooked: isHotelBooking,
-        hotelId: isHotelBooking ? editdata?.hotelBooking?.hotelId : undefined,
-        roomID: isHotelBooking ? editdata?.hotelBooking?.roomID : undefined,
-        totalGuests: isHotelBooking
-          ? parseInt(editdata?.hotelBooking?.totalGuests, 10)
-          : undefined,
-      },
-
-      cabBooking: {
-        isCabBooked: !isHotelBooking,
-        cabId: !isHotelBooking ? editdata.cabId : undefined,
-        pickupLocation: !isHotelBooking ? editdata.pickupLocation : undefined,
-        dropLocation: !isHotelBooking ? editdata.dropLocation : undefined,
-        travelDate: !isHotelBooking ? new Date(editdata.travelDate) : undefined,
-      },
-
-      totalPrice: parseFloat(editdata.totalPrice),
-      status: editdata.status,
+  const handleCreate = () => {
+    setisactiveedit(false);
+    setisactivecreate(true);
+  };
+  const handleEdit = (e, data) => {
+    e.preventDefault();
+    setisactiveedit(true);
+    setisactivecreate(false);
+    const bookingdata = {
+      _id: data._id || "",
+      username: data?.userId?.name || data?.username || "",
+      useremail: data?.userId?.email || data?.useremail || "",
+      userId: data?.userId?._id || data?.userId || "",
+      isHotelBooked: data?.hotelBooking?.isHotelBooked || false,
+      hotelId: data?.hotelBooking?.hotelId?._id || data?.hotelId || "",
+      roomID: data?.hotelBooking?.roomID || "",
+      totalGuests: data?.hotelBooking?.totalGuests || 0,
+      isCabBooked: data?.cabBooking?.isCabBooked || false,
+      cabId: data?.cabBooking?.cabId?._id || data?.cabId || "",
+      pickupLocation: data?.cabBooking?.pickupLocation || "",
+      dropLocation: data?.cabBooking?.dropLocation || "",
+      travelDate: data?.cabBooking?.travelDate || "",
+      totalPrice: data?.totalPrice || 0,
+      status: data?.status || "",
+      bookingType: data?.bookingType || "",
     };
+
+    seteditdata(bookingdata);
+    console.log("Updated editdata", bookingdata);
+  };
+
+  const convertToMongooseFormat = () => {
+    const data = isactivecreate ? createdata : isactiveedit ? editdata : null;
+    if (!data) return null;
+
+    const mongooseFormattedData = {
+      ...(isactiveedit && data._id ? { id: data._id } : {}),
+      userId: data.userId,
+      hotelBooking: {
+        isHotelBooked: data.bookingType === "Hotel" ? true : false,
+        hotelId: data.hotelId || null,
+        roomID: data.roomID || null,
+        totalGuests: Number(data.totalGuests) || 0,
+      },
+      cabBooking: {
+        isCabBooked: data.bookingType === "Cab" ? true : false,
+        cabId: data.cabId || null,
+        pickupLocation: data.pickupLocation || "",
+        dropLocation: data.dropLocation || "",
+        travelDate: data.travelDate ? new Date(data.travelDate) : null,
+      },
+      totalPrice: Number(data.totalPrice) || 0,
+      status: data.status || "pending",
+    };
+
+    return mongooseFormattedData;
   };
 
   const handlesubmit = async (e) => {
     e.preventDefault();
+    const payload = convertToMongooseFormat();
     try {
-      const payload = convertToMongooseFormat(editdata);
-      const res = await axios.put(`${server_url}admin/update-booking`, {
-        payload,
-      });
+      const request = isactivecreate
+        ? axios.post(`${server_url}public/create-booking`, { payload })
+        : axios.put(`${server_url}admin/update-booking`, { payload });
+
+      const res = await request;
+
       if (res.data) {
-        toast.success("upadted successfully");
-        setisactive(false);
+        toast.success(
+          isactivecreate ? "Created successfully" : "Updated successfully"
+        );
+
+        setisactivecreate(false);
+        setisactiveedit(false);
         fetchBooking();
+
+        if (isactivecreate) {
+          setcreatedata((prev) => ({
+            ...prev,
+            username: "",
+            useremail: "",
+            userId: "",
+            isHotelBooked: "",
+            hotelId: "",
+            roomID: "",
+            totalGuests: "",
+            isCabBooked: "",
+            cabId: "",
+            pickupLocation: "",
+            dropLocation: "",
+            travelDate: "",
+            totalPrice: "",
+            status: "",
+            bookingType: "",
+          }));
+        }
       }
     } catch (err) {
-      if (err?.response?.data) {
-        toast.error(err?.response?.data?.message);
-      }
+      toast.error(err?.response?.data?.message || "Something went wrong");
+      console.log(err);
     }
   };
-  const handleEdit = (e, data) => {
-    e.preventDefault();
-    setisactive(true);
-    seteditdata(data);
-  };
+
+  useEffect(() => {
+    console.log("Updated editdata is", editdata);
+  }, [editdata]);
+
   const fetchBooking = useCallback(async () => {
     setisloading(true);
     try {
@@ -97,7 +171,7 @@ function Booking() {
       setisloading(false);
       console.log(err);
     }
-  }, []);
+  }, [server_url]);
 
   const deleteBokking = async (e, id) => {
     e.preventDefault();
@@ -175,8 +249,11 @@ function Booking() {
           {" "}
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Bookings</h2>
-            <button className="px-3 py-1 rounded-md bg-blue-600 text-white">
-              + Create Cab
+            <button
+              onClick={handleCreate}
+              className="px-3 py-1 rounded-md bg-blue-600 text-white"
+            >
+              + Create booking
             </button>
           </div>
           <div className="overflow-x-auto">
@@ -297,12 +374,22 @@ function Booking() {
         </div>
       )}
 
-      {isactive && (
+      {isactiveedit && (
         <BookingCoponent
-          editdata={editdata}
+          data={editdata}
           handlechage={handlechage}
-          setisactive={setisactive}
+          setisactive={setisactiveedit}
           handlesubmit={handlesubmit}
+          componentType="Edit"
+        />
+      )}
+      {isactivecreate && (
+        <BookingCoponent
+          data={createdata}
+          handlechage={handlechage}
+          setisactive={setisactivecreate}
+          handlesubmit={handlesubmit}
+          componentType="Create"
         />
       )}
     </div>
@@ -312,11 +399,15 @@ function Booking() {
 export default Booking;
 
 const BookingCoponent = ({
-  editdata,
+  data,
   handlechage,
   setisactive,
   handlesubmit,
+  componentType,
 }) => {
+  // useEffect(() => {
+  //   console.log("create data", data);
+  // }, [data]);
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <form
@@ -324,7 +415,6 @@ const BookingCoponent = ({
         className="bg-white  p-6 px-10 rounded-lg w-[80%] lg:w-1/2 h-[80%] overflow-hidden overflow-y-scroll  space-y-4 hide-scrollbar"
       >
         <div className=" flex justify-between items-center">
-          {" "}
           <h2 className="text-xl font-bold text-center">Booking Form</h2>
           <p
             className=" cursor-pointer"
@@ -340,24 +430,44 @@ const BookingCoponent = ({
           <label className="block text-sm font-semibold mb-1">
             Choose Booking Type
           </label>
-          <input
-            className="w-full border rounded px-3 py-2"
-            name="bookingType"
-            value={editdata.hotelBooking?.isHotelBooked ? "hotel" : "cab"}
-          />
+          {data.userId !== "" ? (
+            <input
+              className="w-full border rounded px-3 py-2"
+              name="bookingType"
+              value={
+                data.isHotelBooked
+                  ? "Hotel"
+                  : data.isCabBooked
+                  ? "Cab"
+                  : "other"
+              }
+              readOnly
+            />
+          ) : (
+            <select
+              onChange={handlechage}
+              className="w-full border rounded px-3 py-2"
+              name="bookingType"
+              value={data.bookingType}
+            >
+              <option value="">Select Type</option>
+              <option value="Hotel">Hotel</option>
+              <option value="Cab">Cab</option>
+            </select>
+          )}
         </div>
         <div>
           <label className="block text-sm font-semibold">User ID</label>
           <input
             type="text"
             name="userId"
-            value={editdata.userId?._id}
+            value={data.userId}
             onChange={handlechage}
             className="w-full border rounded px-3 py-2"
             placeholder="Enter User ID"
           />
         </div>
-        {editdata.bookingtype === "hotel" && (
+        {data.bookingType === "Hotel" && (
           <>
             <div>
               <label className="block text-sm font-semibold">Hotel ID</label>
@@ -367,7 +477,7 @@ const BookingCoponent = ({
                 placeholder="Enter Hotel ID"
                 onChange={handlechage}
                 name="hotelId"
-                value={editdata.hotelBooking.hotelId?._id}
+                value={data.hotelId}
               />
             </div>
             <div>
@@ -378,7 +488,7 @@ const BookingCoponent = ({
                 placeholder="Enter Room ID"
                 onChange={handlechage}
                 name="roomID"
-                value={editdata?.hotelBooking.roomID?._id}
+                value={data.roomID}
               />
             </div>
             <div>
@@ -387,7 +497,7 @@ const BookingCoponent = ({
               </label>
               <input
                 type="number"
-                value={editdata?.hotelBooking?.totalGuests}
+                value={data.totalGuests}
                 onChange={handlechage}
                 name="totalGuests"
                 className="w-full border rounded px-3 py-2"
@@ -396,15 +506,13 @@ const BookingCoponent = ({
             </div>
           </>
         )}
-
-        {/* Cab Booking Fields */}
-        {editdata.bookingtype === "cab" && (
+        {data.bookingType === "Cab" && (
           <>
             <div>
               <label className="block text-sm font-semibold">Cab ID</label>
               <input
                 onChange={handlechage}
-                value={editdata.cabId}
+                value={data.cabId}
                 type="text"
                 name="cabId"
                 className="w-full border rounded px-3 py-2"
@@ -417,7 +525,7 @@ const BookingCoponent = ({
               </label>
               <input
                 type="text"
-                value={editdata.pickupLocation}
+                value={data.pickupLocation}
                 onChange={handlechage}
                 name="pickupLocation"
                 className="w-full border rounded px-3 py-2"
@@ -432,7 +540,7 @@ const BookingCoponent = ({
                 type="text"
                 name="dropLocation"
                 onChange={handlechage}
-                value={editdata.dropLocation}
+                value={data.dropLocation}
                 className="w-full border rounded px-3 py-2"
                 placeholder="Drop Location"
               />
@@ -443,14 +551,12 @@ const BookingCoponent = ({
                 type="date"
                 name="travelDate"
                 onChange={handlechage}
-                value={editdata.travelDate}
+                value={data.travelDate}
                 className="w-full border rounded px-3 py-2"
               />
             </div>
           </>
         )}
-
-        {/* Common Price and Status */}
         <div>
           <label className="block text-sm font-semibold">Total Price</label>
           <input
@@ -459,23 +565,24 @@ const BookingCoponent = ({
             className="w-full border rounded px-3 py-2"
             placeholder="Total Price"
             onChange={handlechage}
-            value={editdata.totalPrice}
+            value={data.totalPrice}
           />
         </div>
-
-        <div>
-          <label className="block text-sm font-semibold">Status</label>
-          <select
-            onChange={handlechage}
-            className="w-full border rounded px-3 py-2"
-            name="status"
-            value={editdata.status}
-          >
-            <option value="reject">Reject</option>
-            <option value="pending">Pending</option>
-            <option value="success">Success</option>
-          </select>
-        </div>
+        {componentType !== "Create" && (
+          <div>
+            <label className="block text-sm font-semibold">Status</label>
+            <select
+              onChange={handlechage}
+              className="w-full border rounded px-3 py-2"
+              name="status"
+              value={data.status}
+            >
+              <option value="reject">Reject</option>
+              <option value="pending">Pending</option>
+              <option value="success">Success</option>
+            </select>
+          </div>
+        )}
 
         <div className="flex justify-end">
           <button
