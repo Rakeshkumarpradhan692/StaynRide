@@ -17,6 +17,7 @@ export default function Hotels() {
   const [editMode, setEditMode] = useState(false);
   const [isRooms, setisRooms] = useState(false);
   const [selectedHotel, setSelectedHotel] = useState(null);
+  const [hotelId, sethotelId] = useState(null);
   const [formData, setFormData] = useState({
     _id: null,
     name: "",
@@ -82,8 +83,9 @@ export default function Hotels() {
     });
     setFormOpen(true);
   };
-  const handleRooms = () => {
+  const handleRooms = (id) => {
     setisRooms(!isRooms);
+    sethotelId(id);
   };
   const closeForm = () => setFormOpen(false);
   const openDetails = (hotel) => setSelectedHotel(hotel);
@@ -234,7 +236,7 @@ export default function Hotels() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleRooms();
+                        handleRooms(hotel._id);
                       }}
                       className=" bg-green-200 rounded-md px-2 py-1 inline-block"
                     >
@@ -305,7 +307,7 @@ export default function Hotels() {
                   </div>
 
                   <div className="h-full overflow-y-auto">
-                    <Rooms />
+                    <Rooms hotelId={hotelId} />
                   </div>
                 </div>
               </motion.div>
