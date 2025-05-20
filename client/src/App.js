@@ -79,8 +79,8 @@ function App() {
         <Route path='/about' element={<About />} />
         <Route path='/contact' element={<Contact />} />
         <Route path='/login' element={<LoginPage />} />
-         <Route path="/cabs/:id" element={<CabDetail />} />
-       
+         <Route path="/cab/:id" element={<CabDetail />} />
+       <Route path='/hotel/:id' element={<HotelDetails />} /> 
         <Route
           path='/register'
           element={
@@ -90,7 +90,7 @@ function App() {
           }
         />
 
-        <Route path='/hotels/:id' element={<HotelDetails />} />
+        
 
         
         <Route

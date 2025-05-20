@@ -164,15 +164,14 @@ const FeedbackPage = () => {
   );
 
   return (
-    <div className="container mx-auto px-4 py-10">
-      <div className="bg-white shadow-md rounded-2xl p-6 md:p-10 mb-8 border border-gray-200">
-  <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-    {/* Title */}
+    <div className="container mx-auto md:px-[4.5rem] py-10">
+      <div className="bg-white shadow-md rounded-2xl mb-8 border border-gray-200">
+  <div className="flex flex-col md:flex-row items-center justify-between p-4 gap-6">
+  
     <div className="text-3xl md:text-4xl font-serif text-blue-700 tracking-wide">
       What Our Customers Say
     </div>
 
-    {/* Add Feedback Button */}
     <button
       onClick={() => setShowForm(true)}
       className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-2 rounded-full hover:scale-105 transform transition duration-300 shadow-lg font-semibold"

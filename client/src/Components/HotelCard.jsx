@@ -35,10 +35,11 @@ export default function HotelCard({ hotel }) {
   const navigate = useNavigate();
 
   const handleDetailsClick = (hotelId) => {
-  // if (hotel && hotel._id) {
+   if (hotelId) { 
   console.log("hotelId",hotelId)
-    navigate(hotelId);
-  // }
+    navigate(`/hotel/${hotelId}`);
+
+  }
 };
 
   const image = hotel.images && hotel.images.length > 0
@@ -46,7 +47,13 @@ export default function HotelCard({ hotel }) {
     : "https://placehold.co/300x200?text=No+Image";
 
   return (
-    <div onClick={handleDetailsClick} className="rounded-2xl shadow hover:shadow-lg transition overflow-hidden">
+    <div className="rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
+    
+    onClick={
+      ()=>{
+        handleDetailsClick(hotel?._id)
+      }
+    }>
       <img
         src={image}
         alt={hotel.name}
@@ -62,7 +69,9 @@ export default function HotelCard({ hotel }) {
         </div>
         <p className="text-blue-600 font-semibold">{hotel.hotelType}</p>
         <button
-          onClick={handleDetailsClick(hotel?._id)}
+          onClick={()=>{
+            handleDetailsClick(hotel?._id)
+          }}
           className="mt-2 px-4 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition"
         >
           Details

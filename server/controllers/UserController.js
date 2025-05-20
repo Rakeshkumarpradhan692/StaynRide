@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
 
 exports.signup = async (req, res) => {
+  console.log(req.body.formData);
   try {
     const {
       name,

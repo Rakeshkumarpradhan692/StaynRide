@@ -9,7 +9,7 @@ const HotelFacilities = () => {
   ];
 
   return (
-    <div className="px-6 md:px-[4rem] py-12 flex flex-col lg:flex-row items-center gap-8 w-full ">
+    <div className="px-6 md:px-[5rem] py-12 flex flex-col lg:flex-row items-center gap-8 w-full ">
       
      
       
@@ -37,7 +37,7 @@ const HotelFacilities = () => {
               </div>
               <div className="w-full bg-gray-200 rounded-full h-6 overflow-hidden">
                 <div
-                  className="bg-gray-700 h-6 text-white text-sm flex items-center justify-center px-2 transition-all duration-700 ease-in-out"
+                  className="bg-gray-700 h-6 text-white text-sm flex items-center justify-center  transition-all duration-700 ease-in-out"
                   style={{ width: `${facility.value}%` }}
                 >
                   {facility.value >= 30 && <span className="truncate">{facility.name}</span>}

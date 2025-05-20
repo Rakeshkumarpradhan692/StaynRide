@@ -71,7 +71,7 @@ function Home() {
 
       <HotelFacilities />
 
-      <div className="w-full mx-auto px-[4rem] py-8">
+      <div className="w-full mx-auto px-[4.5rem] py-8">
         <div className='flex flex-col md:flex-row justify-between items-center p-6'>
           <h2 className="text-4xl font-serif text-blue-700 mb-6">Popular Cabs</h2>
           <button

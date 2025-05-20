@@ -166,8 +166,8 @@ const Navbar = () => {
 
   return (
     <header className="bg-white sticky top-0 z-50 shadow-md">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
-        {/* Logo */}
+      <div className="w-full mx-auto flex items-center justify-between px-[4rem] py-3">
+       
         <div className="flex items-center space-x-2">
           <h1 className="text-xl md:text-2xl font-bold text-blue-700 flex items-center gap-1">
             Stayn

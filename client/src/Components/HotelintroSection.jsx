@@ -2,7 +2,7 @@ import React from "react";
 
 const HotelIntroSection = () => {
   return (
-    <div className="bg-white px-6 py-12 max-w-7xl mx-auto">
+    <div className="bg-white px-8 md:px-[5rem] py-12 w-full  mx-auto">
      
       <div className="text-center mb-12">
         <h3 className="md:text-lg font-semibold text-yellow-600">HOTEL BAYVIEW</h3>
