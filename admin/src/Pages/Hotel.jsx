@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { X, Plus } from "lucide-react";
+import { X, Star, Plus } from "lucide-react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
 import CloudinaryUpload from "../utils/UploadCloudinary";
 import hotelimg from "../assets/images/hotels.jpg";
 import SkelitonLoader from "../component/SkelitonLoader";
+import Rooms from "../component/Rooms";
 export default function Hotels() {
   const { uploadImage } = CloudinaryUpload();
   const [isloading, setisloading] = useState(false);
@@ -13,6 +15,7 @@ export default function Hotels() {
   const [hotels, setHotels] = useState([]);
   const [formOpen, setFormOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [isRooms, setisRooms] = useState(false);
   const [selectedHotel, setSelectedHotel] = useState(null);
   const [formData, setFormData] = useState({
     _id: null,
@@ -78,6 +81,9 @@ export default function Hotels() {
       images: hotel.images || [],
     });
     setFormOpen(true);
+  };
+  const handleRooms = () => {
+    setisRooms(!isRooms);
   };
   const closeForm = () => setFormOpen(false);
   const openDetails = (hotel) => setSelectedHotel(hotel);
@@ -190,7 +196,7 @@ export default function Hotels() {
       {isloading === true ? (
         <SkelitonLoader />
       ) : (
-        <div>
+        <div className=" relative">
           {" "}
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-3xl font-semibold">Hotels</h1>
@@ -216,12 +222,25 @@ export default function Hotels() {
                   />
                 </div>
                 <div className="p-3 space-y-3">
-                  <h2 className="font-semibold">
-                    {hotel.name.toUpperCase()}-{hotel.hotelType}
-                  </h2>
-                  <p className="text-xs text-gray-500">
-                    {hotel.city}, {hotel.state}
-                  </p>
+                  <div className=" flex justify-between items-center">
+                    <div className="">
+                      <h2 className="font-semibold">
+                        {hotel.name.toUpperCase()}-{hotel.hotelType}
+                      </h2>
+                      <p className="text-xs text-gray-500">
+                        {hotel.city}, {hotel.state}
+                      </p>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRooms();
+                      }}
+                      className=" bg-green-200 rounded-md px-2 py-1 inline-block"
+                    >
+                      Rooms
+                    </button>
+                  </div>
                   <div className=" flex justify-between gap-2">
                     <button
                       onClick={(e) => {
@@ -246,12 +265,58 @@ export default function Hotels() {
               </div>
             ))}
           </div>
+          {isRooms && (
+            <AnimatePresence>
+              <motion.div
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: "100%", opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="fixed inset-0 z-50 flex items-end"
+              >
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.5 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 bg-black"
+                  onClick={() => setisRooms(false)}
+                />
+                <div className="relative w-full h-[90%] bg-white rounded-t-xl shadow-2xl overflow-hidden">
+                  <div className="absolute top-4 right-4 z-10">
+                    <button
+                      onClick={() => setisRooms(false)}
+                      className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className="h-full overflow-y-auto">
+                    <Rooms />
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          )}
         </div>
       )}
 
       {formOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white w-full max-w-2xl p-6 rounded shadow-lg overflow-auto max-h-[90vh] relative">
+          <div className="bg-white w-full max-w-2xl p-6 rounded shadow-lg overflow-auto max-h-[90vh] relative hide-scrollbar">
             <button
               onClick={closeForm}
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
@@ -324,6 +389,7 @@ export default function Hotels() {
                   onChange={handleChange}
                   className="border px-3 py-2 rounded"
                 />
+
                 <input
                   name="address"
                   placeholder="Street Address"
@@ -418,66 +484,114 @@ export default function Hotels() {
         </div>
       )}
       {selectedHotel && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white w-full max-w-2xl p-6 rounded shadow-lg overflow-auto max-h-[90vh] relative">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white w-full max-w-4xl rounded-2xl shadow-xl overflow-hidden max-h-[90vh] relative flex flex-col md:flex-row">
             <button
               onClick={closeDetails}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              className="absolute top-1 bg-opacity-30  right-4 z-10 p-2 bg-gray-100 rounded-full hover:bg-gray-100 transition-all"
             >
-              <X size={24} />
+              <X size={20} className="text-gray-600" />
             </button>
-            <h2 className="text-2xl font-bold mb-4">{selectedHotel.name}</h2>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              {selectedHotel.images.map((img, i) => (
-                <img
-                  key={i}
-                  src={img}
-                  alt={`${selectedHotel.name} ${i}`}
-                  className="w-full h-40 object-cover rounded"
-                />
-              ))}
-              {selectedHotel.images.length === 0 && (
-                <img
-                  src={hotelimg}
-                  alt="placeholder"
-                  className="w-full h-40 object-cover rounded"
-                />
+
+            <div className=" w-full bg-red-600 bg md:w-1/2 max-h-max overflow-y-scroll">
+              {selectedHotel.images.length > 0 ? (
+                <div className="relative h-full w-full">
+                  {selectedHotel.images.slice(0, 4).map((img, i) => (
+                    <div key={i} className="w-full h-full">
+                      <img
+                        src={img}
+                        alt={`${selectedHotel.name} ${i}`}
+                        className=" w-full h-full
+                        "
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="absolute inset-0">
+                  <img
+                    src={hotelimg}
+                    alt="placeholder"
+                    className="w-full h-full object-cove"
+                  />
+                </div>
               )}
             </div>
-            <p className="mb-2">
-              <strong>Type:</strong> {selectedHotel.hotelType}
-            </p>
-            <p className="mb-2">
-              <strong>Description:</strong> {selectedHotel.description}
-            </p>
-            <p className="mb-2">
-              <strong>Address:</strong> {selectedHotel.address},{" "}
-              {selectedHotel.city}, {selectedHotel.district},{" "}
-              {selectedHotel.state}, {selectedHotel.country} –{" "}
-              {selectedHotel.pincode}
-            </p>
-            <p className="mb-2">
-              <strong>Contact:</strong> {selectedHotel.contactNumber}
-            </p>
-            <p className="mb-2">
-              <strong>Check-In:</strong> {selectedHotel.checkInTime}
-            </p>
-            <p className="mb-2">
-              <strong>Check-Out:</strong> {selectedHotel.checkOutTime}
-            </p>
-            <p className="mb-2">
-              <strong>Rating:</strong> {selectedHotel.rating}
-            </p>
-            <p className="mb-4">
-              <strong>Availability:</strong>{" "}
-              {selectedHotel.availability ? "Available" : "Not Available"}
-            </p>
-            <button
-              onClick={closeDetails}
-              className="mt-3 px-4 py-2 bg-blue-600 text-white rounded"
-            >
-              Close
-            </button>
+            <div className="w-full md:w-1/2 p-6 overflow-y-auto">
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between items-start">
+                    <h2 className="text-2xl font-bold text-gray-900">
+                      {selectedHotel.name}
+                    </h2>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        selectedHotel.availability
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {selectedHotel.availability ? "Available" : "Booked"}
+                    </span>
+                  </div>
+                  <div className="flex items-center mt-2 space-x-3">
+                    <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded">
+                      {selectedHotel.hotelType}
+                    </span>
+                    <div className="flex items-center">
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <span className="ml-1 text-sm font-medium text-gray-700">
+                        {selectedHotel.rating}{" "}
+                        {selectedHotel.rating > 1 ? "stars" : "star"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="pt-2">
+                  <p className="text-gray-700">{selectedHotel.description}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4 pt-4">
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      Check-in
+                    </h4>
+                    <p className="font-medium">{selectedHotel.checkInTime}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      Check-out
+                    </h4>
+                    <p className="font-medium">{selectedHotel.checkOutTime}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      Contact
+                    </h4>
+                    <p className="font-medium">{selectedHotel.contactNumber}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                      Location
+                    </h4>
+                    <p className="font-medium">
+                      {selectedHotel.city}, {selectedHotel.state}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Full address */}
+                <div className="pt-4">
+                  <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                    Full Address
+                  </h4>
+                  <p className="text-sm text-gray-700">
+                    {selectedHotel.address}, {selectedHotel.district},{" "}
+                    {selectedHotel.state}, {selectedHotel.country} -{" "}
+                    {selectedHotel.pincode}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
