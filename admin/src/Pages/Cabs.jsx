@@ -207,35 +207,17 @@ function Cabs() {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {cabs.map((cab) => (
               <div
+                onClick={() => handleViewMore(cab)}
                 key={cab._id}
-                className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 relative"
+                className="bg-white cursor-pointer rounded-lg shadow-md overflow-hidden border border-gray-200 relative"
               >
                 <img
                   src={cab.image != null ? cab.image : cabimg}
                   alt={cab.name}
                   className="w-full h-44 object-cover"
                 />
-                <div className="absolute top-2 right-2 flex space-x-2">
-                  <button
-                    onClick={() => openEditModal(cab)}
-                    className="p-1 bg-gray-300 rounded hover:bg-gray-400"
-                    aria-label="Edit"
-                  >
-                    <Edit2 size={20} />
-                  </button>
-                  <button
-                    onClick={() => deleteCabs(cab._id)}
-                    className="p-1 bg-gray-400 rounded hover:bg-gray-500"
-                    aria-label="Delete"
-                  >
-                    <Trash2 size={20} />
-                  </button>
-                </div>
 
-                <div
-                  onClick={() => handleViewMore(cab)}
-                  className="p-4 space-y-2"
-                >
+                <div className="p-4 space-y-2">
                   <h3 className="text-lg font-semibold text-gray-900">
                     {cab.name}
                   </h3>
@@ -247,14 +229,14 @@ function Cabs() {
                       className="px-4 py-1 bg-gray-400 rounded text-sm text-white"
                       aria-label="Edit"
                     >
-                      delete
+                      Edit
                     </button>
                     <button
                       onClick={() => deleteCabs(cab._id)}
                       className="px-4 py-1 bg-red-500 rounded text-sm text-white"
                       aria-label="Delete"
                     >
-                      Edit
+                      delete
                     </button>
                   </div>
                 </div>
@@ -276,7 +258,7 @@ function Cabs() {
             </button>
             <h3 className="text-xl font-bold mb-4">{selectedCab.name}</h3>
             <img
-              src={cabimg}
+              src={selectedCab.image}
               alt={selectedCab.name}
               className="w-full h-48 object-cover rounded mb-4"
             />

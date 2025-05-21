@@ -24,6 +24,7 @@ router.put("/update-hotel", hotelController.updateHotel);
 router.delete("/delete-hotel", hotelController.deleteHotel);
 
 router.post("/create-room", roomController.createRoom);
+router.get("/roomBy-HotelId/:hotelId", roomController.getRoomsByHotelId);
 router.put("/update-room", roomController.updateRoom);
 router.delete("/delete-room", roomController.deleteRoom);
 
