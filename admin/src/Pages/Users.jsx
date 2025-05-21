@@ -8,6 +8,15 @@ function Users() {
   const [users, setUsers] = useState([]);
   const [editUserId, setEditUserId] = useState(null);
   const [editFormData, setEditFormData] = useState({});
+  const [filterData, setfilterData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    country: "",
+    state: "",
+    district: "",
+  });
+  const [isfilterActive, setisfilterActive] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,6 +28,16 @@ function Users() {
     city: "",
     address: "",
   });
+  const handlefilterinput = (e) => {
+    const { name, value } = e.target;
+    setfilterData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  useEffect(() => {
+    console.log(users);
+  }, [users]);
   const [expandedRows, setExpandedRows] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
@@ -170,7 +189,44 @@ function Users() {
     setEditFormData({ ...user });
     setShowEditForm(true);
   };
-
+  const submitFilter = (e) => {
+    e.preventDefault();
+    const filteredUsers = users.filter((user) => {
+      return (
+        (filterData.name === "" ||
+          user.name.toLowerCase().includes(filterData.name.toLowerCase())) &&
+        (filterData.email === "" ||
+          user.email.toLowerCase().includes(filterData.email.toLowerCase())) &&
+        (filterData.phone === "" ||
+          user.number.toString().includes(filterData.phone)) &&
+        (filterData.country === "" ||
+          user.country
+            .toLowerCase()
+            .includes(filterData.country.toLowerCase())) &&
+        (filterData.state === "" ||
+          user.state.toLowerCase().includes(filterData.state.toLowerCase())) &&
+        (filterData.district === "" ||
+          user.district
+            .toLowerCase()
+            .includes(filterData.district.toLowerCase()))
+      );
+    });
+    setUsers(filteredUsers);
+    setisfilterActive(false);
+  };
+  const clearFilter = () => {
+    setfilterData((prev) => ({
+      ...prev,
+      name: "",
+      email: "",
+      phone: "",
+      country: "",
+      state: "",
+      district: "",
+    }));
+    fetchUser();
+    setisfilterActive(false);
+  };
   return (
     <div className="relative p-4 w-full">
       {isloading === true ? (
@@ -180,112 +236,167 @@ function Users() {
           {" "}
           <div className="flex flex-row justify-between items-start sm:items-center mb-4">
             <h2 className="text-xl font-semibold mb-2 sm:mb-0">Users</h2>
-            <button
-              onClick={() => setShowForm(true)}
-              className="px-4 py-2 border border-gray-400 rounded-md text-sm hover:bg-gray-100"
-            >
-              + Create User
-            </button>
-          </div>
-          <div class="fixed hidden inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-              <div class="border-b p-4 flex justify-between items-center sticky top-0 bg-white z-10">
-                <h3 class="text-xl font-semibold text-gray-800">
-                  Filter Users
-                </h3>
-                <button class="text-gray-400 hover:text-gray-500">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <div class="p-6 space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700">
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Search by name..."
-                      class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border"
-                    />
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      placeholder="Search by email..."
-                      class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border"
-                    />
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700">
-                      Phone
-                    </label>
-                    <input
-                      type="tel"
-                      placeholder="Search by phone..."
-                      class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border"
-                    />
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700">
-                      Country
-                    </label>
-                    <select class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border">
-                      <option value="">All Countries</option>
-                      <option>India</option>
-                      <option>USA</option>
-                      <option>UK</option>
-                    </select>
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700">
-                      State
-                    </label>
-                    <select class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border">
-                      <option value="">All States</option>
-                    </select>
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700">
-                      District
-                    </label>
-                    <select class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border">
-                      <option value="">All Districts</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div class="border-t p-4 flex justify-end gap-3 sticky bottom-0 bg-white">
-                <button class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 rounded-md">
-                  Clear
-                </button>
-                <button class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                  Apply Filters
-                </button>
-              </div>
+            <div>
+              <button
+                onClick={() => setisfilterActive(!isfilterActive)}
+                className="px-4 py-2 border border-gray-400 rounded-md text-sm hover:bg-gray-100"
+              >
+                Filter
+              </button>
+              <button
+                onClick={() => setShowForm(true)}
+                className="px-4 ml-2 py-2 border border-gray-400 rounded-md text-sm hover:bg-gray-100"
+              >
+                + Create User
+              </button>
             </div>
           </div>
+          {isfilterActive && (
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+              <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto hide-scrollbar">
+                <div className="border-b p-4 flex justify-between items-center sticky top-0 bg-white z-10">
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    Filter Users
+                  </h3>
+                  <button
+                    onClick={() => setisfilterActive(!isfilterActive)}
+                    className="text-gray-400 hover:text-gray-500"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div className="p-6 space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        value={filterData.name}
+                        name="name"
+                        placeholder="Search by name..."
+                        onChange={handlefilterinput}
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Email
+                      </label>
+                      <input
+                        onChange={handlefilterinput}
+                        type="email"
+                        name="email"
+                        value={filterData.email}
+                        placeholder="Search by email..."
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Phone
+                      </label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={filterData.phone}
+                        onChange={handlefilterinput}
+                        placeholder="Search by phone..."
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Country
+                      </label>
+                      <select
+                        value={filterData.country}
+                        name="country"
+                        onChange={handlefilterinput}
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border"
+                      >
+                        <option value="">All Countries</option>
+                        {[...new Set(users.map((user) => user.country))].map(
+                          (country, i) => (
+                            <option key={i}>{country}</option>
+                          )
+                        )}
+                      </select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        State
+                      </label>
+                      <select
+                        name="state"
+                        value={filterData.state}
+                        onChange={handlefilterinput}
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border"
+                      >
+                        <option value="">All States</option>
+                        {[...new Set(users.map((user) => user.state))].map(
+                          (state, i) => (
+                            <option key={i}>{state}</option>
+                          )
+                        )}
+                      </select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        District
+                      </label>
+                      <select
+                        name="district"
+                        value={filterData.district}
+                        onChange={handlefilterinput}
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border"
+                      >
+                        <option value="">All Districts</option>
+                        {[...new Set(users.map((user) => user.district))].map(
+                          (district, i) => (
+                            <option key={i}>{district}</option>
+                          )
+                        )}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div className="border-t p-4 flex justify-end gap-3 sticky bottom-0 bg-white">
+                  <button
+                    onClick={clearFilter}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 rounded-md"
+                  >
+                    Clear
+                  </button>
+                  <button
+                    onClick={submitFilter}
+                    className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Apply Filters
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="overflow-x-auto">
             <table className="min-w-full border border-gray-300 text-sm">
               <thead className="bg-gray-100">
