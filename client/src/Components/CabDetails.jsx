@@ -68,7 +68,7 @@ export default function CabDetail() {
     }
 
     const options = {
-      key: "YOUR_RAZORPAY_KEY_ID", 
+      key: "YOUR_RAZORPAY_KEY_ID",
       amount: cab.price * 100,
       currency: "INR",
       name: "Cab Booking",
@@ -173,23 +173,27 @@ export default function CabDetail() {
               <div className="p-6 lg:p-8">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h1 className="text-3xl font-bold text-gray-900">{cab.name}</h1>
-                    <p className="text-gray-500 mt-1">{cab.model}</p>
+                    <h3 className="text-lg font-semibold">{cab.name}</h3>
+                    <p className="text-gray-500">{cab.model}</p>
+                    <p className="text-gray-500">{cab.address?.city}, {cab.address?.state}</p>
+                    <p className="text-gray-500">{cab.address?.fullAddress}</p>
+                    <p className="text-green-600 font-semibold">₹{cab.price}/ride</p>
+
                   </div>
-                  <div className="text-2xl font-bold text-blue-600">₹{cab.price}/ride</div>
+                  {/* <div className="text-2xl font-bold text-blue-600">₹{cab.price}/ride</div> */}
                 </div>
 
-                <div className="mt-6 flex items-center text-gray-600">
+                {/* <div className="mt-6 flex items-center text-gray-600">
                   <MapPin className="w-5 h-5 mr-1" />
                   <span>{cab.location}</span>
-                </div>
+                </div> */}
 
-                <div className="mt-6">
+                {/* <div className="mt-6">
                   <h2 className="text-lg font-semibold text-gray-900">Description</h2>
                   <p className="mt-2 text-gray-600">{cab.description || 'No description available.'}</p>
-                </div>
+                </div> */}
 
-              
+
 
                 <button
                   onClick={() => setShowBooking(true)}
@@ -203,7 +207,7 @@ export default function CabDetail() {
         </div>
       </main>
 
-      
+
       {showBooking && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full overflow-hidden">
@@ -214,7 +218,7 @@ export default function CabDetail() {
 
             <form onSubmit={handleBookingSubmit} className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
+
                 <div className="relative">
                   <User className="absolute top-3 left-3 text-gray-400" />
                   <input
@@ -228,7 +232,7 @@ export default function CabDetail() {
                   />
                 </div>
 
-                
+
                 <div className="relative">
                   <Phone className="absolute top-3 left-3 text-gray-400" />
                   <input
@@ -242,7 +246,7 @@ export default function CabDetail() {
                   />
                 </div>
 
-                
+
                 <div className="relative">
                   <Mail className="absolute top-3 left-3 text-gray-400" />
                   <input
@@ -256,7 +260,7 @@ export default function CabDetail() {
                   />
                 </div>
 
-              
+
                 <div className="relative">
                   <Calendar className="absolute top-3 left-3 text-gray-400" />
                   <input
@@ -271,7 +275,7 @@ export default function CabDetail() {
                 </div>
               </div>
 
-          
+
               <div className="space-y-4">
                 <div className="relative">
                   <Home className="absolute top-3 left-3 text-gray-400" />
@@ -300,7 +304,7 @@ export default function CabDetail() {
                 </div>
               </div>
 
-           
+
               <div className="mt-6 flex justify-end gap-3">
                 <button
                   type="button"

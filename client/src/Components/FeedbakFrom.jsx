@@ -164,11 +164,11 @@ const FeedbackPage = () => {
   );
 
   return (
-    <div className="container mx-auto md:px-[4.5rem] py-10">
+    <div className="container mx-auto md:px-[4.5rem] px-6 py-10">
       <div className="bg-white shadow-md rounded-2xl mb-8 border border-gray-200">
   <div className="flex flex-col md:flex-row items-center justify-between p-4 gap-6">
   
-    <div className="text-3xl md:text-4xl font-serif text-blue-700 tracking-wide">
+    <div className="text-[1.5rem] md:text-4xl font-serif text-blue-700 tracking-wide">
       What Our Customers Say
     </div>
 

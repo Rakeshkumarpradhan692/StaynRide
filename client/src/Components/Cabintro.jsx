@@ -11,9 +11,9 @@ function Cabintro() {
         <div className='items-center'>
          <img src={Cab} alt="" />
         </div>
-        <div className='w-[60%]'>
+        <div className='sm:w-[60%]'>
            <div className=" flex flex-col w-full h-auto">
-      <div className=" ">
+      <div className=" w-full">
         <h3 className="md:text-sm font-semibold uppercase text-yellow-700 mb-3 ">Cab Facilities</h3>
         <h1 className="md:text-6xl font-serif text-blue-900">The Structure</h1>
         <p className="text-gray-600 mt-4 md:text-[1.2rem]">
@@ -26,7 +26,7 @@ function Cabintro() {
       <div className=" ">
         {facilities.map((facility, index) => (
           <div key={index}>
-            <div className="flex justify-between text-sm font-medium text-gray-700 ">
+            <div className="flex justify-between text-sm font-medium text-gray-700 m-2">
               <span>{facility.name}</span>
               <span>{facility.value}%</span>
             </div>

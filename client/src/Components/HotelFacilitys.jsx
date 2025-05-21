@@ -18,7 +18,7 @@ const HotelFacilities = () => {
       <div className="w-full lg:w-[70%] flex flex-col  justify-center">
         
        
-        <div className="mb-8">
+        <div className="mb-6 text-center">
           <h3 className="text-sm font-semibold uppercase text-yellow-700 mb-2">Hotel Facilities</h3>
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-serif text-blue-900 mb-4">The Structure</h1>
           <p className="text-gray-600 text-base md:text-lg">
@@ -35,9 +35,9 @@ const HotelFacilities = () => {
                 <span>{facility.name}</span>
                 <span>{facility.value}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-6 overflow-hidden">
+              <div className="w-full bg-gray-200 rounded-full h-8 overflow-hidden m-2">
                 <div
-                  className="bg-gray-700 h-6 text-white text-sm flex items-center justify-center  transition-all duration-700 ease-in-out"
+                  className="bg-gray-700 h-8 text-white text-sm flex items-center justify-center  transition-all duration-700 ease-in-out"
                   style={{ width: `${facility.value}%` }}
                 >
                   {facility.value >= 30 && <span className="truncate">{facility.name}</span>}

@@ -20,12 +20,9 @@ export default function CabCard({ cab }) {
       />
       <div className="p-4 space-y-2">
         <h3 className="text-lg font-semibold">{cab.name}</h3>
-        <p className="text-gray-500">{cab.location}</p>
-        <div className="flex items-center text-yellow-500 text-sm">
-          {'★'.repeat(Math.floor(cab.rating || 0))}
-          {'☆'.repeat(5 - Math.floor(cab.rating || 0))}
-          <span className="text-gray-600 ml-2">({cab.rating})</span>
-        </div>
+        <p className="text-gray-500">{cab.model}</p>
+        <p className="text-gray-500">{cab.address?.city}, {cab.address?.state}</p>
+        <p className="text-gray-500">{cab.address?.fullAddress}</p>
         <p className="text-green-600 font-semibold">₹{cab.price}/ride</p>
         <button
           onClick={handleDetailsClick}
