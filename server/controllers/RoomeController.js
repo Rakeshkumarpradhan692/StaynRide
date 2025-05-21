@@ -4,9 +4,9 @@ const mongoose = require("mongoose");
 
 exports.createRoom = async (req, res) => {
   try {
-    const { hotelId } = req.body;
-    console.log(req.body);
-    const { roomNumber, roomType, price, images } = req.body;
+    const { hotelId } = req.body.payload;
+    console.log(req.body.payload);
+    const { roomNumber, roomType, price, images } = req.body.payload;
     if (!mongoose.Types.ObjectId.isValid(hotelId)) {
       return res.status(400).json({
         success: false,
@@ -127,10 +127,10 @@ exports.getRoomById = async (req, res) => {
 exports.updateRoom = async (req, res) => {
   try {
     console.log(req.body);
-    const id = req.body?.formData?._id;
+    const { id } = req.body;
     const updatedRoom = await Room.findByIdAndUpdate(
       id,
-      { $set: req.body.formData },
+      { $set: req.body },
       { new: true, runValidators: true }
     );
     if (!updatedRoom) {

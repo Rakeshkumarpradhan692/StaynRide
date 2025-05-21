@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import SkelitonLoader from "./SkelitonLoader";
 import { Plus } from "lucide-react";
+import CloudinaryUpload from "../utils/UploadCloudinary";
 import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 import axios from "axios";
 function Rooms(props) {
   useEffect(() => {
@@ -13,19 +15,29 @@ function Rooms(props) {
   const [showForm, setShowForm] = useState(false);
   const [formType, setformType] = useState("");
   const [formData, setFormData] = useState({
+    _id: "",
     roomNumber: "",
     roomType: "",
     price: "",
-    images: "",
+    images: [],
   });
-
+  const { uploadImage } = CloudinaryUpload();
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value, files } = e.target;
+
+    if (name === "image" && files.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        images: [files[0]],
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
+
   const handlecreate = (e) => {
     e.preventDefault();
     setShowForm(true);
@@ -42,17 +54,34 @@ function Rooms(props) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { roomNumber, roomType, price, images } = formData;
+    const { _id, roomNumber, roomType, price, images } = formData;
     try {
+      let uploadedImageUrls = [];
+      for (let imageFile of images) {
+        const url = await uploadImage(imageFile);
+        if (url) uploadedImageUrls.push(url);
+      }
+
+      const payload = {
+        hotelId: props.hotelId,
+        roomNumber,
+        roomType,
+        price,
+        images: uploadedImageUrls[0],
+      };
+
       const url =
         formType === "create"
           ? axios.post(`${server_url}admin/create-room`, {
-              hotelId: props.hotelId,
+              payload,
+            })
+          : axios.put(`${server_url}admin/update-room`, {
+              id: _id,
               roomNumber,
               roomType,
               price,
-            })
-          : axios.put(`${server_url}admin/update-room`, { formData });
+              images: uploadedImageUrls[0],
+            });
       await url;
 
       formType === "create"
@@ -96,7 +125,57 @@ function Rooms(props) {
     fetchRoomsByHotelId(props.hotelId);
   }, [fetchRoomsByHotelId]);
 
-  const handleDelete = (id) => {};
+  const handleDelete = async (id) => {
+    const swalWithTailwindButtons = Swal.mixin({
+      customClass: {
+        confirmButton:
+          "bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded ml-2",
+        cancelButton:
+          "bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded",
+      },
+      buttonsStyling: false,
+    });
+
+    const result = await swalWithTailwindButtons.fire({
+      title: "Are you sure?",
+      text: "This hotel will be permanently deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete!",
+      cancelButtonText: "No, cancel!",
+      reverseButtons: true,
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${server_url}admin/delete-room`, {
+          data: { id },
+        });
+
+        swalWithTailwindButtons.fire({
+          title: "Deleted!",
+          text: "Hotel has been deleted.",
+          icon: "success",
+        });
+        fetchRoomsByHotelId(props.hotelId);
+      } catch (err) {
+        console.error(err);
+
+        swalWithTailwindButtons.fire({
+          title: "Error",
+          text: "Failed to delete hotel.",
+          icon: "error",
+        });
+      }
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      swalWithTailwindButtons.fire({
+        title: "Cancelled",
+        text: "Hotel deletion has been cancelled.",
+        icon: "error",
+      });
+    }
+  };
+
   try {
   } catch (error) {}
   const resetForm = () => {
@@ -176,8 +255,6 @@ function Rooms(props) {
                       min="1"
                     />
                   </div>
-
-                  {/* Room Type */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Room Type
@@ -239,7 +316,7 @@ function Rooms(props) {
                             <p className="mb-2 text-sm text-gray-500">
                               <span className="font-semibold">
                                 Click to upload
-                              </span>{" "}
+                              </span>
                               or drag and drop
                             </p>
                             <p className="text-xs text-gray-500">

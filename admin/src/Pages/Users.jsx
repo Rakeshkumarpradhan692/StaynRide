@@ -187,6 +187,105 @@ function Users() {
               + Create User
             </button>
           </div>
+          <div class="fixed hidden inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+              <div class="border-b p-4 flex justify-between items-center sticky top-0 bg-white z-10">
+                <h3 class="text-xl font-semibold text-gray-800">
+                  Filter Users
+                </h3>
+                <button class="text-gray-400 hover:text-gray-500">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <div class="p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">
+                      Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Search by name..."
+                      class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border"
+                    />
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="Search by email..."
+                      class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border"
+                    />
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">
+                      Phone
+                    </label>
+                    <input
+                      type="tel"
+                      placeholder="Search by phone..."
+                      class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border"
+                    />
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">
+                      Country
+                    </label>
+                    <select class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border">
+                      <option value="">All Countries</option>
+                      <option>India</option>
+                      <option>USA</option>
+                      <option>UK</option>
+                    </select>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">
+                      State
+                    </label>
+                    <select class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border">
+                      <option value="">All States</option>
+                    </select>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">
+                      District
+                    </label>
+                    <select class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2.5 text-sm border">
+                      <option value="">All Districts</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="border-t p-4 flex justify-end gap-3 sticky bottom-0 bg-white">
+                <button class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 rounded-md">
+                  Clear
+                </button>
+                <button class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                  Apply Filters
+                </button>
+              </div>
+            </div>
+          </div>
           <div className="overflow-x-auto">
             <table className="min-w-full border border-gray-300 text-sm">
               <thead className="bg-gray-100">

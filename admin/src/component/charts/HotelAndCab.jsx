@@ -1,56 +1,78 @@
-import React, { useState } from "react";
+import React from "react";
 import ReactApexChart from "react-apexcharts";
 
 function HotelAndCab() {
-  const [state] = useState({
+  const getLastSixMonths = () => {
+    const months = [];
+    const today = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(today);
+      date.setMonth(today.getMonth() - i);
+      months.push(date.toISOString());
+    }
+    return months;
+  };
+
+  const [state] = React.useState({
     series: [
       {
-        name: "series1",
-        data: [31, 40, 28, 51, 42, 109, 100],
+        name: "Hotel Bookings",
+        data: [31, 40, 28, 51, 42, 109],
       },
       {
-        name: "series2",
-        data: [11, 32, 45, 32, 34, 52, 41],
+        name: "Cab Rides",
+        data: [11, 32, 45, 32, 34, 52],
       },
     ],
     options: {
       chart: {
         height: 350,
         type: "area",
-        toolbar: { show: false },
+        toolbar: {
+          show: false,
+        },
       },
       dataLabels: {
-        enabled: false,
+        enabled: true,
       },
       stroke: {
         curve: "smooth",
+        width: 2,
+      },
+      colors: ["#008FFB", "#00E396"],
+      fill: {
+        type: "gradient",
+        gradient: {
+          shadeIntensity: 1,
+          opacityFrom: 0.7,
+          opacityTo: 0.3,
+        },
       },
       xaxis: {
         type: "datetime",
-        categories: [
-          "2018-09-19T00:00:00.000Z",
-          "2018-09-19T01:30:00.000Z",
-          "2018-09-19T02:30:00.000Z",
-          "2018-09-19T03:30:00.000Z",
-          "2018-09-19T04:30:00.000Z",
-          "2018-09-19T05:30:00.000Z",
-          "2018-09-19T06:30:00.000Z",
-        ],
+        categories: getLastSixMonths(),
+        labels: {
+          format: "MMM yyyy",
+        },
+      },
+      yaxis: {
+        title: {
+          text: "Number of Bookings",
+        },
       },
       tooltip: {
         x: {
-          format: "dd/MM/yy HH:mm",
+          format: "MMM yyyy",
         },
+      },
+      legend: {
+        position: "top",
       },
     },
   });
+
   return (
-    <div className="mt-10 sm:p-5 border rounded-lg bg-white">
-      <div>
-        <h4 className="text-xl font-semibold text-gray-800 mb-4">
-          Booking status
-        </h4>
-      </div>
+    <div className="chart-container">
       <ReactApexChart
         options={state.options}
         series={state.series}
