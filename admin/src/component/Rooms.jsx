@@ -429,7 +429,7 @@ function Rooms(props) {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 w-full overflow-hidden box-border">
+        <div className=" gap-2 w-full overflow-hidden box-border">
           {rooms.length > 0 ? (
             rooms.map((room) => (
               <div

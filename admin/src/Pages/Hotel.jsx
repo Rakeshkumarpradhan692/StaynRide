@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { X, Star, Plus } from "lucide-react";
+import { X, Star, Plus, RotateCcw } from "lucide-react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
@@ -14,6 +14,8 @@ export default function Hotels() {
   const server_url = process.env.REACT_APP_SERVER_URL;
   const [hotels, setHotels] = useState([]);
   const [formOpen, setFormOpen] = useState(false);
+
+  const [OriginalData, setOriginalData] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [isRooms, setisRooms] = useState(false);
   const [selectedHotel, setSelectedHotel] = useState(null);
@@ -36,11 +38,56 @@ export default function Hotels() {
     availability: true,
     images: [],
   });
+  const [filterdata, setFilterdata] = useState({
+    name: "",
+    hotelType: "",
+    minRating: "",
+  });
+
+  const handleFilterInput = (e) => {
+    const { name, value } = e.target;
+    setFilterdata((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  useEffect(() => {
+    const filtered = OriginalData.filter((hotel) => {
+      if (
+        filterdata.name &&
+        !hotel.name.toLowerCase().includes(filterdata.name.toLowerCase())
+      ) {
+        return false;
+      }
+      if (filterdata.hotelType && hotel.hotelType !== filterdata.hotelType) {
+        return false;
+      }
+      if (
+        filterdata.minRating &&
+        hotel.rating < parseFloat(filterdata.minRating)
+      ) {
+        return false;
+      }
+      return true;
+    });
+    setHotels(filtered);
+  }, [filterdata, OriginalData]);
+
+  const resetFilters = () => {
+    setFilterdata({
+      name: "",
+      hotelType: "",
+      minRating: "",
+    });
+    setHotels(OriginalData);
+  };
   const fetchHotels = useCallback(async () => {
     setisloading(true);
     try {
       const res = await axios.get(`${server_url}public/all-hotels`);
       setHotels(res.data || []);
+      setOriginalData(res.data || []);
+
       console.log(res.data);
       setisloading(false);
     } catch (err) {
@@ -145,7 +192,7 @@ export default function Hotels() {
     const swalWithTailwindButtons = Swal.mixin({
       customClass: {
         confirmButton:
-          "bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mr-2",
+          "bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded ml-2",
         cancelButton:
           "bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded",
       },
@@ -201,12 +248,58 @@ export default function Hotels() {
         <div className=" relative">
           {" "}
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-semibold">Hotels</h1>
+            <div className=" ">
+              <h1 className="text-3xl font-semibold">Hotels</h1>
+            </div>
             <button
               onClick={openCreate}
               className="flex items-center gap-2 bg-blue-600 text-white px-3 py-1.5 rounded"
             >
               <Plus size={16} /> Create Hotel
+            </button>
+          </div>
+          <div className="flex gap-4 items-center mb-6">
+            <input
+              type="text"
+              name="name"
+              placeholder="Search hotel by name..."
+              className="border rounded-md py-2 px-4 outline-none w-64"
+              value={filterdata.name}
+              onChange={handleFilterInput}
+            />
+
+            <select
+              name="hotelType"
+              value={filterdata.hotelType}
+              onChange={handleFilterInput}
+              className="border rounded-md py-2 px-4 outline-none"
+            >
+              <option value="">All Types</option>
+              <option value="Standard">Standard</option>
+              <option value="Deluxe">Deluxe</option>
+              <option value="Luxury">Luxury</option>
+            </select>
+
+            <select
+              name="minRating"
+              value={filterdata.minRating}
+              onChange={handleFilterInput}
+              className="border rounded-md py-2 px-4 outline-none"
+            >
+              <option value="">Any Rating</option>
+              <option value="4.5">4.5+</option>
+              <option value="4">4+</option>
+              <option value="3">3+</option>
+              <option value="2">2+</option>
+              <option value="1">1+</option>
+            </select>
+
+            <button
+              onClick={resetFilters}
+              className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
+            >
+              <RotateCcw className="w-5 h-5" />
+              Reset Filters
             </button>
           </div>
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
@@ -510,7 +603,7 @@ export default function Hotels() {
                   ))}
                 </div>
               ) : (
-                <div className="absolute inset-0">
+                <div className="relative h-full w-full">
                   <img
                     src={hotelimg}
                     alt="placeholder"

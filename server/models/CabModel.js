@@ -9,7 +9,6 @@ const cabSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      required: [true, "Car model is required"],
       default: null,
     },
     model: {
@@ -48,7 +47,6 @@ const cabSchema = new mongoose.Schema(
     },
     rating: {
       type: Number,
-      required: true,
       min: 1,
       max: 5,
     },

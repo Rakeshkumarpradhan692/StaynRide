@@ -9,9 +9,18 @@ function Booking() {
   const [expandedRows, setExpandedRows] = useState([]);
   const [bookingdata, setbookingdata] = useState([]);
   const [isloading, setisloading] = useState(false);
+  const [tempdata, settempdata] = useState([]);
   const [isactiveedit, setisactiveedit] = useState(false);
   const [isactivecreate, setisactivecreate] = useState(false);
-
+  const [filters, setFilters] = useState({
+    status: "",
+    bookingType: "",
+    startDate: "",
+    endDate: "",
+    minPrice: "",
+    maxPrice: "",
+    search: "",
+  });
   const dataFormat = {
     username: "",
     useremail: "",
@@ -47,6 +56,93 @@ function Booking() {
     }
   };
 
+  const handleFilterInput = (e) => {
+    const { name, value } = e.target;
+    const updatedFilters = {
+      ...filters,
+      [name]: value,
+    };
+    setFilters(updatedFilters);
+
+    const filteredBookings = tempdata.filter((booking) => {
+      if (updatedFilters.status && booking.status !== updatedFilters.status) {
+        return false;
+      }
+      if (updatedFilters.bookingType) {
+        const isHotel = booking.hotelBooking?.isHotelBooked;
+        const isCab = booking.cabBooking?.isCabBooked;
+
+        if (updatedFilters.bookingType === "hotel" && !isHotel) return false;
+        if (updatedFilters.bookingType === "cab" && !isCab) return false;
+      }
+      if (updatedFilters.startDate || updatedFilters.endDate) {
+        const bookingDate = new Date(booking.createdAt).setHours(0, 0, 0, 0);
+
+        if (updatedFilters.startDate) {
+          const startDate = new Date(updatedFilters.startDate).setHours(
+            0,
+            0,
+            0,
+            0
+          );
+          if (bookingDate < startDate) return false;
+        }
+
+        if (updatedFilters.endDate) {
+          const endDate = new Date(updatedFilters.endDate).setHours(
+            23,
+            59,
+            59,
+            999
+          );
+          if (bookingDate > endDate) return false;
+        }
+      }
+      if (
+        updatedFilters.minPrice &&
+        booking.totalPrice < Number(updatedFilters.minPrice)
+      ) {
+        return false;
+      }
+      if (
+        updatedFilters.maxPrice &&
+        booking.totalPrice > Number(updatedFilters.maxPrice)
+      ) {
+        return false;
+      }
+
+      // Filter by search text
+      if (updatedFilters.search) {
+        const searchTerm = updatedFilters.search.toLowerCase();
+        const matchesName = booking.userId.name
+          .toLowerCase()
+          .includes(searchTerm);
+        const matchesEmail = booking.userId.email
+          .toLowerCase()
+          .includes(searchTerm);
+        const matchesBookingId = booking._id.toLowerCase().includes(searchTerm);
+
+        if (!matchesName && !matchesEmail && !matchesBookingId) return false;
+      }
+
+      return true;
+    });
+
+    setbookingdata(filteredBookings);
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      status: "",
+      bookingType: "",
+      startDate: "",
+      endDate: "",
+      minPrice: "",
+      maxPrice: "",
+      search: "",
+    });
+    setbookingdata(tempdata);
+  };
   useEffect(() => {
     console.log(bookingdata);
   }, [bookingdata]);
@@ -165,6 +261,7 @@ function Booking() {
       const records = await axios.get(`${server_url}admin/all-booking`);
       if (records.data) {
         setbookingdata(records.data.data);
+        settempdata(records.data.data);
       }
       setisloading(false);
     } catch (err) {
@@ -251,12 +348,91 @@ function Booking() {
         <div>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Bookings</h2>
-            <button
-              onClick={handleCreate}
-              className="px-3 py-1 rounded-md bg-blue-600 text-white"
-            >
-              + Create booking
-            </button>
+            <div>
+              <button
+                onClick={handleCreate}
+                className="px-3 py-1 rounded-md bg-blue-600 text-white"
+              >
+                + Create booking
+              </button>
+            </div>
+          </div>
+
+          <div className="w-full">
+            <div className="p-4 flex items-center gap-3 flex-wrap">
+              <select
+                name="status"
+                value={filters.status}
+                onChange={handleFilterInput}
+                className="min-w-[120px] rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
+              >
+                <option value="">All Status</option>
+                <option value="success">Success</option>
+                <option value="pending">Pending</option>
+                <option value="reject">Reject</option>
+              </select>
+              <select
+                name="bookingType"
+                value={filters.bookingType}
+                onChange={handleFilterInput}
+                className="min-w-[120px] rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
+              >
+                <option value="">All Types</option>
+                <option value="hotel">Hotel</option>
+                <option value="cab">Cab</option>
+              </select>
+              <input
+                type="date"
+                value={filters.startDate}
+                name="startDate"
+                placeholder="From Date"
+                onChange={handleFilterInput}
+                className="min-w-[150px] rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
+              />
+              <input
+                type="date"
+                name="endDate"
+                value={filters.endDate}
+                placeholder="To Date"
+                onChange={handleFilterInput}
+                className="min-w-[150px] rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
+              />
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  name="minPrice"
+                  value={filters.minPrice}
+                  placeholder="Min Price"
+                  onChange={handleFilterInput}
+                  className="w-24 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
+                />
+                <span>-</span>
+                <input
+                  type="number"
+                  name="maxPrice"
+                  value={filters.maxPrice}
+                  placeholder="Max Price"
+                  onChange={handleFilterInput}
+                  className="w-24 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
+                />
+              </div>
+              <input
+                type="text"
+                value={filters.search}
+                name="search"
+                placeholder="Search users..."
+                onChange={handleFilterInput}
+                className="flex-1 min-w-[200px] rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
+              />
+
+              {/* Reset Button */}
+              <button
+                onClick={resetFilters}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-sm font-medium rounded-md whitespace-nowrap"
+              >
+                Reset
+              </button>
+            </div>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full border border-gray-300 text-sm">
