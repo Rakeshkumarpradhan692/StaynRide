@@ -4,8 +4,8 @@ import axios from "axios";
 
 function UserChrts() {
   const [state, setState] = useState({
-    selectedOption: "all", // default to show all
-    series: [0, 0, 0], // Initial empty data [pending, success, rejected]
+    selectedOption: "all",
+    series: [0, 0, 0],
     loading: true,
     error: null,
     options: {
@@ -15,7 +15,7 @@ function UserChrts() {
         type: "pie",
       },
       labels: ["Pending", "Success", "Rejected"],
-      colors: ["#FFA500", "#008000", "#FF0000"],
+      colors: ["#f3f29c", "#a7e8bc", "#e0a096"],
       plotOptions: {
         pie: {
           dataLabels: {
@@ -51,9 +51,9 @@ function UserChrts() {
   });
 
   const [bookingData, setBookingData] = useState({
-    all: { pending: 0, success: 0, reject: 0 }, // All bookings
-    cab: { pending: 0, success: 0, reject: 0 }, // Only cab bookings
-    hotel: { pending: 0, success: 0, reject: 0 }, // Only hotel bookings
+    all: { pending: 0, success: 0, reject: 0 },
+    cab: { pending: 0, success: 0, reject: 0 },
+    hotel: { pending: 0, success: 0, reject: 0 },
   });
 
   useEffect(() => {
@@ -62,14 +62,15 @@ function UserChrts() {
         const response = await axios.get(
           "http://localhost:5000/api/admin/all-booking"
         );
-        const bookings = response.data.data;
+        const bookings = response.data?.data;
         const newBookingData = {
           all: { pending: 0, success: 0, reject: 0 },
           cab: { pending: 0, success: 0, reject: 0 },
           hotel: { pending: 0, success: 0, reject: 0 },
         };
+
         bookings.forEach((booking) => {
-          const status = booking.status.toLowerCase();
+          const status = booking.status?.toLowerCase();
           newBookingData.all[status] += 1;
           if (booking.cabBooking.isCabBooked) {
             newBookingData.cab[status] += 1;

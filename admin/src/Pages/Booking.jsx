@@ -455,14 +455,14 @@ function Booking() {
                   const isCab = booking?.cabBooking?.cabId?._id != null;
 
                   let type = "-";
-                  let typeId = "-";
+                  // let typeId = "-";
 
                   if (isHotel) {
                     type = "Hotel";
-                    typeId = isHotel;
+                    // typeId = isHotel;
                   } else if (isCab) {
                     type = "Cab";
-                    typeId = isCab;
+                    // typeId = isCab;
                   }
 
                   return (
