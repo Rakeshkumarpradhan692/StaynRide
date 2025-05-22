@@ -1,187 +1,161 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
 
-function UserChrts() {
-  const [state, setState] = useState({
-    selectedOption: "all",
-    series: [0, 0, 0],
-    loading: true,
-    error: null,
-    options: {
-      chart: {
-        width: "100%",
-        height: "100%",
-        type: "pie",
-      },
-      labels: ["Pending", "Success", "Rejected"],
-      colors: ["#f3f29c", "#a7e8bc", "#e0a096"],
-      plotOptions: {
-        pie: {
-          dataLabels: {
-            offset: -5,
-          },
-        },
-      },
-      grid: {
-        padding: {
-          top: 0,
-          bottom: 0,
-          left: 0,
-          right: 0,
-        },
-      },
-      dataLabels: {
-        formatter(val, opts) {
-          const name = opts.w.globals.labels[opts.seriesIndex];
-          return [name, val.toFixed(1) + "%"];
-        },
-      },
-      legend: {
-        position: "bottom",
-      },
-      title: {
-        text: "All Bookings",
-        align: "center",
-        style: {
-          fontSize: "16px",
-        },
-      },
-    },
-  });
-
-  const [bookingData, setBookingData] = useState({
-    all: { pending: 0, success: 0, reject: 0 },
-    cab: { pending: 0, success: 0, reject: 0 },
-    hotel: { pending: 0, success: 0, reject: 0 },
-  });
+const BookingPieChart = () => {
+  const [loading, setLoading] = useState(true);
+  const [bookingData, setBookingData] = useState([]);
+  const [viewMode, setViewMode] = useState("all");
 
   useEffect(() => {
-    const fetchBookingData = async () => {
+    const fetchData = async () => {
       try {
         const response = await axios.get(
           "http://localhost:5000/api/admin/all-booking"
         );
-        const bookings = response.data?.data;
-        const newBookingData = {
-          all: { pending: 0, success: 0, reject: 0 },
-          cab: { pending: 0, success: 0, reject: 0 },
-          hotel: { pending: 0, success: 0, reject: 0 },
-        };
-
-        bookings.forEach((booking) => {
-          const status = booking.status?.toLowerCase();
-          newBookingData.all[status] += 1;
-          if (booking.cabBooking.isCabBooked) {
-            newBookingData.cab[status] += 1;
-          }
-          if (booking.hotelBooking.isHotelBooked) {
-            newBookingData.hotel[status] += 1;
-          }
-        });
-
-        setBookingData(newBookingData);
-        setState((prev) => ({
-          ...prev,
-          series: [
-            newBookingData.all.pending,
-            newBookingData.all.success,
-            newBookingData.all.reject,
-          ],
-          loading: false,
-        }));
+        setBookingData(response.data.data || []);
       } catch (error) {
         console.error("Error fetching booking data:", error);
-        setState((prev) => ({ ...prev, error: error.message, loading: false }));
+      } finally {
+        setLoading(false);
       }
     };
-
-    fetchBookingData();
+    fetchData();
   }, []);
 
-  const handleOptionChange = (option) => {
-    const newSeries = [
-      bookingData[option].pending,
-      bookingData[option].success,
-      bookingData[option].reject,
-    ];
+  const chartData = useMemo(() => {
+    const counts = { pending: 0, reject: 0, success: 0 };
 
-    const titleMap = {
-      all: "All Bookings",
-      cab: "Cab Bookings",
-      hotel: "Hotel Bookings",
-    };
+    bookingData.forEach((booking) => {
+      if (viewMode === "hotel" && !booking.hotelBooking?.isHotelBooked) return;
+      if (viewMode === "cab" && !booking.cabBooking?.isCabBooked) return;
 
-    setState({
-      ...state,
-      selectedOption: option,
-      series: newSeries,
-      options: {
-        ...state.options,
-        title: {
-          ...state.options.title,
-          text: titleMap[option],
-        },
-      },
+      const status = booking.status;
+      if (counts.hasOwnProperty(status)) {
+        counts[status]++;
+      }
     });
-  };
 
-  if (state.loading) {
-    return (
-      <div className="w-full mt-5 p-3 text-center">Loading booking data...</div>
-    );
-  }
+    return {
+      series: [counts.pending, counts.reject, counts.success],
+      labels: ["Pending", "Rejected", "Success"],
+      counts,
+    };
+  }, [bookingData, viewMode]);
 
-  if (state.error) {
+  const hotelCounts = useMemo(() => {
+    const result = { pending: 0, reject: 0, success: 0 };
+    bookingData.forEach((b) => {
+      if (b.hotelBooking?.isHotelBooked && result.hasOwnProperty(b.status)) {
+        result[b.status]++;
+      }
+    });
+    return result;
+  }, [bookingData]);
+
+  const cabCounts = useMemo(() => {
+    const result = { pending: 0, reject: 0, success: 0 };
+    bookingData.forEach((b) => {
+      if (b.cabBooking?.isCabBooked && result.hasOwnProperty(b.status)) {
+        result[b.status]++;
+      }
+    });
+    return result;
+  }, [bookingData]);
+
+  if (loading) {
     return (
-      <div className="w-full mt-5 p-3 text-center text-red-500">
-        Error: {state.error}
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
+
+  if (!bookingData.length) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          No booking data available.
+        </div>
+      </div>
+    );
+  }
+
+  const { series, labels } = chartData;
 
   return (
-    <div className="w-full mt-5 p-3 flex flex-col items-center justify-center">
-      <div className="flex gap-4 mb-4">
-        <label className="inline-flex items-center">
-          <input
-            type="radio"
-            className="form-radio h-5 w-5 text-blue-600"
-            checked={state.selectedOption === "all"}
-            onChange={() => handleOptionChange("all")}
-          />
-          <span className="ml-2 text-gray-700">All</span>
-        </label>
-        <label className="inline-flex items-center">
-          <input
-            type="radio"
-            className="form-radio h-5 w-5 text-blue-600"
-            checked={state.selectedOption === "cab"}
-            onChange={() => handleOptionChange("cab")}
-          />
-          <span className="ml-2 text-gray-700">Cab</span>
-        </label>
-        <label className="inline-flex items-center">
-          <input
-            type="radio"
-            className="form-radio h-5 w-5 text-blue-600"
-            checked={state.selectedOption === "hotel"}
-            onChange={() => handleOptionChange("hotel")}
-          />
-          <span className="ml-2 text-gray-700">Hotel</span>
-        </label>
-      </div>
-
-      <div id="chart" className="w-96 lg:w-full">
+    <div className="container mx-auto px-4 ">
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="flex flex-col justify-center  items-center mb-6 gap-4">
+          <div className="flex justify-center flex-wrap gap-2">
+            <button
+              onClick={() => setViewMode("all")}
+              className={`px-4 py-2 rounded-md transition-colors ${
+                viewMode === "all"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              All Bookings ({bookingData.length})
+            </button>
+            <button
+              onClick={() => setViewMode("hotel")}
+              className={`px-4 py-2 rounded-md transition-colors ${
+                viewMode === "hotel"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              Hotel Only (
+              {hotelCounts.pending + hotelCounts.reject + hotelCounts.success})
+            </button>
+            <button
+              onClick={() => setViewMode("cab")}
+              className={`px-4 py-2 rounded-md transition-colors ${
+                viewMode === "cab"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              Cab Only (
+              {cabCounts.pending + cabCounts.reject + cabCounts.success})
+            </button>
+          </div>
+        </div>
         <ReactApexChart
-          options={state.options}
-          series={state.series}
+          key={viewMode}
+          options={{
+            chart: { type: "pie" },
+            labels: labels,
+            colors: ["#facc15", "#f87171", "#4ade80"],
+            legend: { position: "bottom" },
+            tooltip: {
+              y: {
+                formatter: (val) => {
+                  const total = series.reduce((a, b) => a + b, 0);
+                  return `${val} bookings (${
+                    total > 0 ? Math.round((val / total) * 100) : 0
+                  }%)`;
+                },
+              },
+            },
+            responsive: [
+              {
+                breakpoint: 480,
+                options: {
+                  chart: { width: 280 },
+                  legend: { position: "bottom" },
+                },
+              },
+            ],
+          }}
+          series={series}
           type="pie"
+          height={400}
         />
       </div>
-      <div id="html-dist"></div>
     </div>
   );
-}
+};
 
-export default UserChrts;
+export default BookingPieChart;
