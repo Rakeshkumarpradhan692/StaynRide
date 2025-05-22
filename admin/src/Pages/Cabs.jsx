@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Edit2, Trash2, X } from "lucide-react";
+import { X, RotateCcw } from "lucide-react";
 import Swal from "sweetalert2";
 import cabimg from "../assets/images/cab.jpg";
 import axios from "axios";
@@ -10,6 +10,11 @@ function Cabs() {
   const { uploadImage } = CloudinaryUpload();
   const [isloading, setisloading] = useState(false);
   const [cabs, setCabs] = useState([]);
+  const [filters, setFilters] = useState({
+    search: "",
+    minRating: "",
+  });
+  const [orginalCabs, setorginalCabs] = useState([]);
   const [selectedCab, setSelectedCab] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [formModalOpen, setFormModalOpen] = useState(false);
@@ -28,6 +33,46 @@ function Cabs() {
     },
   });
 
+  useEffect(() => {
+    const filteredCabs = orginalCabs.filter((cab) => {
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        if (
+          !cab.name.toLowerCase().includes(searchLower) &&
+          !cab.model.toLowerCase().includes(searchLower) &&
+          !cab.address.fullAddress.toLowerCase().includes(searchLower) &&
+          !cab.address.city.toLowerCase().includes(searchLower)
+        ) {
+          return false;
+        }
+      }
+
+      if (filters.minRating && cab.rating < parseFloat(filters.minRating)) {
+        return false;
+      }
+
+      return true;
+    });
+
+    setCabs(filteredCabs);
+  }, [filters, orginalCabs]);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const resetFilters = (e) => {
+    e.preventDefault();
+    setFilters({
+      search: "",
+      minRating: "",
+      maxPrice: "",
+    });
+  };
   const server_url = process.env.REACT_APP_SERVER_URL;
 
   const fetchCabs = useCallback(async () => {
@@ -35,6 +80,8 @@ function Cabs() {
     try {
       const result = await axios.get(`${server_url}public/all-cabs`);
       if (result.data) setCabs(result.data);
+
+      setorginalCabs(result.data);
       setisloading(false);
     } catch (err) {
       setisloading(false);
@@ -131,11 +178,12 @@ function Cabs() {
     }
   };
 
-  const deleteCabs = async (id) => {
+  const deleteCabs = async (e, id) => {
+    e.stopPropagation();
     const swalWithTailwindButtons = Swal.mixin({
       customClass: {
         confirmButton:
-          "bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mr-2",
+          "bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded ml-2",
         cancelButton:
           "bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded",
       },
@@ -194,15 +242,49 @@ function Cabs() {
         <div>
           {" "}
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">
-              Cab Listings
-            </h2>
+            <h2 className="text-3xl font-bold mb-6 text-gray-800">Cabs</h2>
             <button
               onClick={openCreateModal}
               className="px-3 py-1 rounded-md bg-blue-600 text-white"
             >
               + Create Cab
             </button>
+          </div>
+          <div className=" mb-6">
+            <div className="flex flex-col md:flex-row gap-3 items-center">
+              <div className=" w-full md:w-80">
+                <input
+                  type="text"
+                  name="search"
+                  value={filters.search}
+                  onChange={handleFilterChange}
+                  placeholder="Search cabs by name, model or address..."
+                  className="w-full  px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-gray-700"
+                />
+              </div>
+
+              <div className="w-full md:w-40">
+                <select
+                  onChange={handleFilterChange}
+                  value={filters.minRating}
+                  name="minRating"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 appearance-none bg-white text-gray-700"
+                >
+                  <option value="">All Ratings</option>
+                  <option value="5">5 ★★★★★</option>
+                  <option value="4">4 ★★★★☆</option>
+                  <option value="3">3 ★★★☆☆</option>
+                  <option value="2">2 ★★☆☆☆</option>
+                </select>
+              </div>
+              <button
+                onClick={resetFilters}
+                className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:text-gray-800 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span className="text-sm font-medium">Reset Filters</span>
+              </button>
+            </div>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {cabs.map((cab) => (
@@ -232,7 +314,7 @@ function Cabs() {
                       Edit
                     </button>
                     <button
-                      onClick={() => deleteCabs(cab._id)}
+                      onClick={(e) => deleteCabs(e, cab._id)}
                       className="px-4 py-1 bg-red-500 rounded text-sm text-white"
                       aria-label="Delete"
                     >
@@ -245,8 +327,6 @@ function Cabs() {
           </div>
         </div>
       )}
-
-      {/* View More Modal */}
       {selectedCab && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white w-full max-w-lg rounded-lg shadow-lg p-6 relative">
@@ -258,7 +338,7 @@ function Cabs() {
             </button>
             <h3 className="text-xl font-bold mb-4">{selectedCab.name}</h3>
             <img
-              src={selectedCab.image}
+              src={selectedCab.image || cabimg}
               alt={selectedCab.name}
               className="w-full h-48 object-cover rounded mb-4"
             />
