@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineClose } from "react-icons/ai";
 import axios from "axios";
-
+import { AuthContext } from "../context/authContext";
 const LoginPage = () => {
+  const { setAuth } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const server_url = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+  const server_url =
+    process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,6 +26,10 @@ const LoginPage = () => {
       console.log("Login successful:", data);
 
       // ✅ Save to localStorage
+      setAuth((prev) => ({
+        ...prev,
+        isLoggedIn: true,
+      }));
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("isAuthenticated", "true");
 
