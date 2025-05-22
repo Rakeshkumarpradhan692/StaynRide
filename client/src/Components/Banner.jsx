@@ -41,7 +41,7 @@ const Banner = () => {
   }
 
   return (
-    <div className="relative w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden">
+    <div className="relative w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px]  mt-[5rem]  bg-black overflow-hidden">
       {/* Image container */}
       <div className="relative w-full h-full">
         {images.map((banner, index) => (
@@ -90,4 +90,5 @@ const Banner = () => {
 };
 
 export default Banner;
+
 

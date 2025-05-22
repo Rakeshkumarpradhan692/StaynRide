@@ -70,6 +70,7 @@ exports.createRoom = async (req, res) => {
 
 exports.getRoomsByHotelId = async (req, res) => {
   try {
+    console.log(req);
     const { hotelId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(hotelId)) {
       return res.status(400).json({

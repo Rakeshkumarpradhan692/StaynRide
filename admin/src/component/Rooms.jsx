@@ -198,7 +198,7 @@ function Rooms(props) {
     );
 
   return (
-    <div className=" w-full h-full overflow-hidden box-border px-10 py-5">
+    <div className=" w-full h-full overflow-hidden hide-scrollbar overflow-y-auto box-border px-10 py-5">
       <div className=" flex justify-between items-center">
         <h1 className="text-3xl font-bold mb-6">Hotel Rooms Management</h1>
         <button
@@ -383,11 +383,11 @@ function Rooms(props) {
         </div>
       )}
       {rooms.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 w-full overflow-hidden box-border">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 w-full overflow-hidden overflow-y-scroll box-border">
           {rooms.map((room) => (
             <div
               key={room._id}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
+              className="bg-white rounded-lg shadow-md overflow-hidden "
             >
               <div className="h-48 bg-gray-200 overflow-hidden">
                 {room.images.length > 0 ? (

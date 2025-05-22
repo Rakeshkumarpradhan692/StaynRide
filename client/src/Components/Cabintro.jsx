@@ -1,50 +1,135 @@
-import React from 'react'
+import React from 'react';
+import { motion } from 'framer-motion';
 import Cab from '../Components/Photo/Cabpic.jpg';
+
 function Cabintro() {
-     const facilities = [
+  const facilities = [
     { name: "Cab Service", value: 82 },
     { name: "Breakfast Included", value: 55 },
     { name: "Laundry & Ironing", value: 73 },
   ];
-  return (
-    <div className='flex flex-col md:flex-row gap-5 p-8  md:p-[4.5rem]'>
-        <div className='items-center'>
-         <img src={Cab} alt="" />
-        </div>
-        <div className='sm:w-[60%]'>
-           <div className=" flex flex-col w-full h-auto">
-      <div className=" w-full">
-        <h3 className="md:text-sm font-semibold uppercase text-yellow-700 mb-3 ">Cab Facilities</h3>
-        <h1 className="md:text-6xl font-serif text-blue-900">The Structure</h1>
-        <p className="text-gray-600 mt-4 md:text-[1.2rem]">
-          Quisque sollicitudin, nunc sit amet ullamcorper lobortis, lorem ante vehicula felis, non elementum
-          dui magna nec leo. Quisque et sapien metus. Fusce sodales mauris a ligula aliquet tincidunt. Sed
-          congue enim at tellus ullamcorper commodo quis eget dui.
-        </p>
-      </div>
 
-      <div className=" ">
-        {facilities.map((facility, index) => (
-          <div key={index}>
-            <div className="flex justify-between text-sm font-medium text-gray-700 m-2">
-              <span>{facility.name}</span>
-              <span>{facility.value}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded h-8 overflow-hidden">
-              <div
-                className="bg-gray-600 h-8 text-white text-sm flex items-center justify-between  transition-all duration-700 ease-in-out"
-                style={{ width: `${facility.value}%` }}
+  // Animation variants
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
+  return (
+    <section className="bg-gradient-to-br from-blue-50 to-gray-50 py-10 px-6 lg:px-8">
+      <div className="w-full mx-auto">
+        <motion.div 
+          className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          variants={container}
+        >
+          {/* Image Section */}
+          <motion.div 
+            className="w-full lg:w-1/2 rounded-xl overflow-hidden shadow-xl"
+            variants={item}
+          >
+            <img 
+              src={Cab} 
+              alt="Luxury Cab" 
+              className="w-full h-full object-cover rounded-xl hover:scale-105 transition-transform duration-500"
+            />
+          </motion.div>
+
+          {/* Content Section */}
+          <motion.div 
+            className="w-full lg:w-1/2 space-y-8"
+            variants={item}
+          >
+            <div className="space-y-4">
+              <motion.span 
+                className="inline-block text-yellow-600 font-semibold text-sm uppercase tracking-wider"
+                variants={item}
               >
-                <span className="truncate">{facility.name}</span>
-              </div>
+                Cab Facilities
+              </motion.span>
+              <motion.h2 
+                className="text-4xl md:text-5xl font-serif font-bold text-gray-900"
+                variants={item}
+              >
+                Premium <span className="text-blue-700">Travel</span> Experience
+              </motion.h2>
+              <motion.p 
+                className="text-gray-600 text-lg leading-relaxed"
+                variants={item}
+              >
+                Our cab services are designed for comfort and convenience. With professional drivers, 
+                well-maintained vehicles, and premium amenities, we ensure your journey is as enjoyable 
+                as your destination.
+              </motion.p>
             </div>
-          </div>
-        ))}
+
+            
+            <motion.div 
+              className="space-y-6"
+              variants={container}
+            >
+              {facilities.map((facility, index) => (
+                <motion.div 
+                  key={index}
+                  className="space-y-2"
+                  variants={item}
+                >
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-800">{facility.name}</span>
+                    <span className="font-semibold text-blue-600">{facility.value}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                    <motion.div
+                      className="bg-gradient-to-r from-blue-500 to-blue-700 h-full rounded-full"
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${facility.value}%` }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1, delay: index * 0.2 }}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+
+          
+            <motion.div 
+              className="grid grid-cols-2 gap-4 mt-6"
+              variants={container}
+            >
+              {[
+                { icon: "🚗", text: "24/7 Availability" },
+                { icon: "🛋️", text: "Luxury Seating" },
+                { icon: "📱", text: "Easy Booking" },
+                { icon: "🧳", text: "Ample Storage" }
+              ].map((feature, index) => (
+                <motion.div 
+                  key={index}
+                  className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm"
+                  variants={item}
+                  whileHover={{ y: -5 }}
+                >
+                  <span className="text-2xl">{feature.icon}</span>
+                  <span className="text-gray-700">{feature.text}</span>
+                </motion.div>
+              ))}
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </div>
-    </div>
-        </div>
-    </div>
-  )
+    </section>
+  );
 }
 
-export default Cabintro
+export default Cabintro;
