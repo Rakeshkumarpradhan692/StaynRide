@@ -104,19 +104,19 @@ const FeedbackPopup = ({ onClose }) => {
 
   return (
     <motion.div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black bg-opacity-50 overflow-y-scroll  flex items-center justify-center z-50 py-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
       <motion.div 
-        className="bg-white  w-[60%]  rounded-xl shadow-2xl overflow-hidden"
+        className="bg-white md:w-[60%] h-[100vh]  overflow-y-scroll rounded-xl shadow-2xl overflow-hidden"
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ type: "spring", damping: 25 }}
       >
         <div className="flex flex-col md:flex-row ">
-          <div className="md:w-1/2 bg-gradient-to-br from-blue-600 to-blue-800 text-white p-8">
+          <div className="w-full md:w-1/2 bg-gradient-to-br from-blue-600 to-blue-800 text-white p-8">
             <div className="flex justify-between items-start mb-6">
               <h3 className="text-xl font-bold">WHY IS YOUR FEEDBACK IMPORTANT TO US</h3>
               <button 
@@ -166,7 +166,7 @@ const FeedbackPopup = ({ onClose }) => {
               </div>
             </div>
           </div>
-          <div className="md:w-1/2 p-8">
+          <div className="w-full md:w-1/2 p-8">
             <h4 className="text-xl font-bold text-gray-800 mb-6">Feedback Form</h4>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>

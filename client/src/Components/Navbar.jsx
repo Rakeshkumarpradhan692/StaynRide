@@ -170,7 +170,7 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
-const dropdownRef = useRef(null);
+  const dropdownRef = useRef(null);
   // Load auth state from localStorage on mount
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -202,21 +202,21 @@ const dropdownRef = useRef(null);
     };
   }, []);
   useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setShowDropdown(false);
-    }
-  };
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const navLinkStyles = ({ isActive }) => ({
     color: isActive ? "#3b82f6" : "#374151",
     borderBottom: isActive ? "2px solid #3b82f6" : "none",
-    
+
   });
 
   const handleLogout = () => {
@@ -230,11 +230,10 @@ const dropdownRef = useRef(null);
 
   return (
     <header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled
           ? "bg-white shadow-lg py-0"
           : "bg-white/90 backdrop-blur-sm py-2"
-      }`}
+        }`}
     >
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-[4rem]">
         <div className="flex items-center justify-between h-16">
@@ -276,39 +275,39 @@ const dropdownRef = useRef(null);
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
-             <div className="relative" ref={dropdownRef}>
-  <button
-    onClick={() => setShowDropdown(!showDropdown)}
-    className="flex items-center text-blue-600 font-medium focus:outline-none"
-  >
-    <FaUser className="mr-2" />
-    {user?.name || "User"}
-    <FaChevronDown className="ml-1" />
-  </button>
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setShowDropdown(!showDropdown)}
+                  className="flex items-center text-blue-600 font-medium focus:outline-none"
+                >
+                  <FaUser className="mr-2" />
+                  {user?.name || "User"}
+                  <FaChevronDown className="ml-1" />
+                </button>
 
-  {showDropdown && (
-    <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-50">
-      <button
-        onClick={() => {
-          navigate("/profile");
-          setShowDropdown(false);
-        }}
-        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
-      >
-        Profile
-      </button>
-      <button
-        onClick={() => {
-          handleLogout();
-          setShowDropdown(false);
-        }}
-        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
-      >
-        Logout
-      </button>
-    </div>
-  )}
-</div>
+                {showDropdown && (
+                  <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-50">
+                    <button
+                      onClick={() => {
+                        navigate("/profile");
+                        setShowDropdown(false);
+                      }}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
+                    >
+                      Profile
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setShowDropdown(false);
+                      }}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
 
             ) : (
               <>
@@ -348,9 +347,8 @@ const dropdownRef = useRef(null);
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden ${
-          isMenuOpen ? "block" : "hidden"
-        } bg-white shadow-xl`}
+        className={`md:hidden ${isMenuOpen ? "block" : "hidden"
+          } bg-white shadow-xl`}
       >
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <NavLink
@@ -394,14 +392,7 @@ const dropdownRef = useRef(null);
                 <FaSignOutAlt className="mr-1" />
                 Logout
               </button>
-              {/* <NavLink
-    to="/profile"
-    style={navLinkStyles}
-    className="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-50"
-    onClick={() => setIsMenuOpen(false)}
-  >
-    Profile
-  </NavLink> */}
+          
             </div>
           ) : (
             <div className="space-y-2">
