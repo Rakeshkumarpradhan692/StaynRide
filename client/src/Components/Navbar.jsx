@@ -1,6 +1,3 @@
-
-
-
 // import React, { useEffect, useState } from "react";
 // import { useNavigate, NavLink } from "react-router-dom";
 // import Logo from "../Components/Photo/logo.png";
@@ -50,7 +47,7 @@
 //   return (
 //     <header className="bg-white p-2 w-full h-auto fixed top-0 z-50 shadow-md">
 //       <div className="w-full mx-auto flex items-center justify-between  px-[1rem] md:px-[4rem] py-3">
-       
+
 //         <div className="flex items-center space-x-2">
 //           <h1 className="text-xl md:text-2xl font-bold text-blue-700 flex items-center gap-1">
 //             Stayn
@@ -161,8 +158,6 @@
 
 // export default Navbar;
 
-
-
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import Logo from "../Components/Photo/logo.png";
@@ -192,14 +187,14 @@ const dropdownRef = useRef(null);
       setScrolled(window.scrollY > 10);
     };
     window.addEventListener("scroll", handleScroll);
-    
+
     const handleStorageChange = () => {
       const storedUser = localStorage.getItem("user");
       const authStatus = localStorage.getItem("isAuthenticated") === "true";
       setUser(storedUser ? JSON.parse(storedUser) : null);
       setIsAuthenticated(authStatus);
     };
-    
+
     window.addEventListener("storage", handleStorageChange);
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -234,35 +229,43 @@ const dropdownRef = useRef(null);
   };
 
   return (
-    <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-white shadow-lg py-0" : "bg-white/90 backdrop-blur-sm py-2"}`}>
+    <header
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-white shadow-lg py-0"
+          : "bg-white/90 backdrop-blur-sm py-2"
+      }`}
+    >
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-[4rem]">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <NavLink to="/" className="flex items-center">
               <img src={Logo} alt="Logo" className="h-8 w-8 mr-2" />
-              <span className="text-xl font-bold text-blue-600 hidden sm:inline">StaynRide</span>
+              <span className="text-xl font-bold text-blue-600 hidden sm:inline">
+                StaynRide
+              </span>
             </NavLink>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <NavLink 
-              to="/" 
+            <NavLink
+              to="/"
               style={navLinkStyles}
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
               Home
             </NavLink>
-            <NavLink 
-              to="/about" 
+            <NavLink
+              to="/about"
               style={navLinkStyles}
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
               About
             </NavLink>
-            <NavLink 
-              to="/contact" 
+            <NavLink
+              to="/contact"
               style={navLinkStyles}
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
             >
@@ -344,7 +347,11 @@ const dropdownRef = useRef(null);
       </div>
 
       {/* Mobile Menu */}
-      <div className={`md:hidden ${isMenuOpen ? "block" : "hidden"} bg-white shadow-xl`}>
+      <div
+        className={`md:hidden ${
+          isMenuOpen ? "block" : "hidden"
+        } bg-white shadow-xl`}
+      >
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <NavLink
             to="/"

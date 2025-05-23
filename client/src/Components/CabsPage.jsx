@@ -247,7 +247,7 @@ export default function CabsPage() {
   return (
     <>
       <Navbar />
-      <div className="flex flex-col lg:flex-row mt-[5rem] px-4 py-8">
+      <div className="flex flex-col lg:flex-row mt-[5rem] px-6 lg:px-[4rem] py-8">
         {/* Sidebar */}
         <div className="lg:w-1/4 w-full mb-6 lg:mb-0 lg:pr-4">
           <h3 className="text-xl font-bold mb-4">Filter by:</h3>
@@ -340,7 +340,7 @@ export default function CabsPage() {
                   disabled={currentPage === 1}
                   className="px-3 py-1 border rounded disabled:opacity-50"
                 >
-                  
+                  Prev
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => (
                   <button
@@ -356,7 +356,7 @@ export default function CabsPage() {
                   disabled={currentPage === totalPages}
                   className="px-3 py-1 border rounded disabled:opacity-50"
                 >
-                  
+                  Next
                 </button>
               </div>
             </>

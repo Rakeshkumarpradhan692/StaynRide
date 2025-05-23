@@ -98,26 +98,28 @@
 // export default LoginPage;
 
 
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AiOutlineClose, AiOutlineMail, AiOutlineLock } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import axios from "axios";
-
+import { AuthContext } from "../context/authContext";
 const LoginPage = () => {
+  const { setAuth } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // ✅ added
-  const [isLoading, setIsLoading] = useState(false); // ✅ added
+  const [showPassword, setShowPassword] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false); 
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const server_url = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+  const server_url =
+    process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-    setIsLoading(true); // ✅ start loading
+    setIsLoading(true); 
 
     try {
       const response = await axios.post(`${server_url}users/login`, {
@@ -136,7 +138,7 @@ const LoginPage = () => {
       const message = err.response?.data?.message || "Login failed. Try again.";
       setError(message);
     } finally {
-      setIsLoading(false); // ✅ stop loading
+      setIsLoading(false); 
     }
   };
 
@@ -151,7 +153,7 @@ const LoginPage = () => {
           onSubmit={handleLogin}
           className="bg-white p-8 rounded-2xl shadow-xl w-full"
         >
-          {/* Close Button */}
+          
           <button
             type="button"
             onClick={handleClose}

@@ -17,7 +17,6 @@ function Users() {
     state: "",
     district: "",
   });
-  const [isfilterActive, setisfilterActive] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",

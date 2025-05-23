@@ -190,7 +190,7 @@ import CabCard from './CabCard';
 import Cabintro from './Cabintro';
 import Navbar from './Navbar';
 import Banner from './Banner';
-import SeatsSection from './SeatsSection';
+// import SeatsSection from './SeatsSection';
 import FeedbackFrom from './FeedbakFrom';
 import Footer from './Footer';
 // ... other component imports
@@ -242,12 +242,12 @@ function Home() {
       <Banner />
 
       {/* Hotel Section */}
-      <section className="relative py-12 md:py-16 lg:py-20 overflow-hidden">
+      <section className="relative py-6 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 -skew-y-2 lg:-skew-y-3 transform origin-top-left"></div>
         
-        <div className="relative w-full mx-auto px-6  lg:px-[4rem] ">
+        <div className="relative w-full mx-auto px-8  lg:px-[4rem] ">
           <HotelIntroSection />
-           <SeatsSection />
+           {/* <SeatsSection /> */}
           <div className="flex flex-col md:flex-row justify-between items-center  my-8 md:my-12 px-4 sm:px-0">
             <motion.h2 
               initial={{ opacity: 0, x: -20 }}
@@ -295,8 +295,8 @@ function Home() {
       <HotelFacilities />
 
       {/* Cabs Section */}
-      <section className="py-8 md:py-10  bg-gradient-to-b from-gray-50 to-white">
-        <div className="w-full mx-auto  px-4 sm:px-10 lg:px-[4rem]">
+      <section className="pt-8 md:pt-10  bg-gradient-to-b from-gray-50 to-white">
+        <div className="w-full mx-auto  px-8 sm:px-10 lg:px-[4rem]">
          
           
           <div className="flex flex-col md:flex-row justify-between items-center mb-8 md:mb-8 px-4 sm:px-0">
@@ -348,7 +348,7 @@ function Home() {
       
       
       <section className="py-8  bg-gradient-to-b from-white to-gray-50">
-        <div className="w-full mx-auto px-4  sm:px-10 lg:px-[4rem]">
+        <div className="w-full mx-auto px-8  sm:px-10 lg:px-[4rem]">
           <FeedbackFrom />
         </div>
       </section>

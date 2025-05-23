@@ -145,33 +145,15 @@ export default function CabDetail() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen  flex flex-col bg-gray-50">
       <Navbar />
 
        
 
      <main className="flex-grow bg-gray-50">
-  <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-[5rem]">
-    {/* Back Button */}
-    {/* <button
-      onClick={() => navigate(-1)}
-      className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors duration-200 mb-8 group"
-    >
-      <ArrowLeft 
-        size={20} 
-        className="transition-transform duration-200 group-hover:-translate-x-1" 
-      />
-      <span className="font-medium">Back to results</span>
-    </button> */}
-     <div className='p-6'>
-      <button 
-        onClick={handleBackClick}
-        className="top-24 left-4 md:left-8 z-50 flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
-      >
-        <ArrowLeft />
-        <span>Back to Home</span>
-      </button>
-     </div>
+  <div className="w-full mx-auto px-6 lg:px-[4rem] py-[5rem]">
+  
+     
 
     {/* Main Card Container */}
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -193,6 +175,15 @@ export default function CabDetail() {
 
         {/* Details Section */}
         <div className="p-6 md:p-8 lg:p-10">
+            <div className=''>
+      <button 
+        onClick={handleBackClick}
+        className="top-24 left-4 md:left-8 z-50 flex "
+      >
+        <ArrowLeft />
+        
+      </button>
+     </div>
           <div className="flex flex-col h-full">
             {/* Cab Header */}
             <div className="mb-6">

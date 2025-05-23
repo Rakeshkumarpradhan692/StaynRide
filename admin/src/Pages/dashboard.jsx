@@ -81,7 +81,6 @@ function Dashboard() {
         ))}
       </div>
 
-      {/* Charts */}
       <div className="flex flex-col lg:flex-row gap-6 mt-10">
         <div className="w-full lg:w-[65%] border border-gray-200 rounded-xl bg-white p-4 sm:p-6">
           <h4 className="text-lg font-semibold text-gray-700 mb-4">
@@ -91,7 +90,7 @@ function Dashboard() {
         </div>
         <div className="w-full lg:w-[35%] border border-gray-200 rounded-xl bg-white p-4 sm:p-6">
           <h4 className="text-lg font-semibold text-gray-700 mb-4">
-            User Growth
+            Bokking status
           </h4>
           <UserChrts />
         </div>

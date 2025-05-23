@@ -39,6 +39,7 @@ function Booking() {
     bookingType: "",
   };
   const [createdata, setcreatedata] = useState({ ...dataFormat });
+
   const [editdata, seteditdata] = useState({});
   const handlechage = (e) => {
     const { name, value } = e.target;
@@ -171,7 +172,6 @@ function Booking() {
       travelDate: data?.cabBooking?.travelDate || "",
       totalPrice: data?.totalPrice || 0,
       status: data?.status || "",
-      bookingType: data?.bookingType || "",
     };
 
     seteditdata(bookingdata);
@@ -186,13 +186,13 @@ function Booking() {
       ...(isactiveedit && data._id ? { id: data._id } : {}),
       userId: data.userId,
       hotelBooking: {
-        isHotelBooked: data.bookingType === "Hotel" ? true : false,
+        isHotelBooked: data.isHotelBooked ? true : false,
         hotelId: data.hotelId || null,
         roomID: data.roomID || null,
         totalGuests: Number(data.totalGuests) || 0,
       },
       cabBooking: {
-        isCabBooked: data.bookingType === "Cab" ? true : false,
+        isCabBooked: data.isCabBooked ? true : false,
         cabId: data.cabId || null,
         pickupLocation: data.pickupLocation || "",
         dropLocation: data.dropLocation || "",
@@ -455,14 +455,12 @@ function Booking() {
                   const isCab = booking?.cabBooking?.cabId?._id != null;
 
                   let type = "-";
-                  let typeId = "-";
+                  // let typeId = "-";
 
                   if (isHotel) {
                     type = "Hotel";
-                    typeId = isHotel;
                   } else if (isCab) {
                     type = "Cab";
-                    typeId = isCab;
                   }
 
                   return (

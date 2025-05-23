@@ -4,8 +4,8 @@ import { FaQuoteLeft, FaSignature } from "react-icons/fa";
 
 const HotelIntroSection = () => {
   return (
-    <section className="bg-gradient-to-b from-white to-blue-50 py-4 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <section className="bg-gradient-to-b from-white to-blue-50 pb-4 px-4 sm:px-6 lg:px-8">
+      <div className="w-full mx-auto">
         {/* Header Section */}
         <motion.div 
           className="text-center mb-16"
@@ -80,7 +80,7 @@ const HotelIntroSection = () => {
 
         {/* Signature Section */}
         <motion.div 
-          className="grid md:grid-cols-2 items-center gap-8 bg-white p-8 rounded-xl shadow-lg"
+          className="grid md:grid-cols-2 items-center gap-8 bg-white w-full p-8 rounded-xl shadow-lg"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

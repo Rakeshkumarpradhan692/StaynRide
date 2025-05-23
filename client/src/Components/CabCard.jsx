@@ -12,7 +12,7 @@ export default function CabCard({ cab }) {
   };
 
   return (
-    <div onClick={handleDetailsClick} className="w-full h-auto rounded-2xl shadow hover:shadow-lg transition overflow-hidden">
+    <div onClick={handleDetailsClick} className="w-full h-auto  rounded-2xl shadow hover:shadow-lg transition overflow-hidden">
       
       <img
         src={cab.image || CabImage}
