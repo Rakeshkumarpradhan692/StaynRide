@@ -9,10 +9,9 @@ import About from './Components/About';
 import Contact from './Components/Contact';
 import CabsPage from './Components/CabsPage';
 import HotelDetails from './Components/HotelDetails';
-// import Navbar from './Components/Navbar';
-// import DashboardPage from './Components/Dashboard';
+
 import PrivateRoute from './Components/PrivateRoute';
-import PublicRoute from './Components/PublicRoute'; 
+
 import CabDetail from './Components/CabDetails';
 import ProfilePage from './Components/Profilepage';
 
@@ -33,9 +32,9 @@ function App() {
         <Route
           path='/register'
           element={
-            <PublicRoute>
+            
               <RegisterPage />
-            </PublicRoute>
+            
           }
         />
 

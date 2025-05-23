@@ -104,13 +104,14 @@ const HotelsPage = () => {
     <>
       <Navbar />
       <div className="p-4 space-y-4 px-8 md:px-[4rem] mt-[4.5rem]">
-        <button 
-        onClick={handleBackClick}
-        className="top-24 left-4 md:left-8 z-50 flex items-center gap-2 "
-      >
-        <ArrowLeft />
-        
-      </button>
+       <div className="w-10 h-8 bg-blue-600 text-white rounded-md flex items-center justify-center">
+  <button
+    onClick={handleBackClick}
+    className="flex items-center justify-center"
+  >
+    <ArrowLeft size={20} />
+  </button>
+</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div className="relative">
             <input

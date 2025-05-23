@@ -175,15 +175,14 @@ export default function CabDetail() {
 
         {/* Details Section */}
         <div className="p-6 md:p-8 lg:p-10">
-            <div className=''>
-      <button 
-        onClick={handleBackClick}
-        className="top-24 left-4 md:left-8 z-50 flex "
-      >
-        <ArrowLeft />
-        
-      </button>
-     </div>
+          <div className="w-10 h-8 bg-blue-600 text-white rounded-md flex items-center justify-center">
+            <button
+              onClick={handleBackClick}
+              className="flex items-center justify-center"
+            >
+              <ArrowLeft size={20} />
+            </button>
+          </div>
           <div className="flex flex-col h-full">
             {/* Cab Header */}
             <div className="mb-6">

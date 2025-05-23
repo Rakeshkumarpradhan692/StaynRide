@@ -166,15 +166,14 @@ const HotelDetails = () => {
   <div className="w-full mx-auto px-4 sm:px-6 lg:px-[4rem] py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-cent">
     
     <div className="order-2 md:order-1 px-6">
-      <div className=''>
-      <button 
-        onClick={handleBackClick}
-        className="top-24 left-4 md:left-8 z-50 flex items-center gap-2 "
-      >
-        <ArrowLeft />
-        <span></span>
-      </button>
-     </div>
+      <div className="w-10 h-8 bg-blue-600 text-white rounded-md flex items-center justify-center">
+        <button
+          onClick={handleBackClick}
+          className="flex items-center justify-center"
+        >
+          <ArrowLeft size={20} />
+        </button>
+      </div>
       <h2 className="text-4xl font-semibold text-[#8C5B3F] mb-6">{hotel.name}</h2>
       <p className="text-lg text-gray-600 mb-8 leading-relaxed">{hotel.description}</p>
       <ul className="space-y-3 text-gray-700 text-lg">
