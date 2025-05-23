@@ -1,262 +1,15 @@
-// HotelsPage.jsx
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-// import HotelCard from './HotelCard';
-// import Navbar from './Navbar';
-// import { FaSearch, FaFilter } from 'react-icons/fa';
-
-// const HotelsPage = () => {
-//   const [hotels, setHotels] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState('');
-
-//   const [filters, setFilters] = useState({
-//     name: '',
-//     state: '',
-//     city: '',
-//     priceRanges: [],
-//     types: [],
-//     ratings: []
-//   });
-
-//   const fetchHotels = async (filterParams = filters) => {
-//     setLoading(true);
-//     setError('');
-//     try {
-//       const query = buildQueryParams(filterParams);
-//       const response = await axios.get(`http://localhost:5000/api/public/all-hotels?${query}`);
-//       if (Array.isArray(response.data)) {
-//         setHotels(response.data);
-//       } else {
-//         setHotels([]);
-//         setError('Invalid data format received.');
-//       }
-//     } catch (err) {
-//       console.error('Error fetching hotels:', err);
-//       setError('Failed to fetch hotels.');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const buildQueryParams = (filters) => {
-//     const params = new URLSearchParams();
-
-//     if (filters.name) params.append('name', filters.name);
-//     if (filters.state) params.append('state', filters.state);
-//     if (filters.city) params.append('city', filters.city);
-
-//     filters.types.forEach((type) => params.append('type', type));
-//     filters.ratings.forEach((rating) => params.append('rating', rating));
-
-//     filters.priceRanges.forEach((range) => {
-//       const [min, max] = range.replace(/[₹\s+]/g, '').split('-');
-//       if (min && max) {
-//         params.append('minPrice', min);
-//         params.append('maxPrice', max);
-//       } else if (range.includes('+')) {
-//         const minOnly = range.replace(/[₹+]/g, '').trim();
-//         params.append('minPrice', minOnly);
-//       }
-//     });
-
-//     return params.toString();
-//   };
-
-//   const handleInputChange = (e) => {
-//     setFilters({ ...filters, [e.target.name]: e.target.value });
-//   };
-
-//   const handleCheckboxChange = (key, value) => {
-//     const current = filters[key];
-//     setFilters({
-//       ...filters,
-//       [key]: current.includes(value) ? current.filter((v) => v !== value) : [...current, value]
-//     });
-//   };
-
-//   const handleApplyFilters = () => fetchHotels(filters);
-
-//   const handleClearFilters = () => {
-//     const cleared = {
-//       name: '',
-//       state: '',
-//       city: '',
-//       priceRanges: [],
-//       types: [],
-//       ratings: []
-//     };
-//     setFilters(cleared);
-//     fetchHotels(cleared);
-//   };
-
-//   useEffect(() => {
-//     fetchHotels();
-//   }, []);
-
-//   const HotelsPage = ({ hotels }) => {
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const hotelsPerPage = 6;
-
-//   const indexOfLast = currentPage * hotelsPerPage;
-//   const indexOfFirst = indexOfLast - hotelsPerPage;
-//   const currentHotels = hotels.slice(indexOfFirst, indexOfLast);
-
-//   const totalPages = Math.ceil(hotels.length / hotelsPerPage);
- 
-
-//   return (
-//     <>
-//       <Navbar />
-//       <div className="p-4 space-y-4">
-//         {/* Top Filters */}
-//         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-[5.5rem]">
-//           <div className="relative">
-//             <input
-//               type="text"
-//               name="name"
-//               placeholder="Search by hotel name"
-//               value={filters.name}
-//               onChange={handleInputChange}
-//               className="w-full border p-2 pl-10 rounded"
-//             />
-//             <FaSearch className="absolute left-3 top-3 text-gray-400" />
-//           </div>
-//           <input
-//             type="text"
-//             name="state"
-//             placeholder="State"
-//             value={filters.state}
-//             onChange={handleInputChange}
-//             className="w-full border p-2 rounded"
-//           />
-//           <input
-//             type="text"
-//             name="city"
-//             placeholder="City"
-//             value={filters.city}
-//             onChange={handleInputChange}
-//             className="w-full border p-2 rounded"
-//           />
-//           <button
-//             onClick={handleClearFilters}
-//             className="bg-gray-200 hover:bg-gray-300 p-2 rounded flex items-center justify-center gap-2"
-//           >
-//             <FaFilter /> Clear Filters
-//           </button>
-//         </div>
-
-//         {/* Sidebar and Results */}
-//         <div className="flex flex-col md:flex-row gap-4">
-//           {/* Sidebar Filters */}
-//           <div className="w-full md:w-1/4 space-y-4">
-//             <div>
-//               <h2 className="font-bold mb-2">Your Spending Plan</h2>
-//               {["₹100 - ₹500", "₹300 - ₹500", "₹500+"].map(range => (
-//                 <div key={range}>
-//                   <label className="flex items-center gap-2">
-//                     <input
-//                       type="checkbox"
-//                       checked={filters.priceRanges.includes(range)}
-//                       onChange={() => handleCheckboxChange('priceRanges', range)}
-//                     />
-//                     {range}
-//                   </label>
-//                 </div>
-//               ))}
-//             </div>
-
-//             <div>
-//               <h2 className="font-bold mb-2">Your Stay Preference</h2>
-//               {["Standard", "Luxury", "Deluxe"].map(type => (
-//                 <div key={type}>
-//                   <label className="flex items-center gap-2">
-//                     <input
-//                       type="checkbox"
-//                       checked={filters.types.includes(type)}
-//                       onChange={() => handleCheckboxChange('types', type)}
-//                     />
-//                     {type}
-//                   </label>
-//                 </div>
-//               ))}
-//             </div>
-
-//             <div>
-//               <h2 className="font-bold mb-2">Filter by Customer Rating</h2>
-//               {[1, 2, 3, 4, 5].map(rating => (
-//                 <div key={rating}>
-//                   <label className="flex items-center gap-2">
-//                     <input
-//                       type="checkbox"
-//                       checked={filters.ratings.includes(rating.toString())}
-//                       onChange={() => handleCheckboxChange('ratings', rating.toString())}
-//                     />
-//                     {Array(rating).fill('⭐').join('')}
-//                   </label>
-//                 </div>
-//               ))}
-//             </div>
-
-//             <button
-//               onClick={handleApplyFilters}
-//               className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600"
-//             >
-//               Apply Filters
-//             </button>
-//           </div>
-
-//           {/* Hotel Cards */}
-//           <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-//             {loading ? (
-//               <p>Loading hotels...</p>
-//             ) : error ? (
-//               <p className="text-red-500">{error}</p>
-//             ) : hotels.length === 0 ? (
-//               <p>No hotels found.</p>
-//             ) : (
-//               hotels.map(hotel => (
-//                 <HotelCard key={hotel.id || hotel._id} hotel={hotel} />
-//               ))
-//             )}
-//           </div>
-
-//           <div className="flex justify-center mt-6 space-x-2">
-//         <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} disabled={currentPage === 1}>Prev</button>
-//         {Array.from({ length: totalPages }).map((_, i) => (
-//           <button
-//             key={i}
-//             onClick={() => setCurrentPage(i + 1)}
-//             className={currentPage === i + 1 ? 'font-bold' : ''}
-//           >
-//             {i + 1}
-//           </button>
-//         ))}
-//         <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>Next</button>
-//       </div>
-//       </div>
-        
-         
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default HotelsPage;
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import HotelCard from './HotelCard';
 import Navbar from './Navbar';
 import { FaSearch, FaFilter } from 'react-icons/fa';
+import { ArrowLeft } from 'lucide-react';
+import {  useNavigate } from 'react-router-dom';
 
 const HotelsPage = () => {
   const [hotels, setHotels] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const hotelsPerPage = 6;
 
   const [filters, setFilters] = useState({
     name: '',
@@ -267,92 +20,98 @@ const HotelsPage = () => {
     ratings: []
   });
 
-  const fetchHotels = async (filterParams = filters) => {
-    setLoading(true);
-    setError('');
-    try {
-      const query = buildQueryParams(filterParams);
-      const response = await axios.get(`http://localhost:5000/api/public/all-hotels?${query}`);
-      if (Array.isArray(response.data)) {
-        setHotels(response.data);
-        setCurrentPage(1); // Reset to first page when new filters are applied
-      } else {
-        setHotels([]);
-        setError('Invalid data format received.');
+  const [currentPage, setCurrentPage] = useState(1);
+  const hotelsPerPage = 6;
+
+  useEffect(() => {
+    const fetchAllHotels = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/public/all-hotels');
+        setHotels(Array.isArray(response.data) ? response.data : []);
+      } catch (err) {
+        console.error(err);
+        setError('Failed to fetch hotels.');
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Error fetching hotels:', err);
-      setError('Failed to fetch hotels.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  const buildQueryParams = (filters) => {
-    const params = new URLSearchParams();
-    if (filters.name) params.append('name', filters.name);
-    if (filters.state) params.append('state', filters.state);
-    if (filters.city) params.append('city', filters.city);
+    fetchAllHotels();
+  }, []);
 
-    filters.types.forEach((type) => params.append('type', type));
-    filters.ratings.forEach((rating) => params.append('rating', rating));
-
-    filters.priceRanges.forEach((range) => {
-      const [min, max] = range.replace(/[₹\s+]/g, '').split('-');
-      if (min && max) {
-        params.append('minPrice', min);
-        params.append('maxPrice', max);
-      } else if (range.includes('+')) {
-        const minOnly = range.replace(/[₹+]/g, '').trim();
-        params.append('minPrice', minOnly);
-      }
-    });
-
-    return params.toString();
-  };
-
-  const handleInputChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
-  };
-
-  const handleCheckboxChange = (key, value) => {
-    const current = filters[key];
+  const clearFilters = () => {
     setFilters({
-      ...filters,
-      [key]: current.includes(value) ? current.filter((v) => v !== value) : [...current, value]
-    });
-  };
-
-  const handleApplyFilters = () => fetchHotels(filters);
-
-  const handleClearFilters = () => {
-    const cleared = {
       name: '',
       state: '',
       city: '',
       priceRanges: [],
       types: [],
       ratings: []
-    };
-    setFilters(cleared);
-    fetchHotels(cleared);
+    });
+    setCurrentPage(1);
   };
 
-  useEffect(() => {
-    fetchHotels();
-  }, []);
+  const handleCheckboxChange = (key, value) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: prev[key].includes(value)
+        ? prev[key].filter((v) => v !== value)
+        : [...prev[key], value]
+    }));
+  };
+
+  const handleInputChange = (e) => {
+    setFilters({ ...filters, [e.target.name]: e.target.value });
+  };
+
+ 
+  const filteredHotels = hotels.filter((hotel) => {
+    const matchesName = !filters.name || hotel.name?.toLowerCase().includes(filters.name.toLowerCase());
+    const matchesState = !filters.state || hotel.address?.state === filters.state;
+    const matchesCity = !filters.city || hotel.address?.city === filters.city;
+
+    const matchesType = filters.types.length === 0 || filters.types.includes(hotel.type);
+    const matchesRating = filters.ratings.length === 0 || filters.ratings.includes(String(hotel.rating));
+
+    const price = parseInt(hotel.price, 10);
+    const matchesPrice =
+      filters.priceRanges.length === 0 ||
+      filters.priceRanges.some((range) => {
+        if (range.includes('+')) {
+          const min = parseInt(range.replace(/[₹+]/g, ''), 10);
+          return price >= min;
+        } else {
+          const [min, max] = range.replace(/[₹\s]/g, '').split('-').map(Number);
+          return price >= min && price <= max;
+        }
+      });
+
+    return matchesName && matchesState && matchesCity && matchesType && matchesRating && matchesPrice;
+  });
 
   const indexOfLast = currentPage * hotelsPerPage;
   const indexOfFirst = indexOfLast - hotelsPerPage;
-  const currentHotels = hotels.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(hotels.length / hotelsPerPage);
+  const currentHotels = filteredHotels.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(filteredHotels.length / hotelsPerPage);
+  
+    const navigate = useNavigate();
+
+  const handleBackClick = () => {
+    navigate(-1);
+  };
 
   return (
     <>
       <Navbar />
-      <div className="p-4 space-y-4">
-        {/* Top Filters */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-[5.5rem]">
+      <div className="p-4 space-y-4 px-8 md:px-[4rem] mt-[4.5rem]">
+        <button 
+        onClick={handleBackClick}
+        className="top-24 left-4 md:left-8 z-50 flex items-center gap-2 "
+      >
+        <ArrowLeft />
+        
+      </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div className="relative">
             <input
               type="text"
@@ -381,99 +140,82 @@ const HotelsPage = () => {
             className="w-full border p-2 rounded"
           />
           <button
-            onClick={handleClearFilters}
+            onClick={clearFilters}
             className="bg-gray-200 hover:bg-gray-300 p-2 rounded flex items-center justify-center gap-2"
           >
             <FaFilter /> Clear Filters
           </button>
         </div>
 
-        {/* Sidebar and Results */}
+       
         <div className="flex flex-col md:flex-row gap-4">
-          {/* Sidebar Filters */}
+       
           <div className="w-full md:w-1/4 space-y-4">
             <div>
-              <h2 className="font-bold mb-2">Your Spending Plan</h2>
-              {["₹100 - ₹500", "₹300 - ₹500", "₹500+"].map(range => (
-                <div key={range}>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={filters.priceRanges.includes(range)}
-                      onChange={() => handleCheckboxChange('priceRanges', range)}
-                    />
-                    {range}
-                  </label>
-                </div>
+              <h2 className="font-bold mb-2">Price Range</h2>
+              {["₹100 - ₹500", "₹300 - ₹500", "₹500+"].map((range) => (
+                <label key={range} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={filters.priceRanges.includes(range)}
+                    onChange={() => handleCheckboxChange('priceRanges', range)}
+                  />
+                  {range}
+                </label>
               ))}
             </div>
 
             <div>
-              <h2 className="font-bold mb-2">Your Stay Preference</h2>
-              {["Standard", "Luxury", "Deluxe"].map(type => (
-                <div key={type}>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={filters.types.includes(type)}
-                      onChange={() => handleCheckboxChange('types', type)}
-                    />
-                    {type}
-                  </label>
-                </div>
+              <h2 className="font-bold mb-2">Hotel Type</h2>
+              {["Standard", "Luxury", "Deluxe"].map((type) => (
+                <label key={type} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={filters.types.includes(type)}
+                    onChange={() => handleCheckboxChange('types', type)}
+                  />
+                  {type}
+                </label>
               ))}
             </div>
 
             <div>
-              <h2 className="font-bold mb-2">Filter by Customer Rating</h2>
-              {[1, 2, 3, 4, 5].map(rating => (
-                <div key={rating}>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={filters.ratings.includes(rating.toString())}
-                      onChange={() => handleCheckboxChange('ratings', rating.toString())}
-                    />
-                    {Array(rating).fill('⭐').join('')}
-                  </label>
-                </div>
+              <h2 className="font-bold mb-2">Ratings</h2>
+              {[1, 2, 3, 4, 5].map((rating) => (
+                <label key={rating} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={filters.ratings.includes(String(rating))}
+                    onChange={() => handleCheckboxChange('ratings', String(rating))}
+                  />
+                  {Array(rating).fill('⭐').join('')}
+                </label>
               ))}
             </div>
-
-            <button
-              onClick={handleApplyFilters}
-              className="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600"
-            >
-              Apply Filters
-            </button>
           </div>
 
-          {/* Hotel Cards */}
+          {/* Results */}
           <div className="flex-1">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {loading ? (
-                <p>Loading hotels...</p>
-              ) : error ? (
-                <p className="text-red-500">{error}</p>
-              ) : currentHotels.length === 0 ? (
-                <p>No hotels found.</p>
-              ) : (
-                currentHotels.map(hotel => (
-                  <HotelCard key={hotel.id || hotel._id} hotel={hotel} />
-                ))
-              )}
-            </div>
+            {loading ? (
+              <p>Loading hotels...</p>
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : currentHotels.length === 0 ? (
+              <p>No hotels found.</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {currentHotels.map((hotel) => (
+                  <HotelCard key={hotel._id || hotel.id} hotel={hotel} />
+                ))}
+              </div>
+            )}
 
-            {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex justify-center mt-6 space-x-2">
-                <button
-                  onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
-                  disabled={currentPage === 1}
-                >
+                <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>
                   Prev
                 </button>
-                {Array.from({ length: totalPages }).map((_, i) => (
+                {Array.from({ length: totalPages }, (_, i) => (
                   <button
                     key={i}
                     onClick={() => setCurrentPage(i + 1)}
@@ -482,10 +224,7 @@ const HotelsPage = () => {
                     {i + 1}
                   </button>
                 ))}
-                <button
-                  onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                >
+                <button onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>
                   Next
                 </button>
               </div>
@@ -498,8 +237,6 @@ const HotelsPage = () => {
 };
 
 export default HotelsPage;
-
-
 
 
 

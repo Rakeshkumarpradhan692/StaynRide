@@ -20,8 +20,8 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gradient-to-b from-gray-900 to-black text-gray-300 pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer className="bg-gradient-to-b from-gray-900 to-black text-gray-300 pt-10 pb-8">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-[4rem]">
         <motion.div 
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10"
           initial="hidden"
@@ -29,7 +29,7 @@ export default function Footer() {
           viewport={{ once: true }}
           variants={footerVariants}
         >
-          {/* Brand Column */}
+         
           <motion.div variants={itemVariants}>
             <div className="flex items-center mb-4">
               <div className="bg-blue-600 p-2 rounded-lg mr-3">
@@ -53,7 +53,7 @@ export default function Footer() {
             </div>
           </motion.div>
 
-          {/* Quick Links */}
+          
           <motion.div variants={itemVariants}>
             <h3 className="text-lg font-semibold text-white mb-4 pb-2 border-b border-gray-700">Quick Links</h3>
             <ul className="space-y-3">
@@ -78,7 +78,7 @@ export default function Footer() {
             </ul>
           </motion.div>
 
-          {/* Contact Info */}
+         
           <motion.div variants={itemVariants}>
             <h3 className="text-lg font-semibold text-white mb-4 pb-2 border-b border-gray-700">Contact Us</h3>
             <ul className="space-y-4">
@@ -112,7 +112,7 @@ export default function Footer() {
             </ul>
           </motion.div>
 
-          {/* Newsletter */}
+        
           <motion.div variants={itemVariants}>
             <h3 className="text-lg font-semibold text-white mb-4 pb-2 border-b border-gray-700">Newsletter</h3>
             <p className="text-gray-400 mb-4">Subscribe to our newsletter for the latest offers and travel tips.</p>
@@ -148,7 +148,7 @@ export default function Footer() {
           </motion.div>
         </motion.div>
 
-        {/* Copyright */}
+        
         <motion.div 
           className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-sm"
           initial={{ opacity: 0 }}

@@ -104,19 +104,19 @@ const FeedbackPopup = ({ onClose }) => {
 
   return (
     <motion.div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black bg-opacity-50 overflow-y-scroll  flex items-center justify-center z-50 py-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
       <motion.div 
-        className="bg-white  w-[60%]  rounded-xl shadow-2xl overflow-hidden"
+        className="bg-white md:w-[60%] h-[100vh]  overflow-y-scroll rounded-xl shadow-2xl overflow-hidden"
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ type: "spring", damping: 25 }}
       >
         <div className="flex flex-col md:flex-row ">
-          <div className="md:w-1/2 bg-gradient-to-br from-blue-600 to-blue-800 text-white p-8">
+          <div className="w-full md:w-1/2 bg-gradient-to-br from-blue-600 to-blue-800 text-white p-8">
             <div className="flex justify-between items-start mb-6">
               <h3 className="text-xl font-bold">WHY IS YOUR FEEDBACK IMPORTANT TO US</h3>
               <button 
@@ -166,7 +166,7 @@ const FeedbackPopup = ({ onClose }) => {
               </div>
             </div>
           </div>
-          <div className="md:w-1/2 p-8">
+          <div className="w-full md:w-1/2 p-8">
             <h4 className="text-xl font-bold text-gray-800 mb-6">Feedback Form</h4>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -238,7 +238,7 @@ const FeedbackPage = () => {
   );
 
   return (
-    <div className="bg-gray-50 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div className="bg-gray-50 py-6">
       <div className="w-full mx-auto">
         <motion.div 
           className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-12"
@@ -275,7 +275,7 @@ const FeedbackPage = () => {
         </div>
 
         {/* Pagination */}
-        {totalPages > 1 && (
+        {/* {totalPages > 1 && (
           <div className="flex justify-center">
             <div className="inline-flex rounded-md shadow-sm">
               {Array.from({ length: totalPages }, (_, i) => (
@@ -295,7 +295,58 @@ const FeedbackPage = () => {
               ))}
             </div>
           </div>
-        )}
+        )} */}
+
+          
+      {totalPages > 1 && (
+      <div className="flex justify-center mt-4">
+        <div className="inline-flex shadow-sm">
+          {/* Previous Button - No border */}
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={`px-4 py-2 text-sm font-medium rounde ${
+              currentPage === 1
+                // ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                // : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            Prev
+          </button>
+
+          {/* Page Number Buttons */}
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`px-4 py-2 text-sm font-medium border border-gray-300 ${
+                currentPage === i + 1
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white text-gray-700 hover:bg-gray-"
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+
+          {/* Next Button - No border */}
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
+              currentPage === totalPages
+                // ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                // : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    )}
+    
       </div>
     </div>
   );

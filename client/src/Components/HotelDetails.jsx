@@ -148,15 +148,7 @@ const HotelDetails = () => {
 
 
       <div className="font-serif text-gray-800 bg-white mt-[5rem]">
-   <div className='p-6'>
-      <button 
-        onClick={handleBackClick}
-        className="top-24 left-4 md:left-8 z-50 flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
-      >
-        <ArrowLeft />
-        <span>Back to Home</span>
-      </button>
-     </div>
+   
   <div
     className="relative h-[80vh] bg-cover bg-center"
     style={{ backgroundImage: `url(${hotel.images[0]})` }}
@@ -171,8 +163,18 @@ const HotelDetails = () => {
   </div>
 
   
-  <div className="w-full mx-auto px-4 sm:px-6 lg:px-[4rem] py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-    <div className="order-2 md:order-1">
+  <div className="w-full mx-auto px-4 sm:px-6 lg:px-[4rem] py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-cent">
+    
+    <div className="order-2 md:order-1 px-6">
+      <div className=''>
+      <button 
+        onClick={handleBackClick}
+        className="top-24 left-4 md:left-8 z-50 flex items-center gap-2 "
+      >
+        <ArrowLeft />
+        <span></span>
+      </button>
+     </div>
       <h2 className="text-4xl font-semibold text-[#8C5B3F] mb-6">{hotel.name}</h2>
       <p className="text-lg text-gray-600 mb-8 leading-relaxed">{hotel.description}</p>
       <ul className="space-y-3 text-gray-700 text-lg">
@@ -196,7 +198,7 @@ const HotelDetails = () => {
           Book Now
         </button>
     </div>
-    <div className="order-1 md:order-2">
+    <div className="order-1 md:order-2 p-4">
       <img
         src={img}
         alt="Hotel Room"
@@ -253,7 +255,7 @@ const HotelDetails = () => {
   </div>
 
  
-  <div className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+  <div className="py-16 px-6 lg:px-[4rem] bg-white">
     <div className="max-w-7xl mx-auto">
       <h3 className="text-3xl font-bold text-[#8C5B3F] mb-2 text-center">Room Features</h3>
       <p className="text-gray-600 text-center mb-12 max-w-3xl mx-auto">

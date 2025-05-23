@@ -6,7 +6,7 @@ export const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [Auth, setAuth] = useState({
     isLoggedIn: false,
-    userData: null,
+    user: null,
   });
 
   useEffect(() => {
@@ -15,7 +15,7 @@ const AuthProvider = ({ children }) => {
       setAuth((prev) => ({
         ...prev,
         isLoggedIn: true,
-        userData: JSON.parse(storedUser),
+        user: JSON.parse(storedUser),
       }));
     }
   }, [Auth.isLoggedIn]);

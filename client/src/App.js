@@ -14,6 +14,7 @@ import HotelDetails from './Components/HotelDetails';
 import PrivateRoute from './Components/PrivateRoute';
 import PublicRoute from './Components/PublicRoute'; 
 import CabDetail from './Components/CabDetails';
+import ProfilePage from './Components/Profilepage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path='/about' element={<About />} />
         <Route path='/contact' element={<Contact />} />
         <Route path='/login' element={<LoginPage />} />
+         <Route path="/profile" element={<ProfilePage />} />
          <Route path="/cab/:id" element={<CabDetail />} />
        <Route path='/hotel/:id' element={<HotelDetails />} /> 
         <Route
