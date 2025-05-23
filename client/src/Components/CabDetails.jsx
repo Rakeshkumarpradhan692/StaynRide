@@ -141,7 +141,7 @@ export default function CabDetail() {
     </div>
   );
    const handleBackClick = () => {
-    navigate('/'); // Navigates to home page
+    navigate('/'); 
   };
 
   return (

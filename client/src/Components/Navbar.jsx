@@ -163,10 +163,10 @@
 
 
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import Logo from "../Components/Photo/logo.png";
-import { FaUser, FaSignInAlt, FaUserPlus, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
+import { FaUser, FaSignInAlt, FaUserPlus, FaSignOutAlt, FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -174,7 +174,8 @@ const Navbar = () => {
   const [user, setUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
-
+  const [showDropdown, setShowDropdown] = useState(false);
+const dropdownRef = useRef(null);
   // Load auth state from localStorage on mount
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -205,11 +206,22 @@ const Navbar = () => {
       window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setShowDropdown(false);
+    }
+  };
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
 
   const navLinkStyles = ({ isActive }) => ({
     color: isActive ? "#3b82f6" : "#374151",
     borderBottom: isActive ? "2px solid #3b82f6" : "none",
-    paddingBottom: isActive ? "4px" : "0",
+    
   });
 
   const handleLogout = () => {
@@ -261,19 +273,40 @@ const Navbar = () => {
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center text-blue-600">
-                  <FaUser className="mr-2" />
-                  <span className="font-medium">{user?.name || "User"}</span>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  <FaSignOutAlt className="mr-2" />
-                  Logout
-                </button>
-              </div>
+             <div className="relative" ref={dropdownRef}>
+  <button
+    onClick={() => setShowDropdown(!showDropdown)}
+    className="flex items-center text-blue-600 font-medium focus:outline-none"
+  >
+    <FaUser className="mr-2" />
+    {user?.name || "User"}
+    <FaChevronDown className="ml-1" />
+  </button>
+
+  {showDropdown && (
+    <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-50">
+      <button
+        onClick={() => {
+          navigate("/profile");
+          setShowDropdown(false);
+        }}
+        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
+      >
+        Profile
+      </button>
+      <button
+        onClick={() => {
+          handleLogout();
+          setShowDropdown(false);
+        }}
+        className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
+      >
+        Logout
+      </button>
+    </div>
+  )}
+</div>
+
             ) : (
               <>
                 <button
@@ -354,6 +387,14 @@ const Navbar = () => {
                 <FaSignOutAlt className="mr-1" />
                 Logout
               </button>
+              {/* <NavLink
+    to="/profile"
+    style={navLinkStyles}
+    className="block px-3 py-2 rounded-md text-base font-medium hover:bg-blue-50"
+    onClick={() => setIsMenuOpen(false)}
+  >
+    Profile
+  </NavLink> */}
             </div>
           ) : (
             <div className="space-y-2">

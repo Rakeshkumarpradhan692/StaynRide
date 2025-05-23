@@ -18,7 +18,7 @@ const HotelFacilities = () => {
   ];
 
   return (
-    <section className="bg-gradient-to-br from-blue-50 to-gray-50 py-12 px-8 lg:px-8">
+    <section className="bg-gradient-to-br from-blue-50 to-gray-50 py-8 px-10 lg:px-[4rem]">
       <div className="w-full mx-auto">
         <motion.div 
           className="flex flex-col lg:flex-row gap-12 items-center"

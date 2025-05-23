@@ -238,7 +238,7 @@ const FeedbackPage = () => {
   );
 
   return (
-    <div className="bg-gray-50 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div className="bg-gray-50 py-6  px-4 sm:px-6 lg:px-8">
       <div className="w-full mx-auto">
         <motion.div 
           className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-12"

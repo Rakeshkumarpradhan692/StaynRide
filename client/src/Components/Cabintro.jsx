@@ -26,8 +26,8 @@ function Cabintro() {
   };
 
   return (
-    <section className="bg-gradient-to-br from-blue-50 to-gray-50 py-10 px-6 lg:px-8">
-      <div className="w-full mx-auto">
+    <section className="bg-gradient-to-br from-blue-50 to-gray-50 py-8 px-10 lg:px-8">
+      <div className="w-full mx-auto  ">
         <motion.div 
           className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center"
           initial="hidden"
@@ -105,7 +105,7 @@ function Cabintro() {
 
           
             <motion.div 
-              className="grid grid-cols-2 gap-4 mt-6"
+              className="grid grid-cols sm:grid-cols-2 gap-4 mt-6"
               variants={container}
             >
               {[

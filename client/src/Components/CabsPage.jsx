@@ -340,7 +340,7 @@ export default function CabsPage() {
                   disabled={currentPage === 1}
                   className="px-3 py-1 border rounded disabled:opacity-50"
                 >
-                  Prev
+                  
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => (
                   <button
@@ -356,7 +356,7 @@ export default function CabsPage() {
                   disabled={currentPage === totalPages}
                   className="px-3 py-1 border rounded disabled:opacity-50"
                 >
-                  Next
+                  
                 </button>
               </div>
             </>

@@ -11,7 +11,7 @@ const stats = [
 
 const StatsSection = () => {
   return (
-    <div className="bg-gradient-to-r from-gray-900 to-black py-8 px-4 sm:px-6 lg:px-8">
+    <div className="bg-gradient-to-r from-gray-800 to-black py-8 px-4 sm:px-6 lg:px-8">
       <motion.section 
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}

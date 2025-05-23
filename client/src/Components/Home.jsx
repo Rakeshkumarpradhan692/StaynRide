@@ -295,11 +295,11 @@ function Home() {
       <HotelFacilities />
 
       {/* Cabs Section */}
-      <section className="py-12 md:py-16 lg:py-20 bg-gradient-to-b from-gray-50 to-white">
-        <div className="w-full mx-auto px-4 sm:px-6 lg:px-[4rem]">
+      <section className="py-8 md:py-10  bg-gradient-to-b from-gray-50 to-white">
+        <div className="w-full mx-auto  px-4 sm:px-10 lg:px-[4rem]">
          
           
-          <div className="flex flex-col md:flex-row justify-between items-center mb-8 md:mb-12 px-4 sm:px-0">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8 md:mb-8 px-4 sm:px-0">
             <motion.h2 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -323,7 +323,7 @@ function Home() {
           </div>
 
           {loading ? (
-            <div className="flex justify-center items-center h-64">
+            <div className="flex justify-center items-center h-">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
             </div>
           ) : (
@@ -343,12 +343,12 @@ function Home() {
            <Cabintro />
         </div>
       </section>
-
+      
      
       
-      {/* Testimonials Section */}
-      <section className="py-12 md:py-16 lg:py-4 bg-gradient-to-b from-white to-gray-50">
-        <div className="w-full mx-auto px-4 sm:px-6 lg:px-[4rem]">
+      
+      <section className="py-8  bg-gradient-to-b from-white to-gray-50">
+        <div className="w-full mx-auto px-4  sm:px-10 lg:px-[4rem]">
           <FeedbackFrom />
         </div>
       </section>
