@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const adminController = require("../Controllers/AdminController.js");
+const adminController = require("../controllers/AdminController.js");
 const hotelController = require("../controllers/HotelsController.js");
 const cabController = require("../controllers/CabController.js");
 const bannerController = require("../controllers/BannerController.js");

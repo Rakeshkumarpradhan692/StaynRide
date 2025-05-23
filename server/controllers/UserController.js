@@ -2,12 +2,11 @@ const Users = require("../models/UserModel.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
 exports.signup = async (req, res) => {
   console.log(req.body.formData);
   try {
     const {
+      image,
       name,
       email,
       number,
@@ -22,6 +21,7 @@ exports.signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new Users({
+      image,
       name,
       email,
       number,

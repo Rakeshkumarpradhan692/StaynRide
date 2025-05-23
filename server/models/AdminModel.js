@@ -15,11 +15,13 @@ const adminSchema = new mongoose.Schema(
       lowercase: true,
       match: [/^\S+@\S+\.\S+$/, "Please provide a valid email"],
     },
+    gender: {
+      type: String,
+      required: true,
+    },
     password: {
       type: String,
       required: [true, "Password is required"],
-      minlength: 6,
-      select: false, // don't return password in queries by default
     },
     createdAt: {
       type: Date,
@@ -29,4 +31,4 @@ const adminSchema = new mongoose.Schema(
   { collection: "admins" }
 );
 
-module.exports = mongoose.model("Admin", adminSchema);
+module.exports = mongoose.model("Admins", adminSchema);

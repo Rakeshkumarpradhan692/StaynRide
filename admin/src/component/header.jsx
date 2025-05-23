@@ -1,11 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import people from "../assets/images/people.jpg";
 import Logo from "../assets/images/logo.png";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/Auth";
 import { Menu, User, LogOut, ChevronDown } from "lucide-react";
 
 function Header(props) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { auth, logout } = useContext(AuthContext);
   const dropdownRef = useRef(null);
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -27,6 +29,7 @@ function Header(props) {
 
   const handleLogout = () => {
     // Add your logout logic here
+    logout();
     console.log("Logging out...");
     setIsDropdownOpen(false);
   };
@@ -73,7 +76,7 @@ function Header(props) {
         </div>
 
         {isDropdownOpen && (
-          <div className="origin-top-right absolute right-0 top-12 w-56 rounded-lg shadow-xl bg-white ring-1 ring-gray-200 focus:outline-none z-50 overflow-hidden animate-fade-in">
+          <div className="origin-top-right z-50 absolute right-0 top-10 w-56 rounded-lg shadow-xl bg-white  focus:outline-none overflow-hidden animate-fade-in">
             <div className="py-1">
               <div className="px-4 py-3 border-b border-gray-100">
                 <p className="text-sm font-medium text-gray-900">John Doe</p>
