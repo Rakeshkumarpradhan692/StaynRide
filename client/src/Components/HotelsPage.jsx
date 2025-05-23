@@ -1,23 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import HotelCard from './HotelCard';
-import Navbar from './Navbar';
-import { FaSearch, FaFilter } from 'react-icons/fa';
-import { ArrowLeft } from 'lucide-react';
-import {  useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import HotelCard from "./HotelCard";
+import Navbar from "./Navbar";
+import { FaSearch, FaFilter } from "react-icons/fa";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const HotelsPage = () => {
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const [filters, setFilters] = useState({
-    name: '',
-    state: '',
-    city: '',
-    priceRanges: [],
+    name: "",
+    state: "",
+    city: "",
     types: [],
-    ratings: []
+    ratings: [],
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,11 +25,14 @@ const HotelsPage = () => {
   useEffect(() => {
     const fetchAllHotels = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/public/all-hotels');
+        const response = await axios.get(
+          "http://localhost:5000/api/public/all-hotels"
+        );
         setHotels(Array.isArray(response.data) ? response.data : []);
+        console.log("hotels", response.data);
       } catch (err) {
         console.error(err);
-        setError('Failed to fetch hotels.');
+        setError("Failed to fetch hotels.");
       } finally {
         setLoading(false);
       }
@@ -41,12 +43,12 @@ const HotelsPage = () => {
 
   const clearFilters = () => {
     setFilters({
-      name: '',
-      state: '',
-      city: '',
-      priceRanges: [],
+      name: "",
+      state: "",
+      city: "",
+
       types: [],
-      ratings: []
+      ratings: [],
     });
     setCurrentPage(1);
   };
@@ -56,7 +58,7 @@ const HotelsPage = () => {
       ...prev,
       [key]: prev[key].includes(value)
         ? prev[key].filter((v) => v !== value)
-        : [...prev[key], value]
+        : [...prev[key], value],
     }));
   };
 
@@ -64,37 +66,32 @@ const HotelsPage = () => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
 
- 
   const filteredHotels = hotels.filter((hotel) => {
-    const matchesName = !filters.name || hotel.name?.toLowerCase().includes(filters.name.toLowerCase());
-    const matchesState = !filters.state || hotel.address?.state === filters.state;
-    const matchesCity = !filters.city || hotel.address?.city === filters.city;
+    const matchesName =
+      !filters.name ||
+      hotel.name?.toLowerCase().includes(filters.name.toLowerCase());
 
-    const matchesType = filters.types.length === 0 || filters.types.includes(hotel.type);
-    const matchesRating = filters.ratings.length === 0 || filters.ratings.includes(String(hotel.rating));
+    const matchesState = !filters.state || hotel.state === filters.state;
+    const matchesCity = !filters.city || hotel.city === filters.city;
 
-    const price = parseInt(hotel.price, 10);
-    const matchesPrice =
-      filters.priceRanges.length === 0 ||
-      filters.priceRanges.some((range) => {
-        if (range.includes('+')) {
-          const min = parseInt(range.replace(/[₹+]/g, ''), 10);
-          return price >= min;
-        } else {
-          const [min, max] = range.replace(/[₹\s]/g, '').split('-').map(Number);
-          return price >= min && price <= max;
-        }
-      });
+    const matchesType =
+      filters.types.length === 0 || filters.types.includes(hotel.hotelType);
 
-    return matchesName && matchesState && matchesCity && matchesType && matchesRating && matchesPrice;
+    const matchesRating =
+      filters.ratings.length === 0 ||
+      filters.ratings.includes(String(Math.floor(hotel.rating)));
+
+    return (
+      matchesName && matchesState && matchesCity && matchesType && matchesRating
+    );
   });
 
   const indexOfLast = currentPage * hotelsPerPage;
   const indexOfFirst = indexOfLast - hotelsPerPage;
   const currentHotels = filteredHotels.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredHotels.length / hotelsPerPage);
-  
-    const navigate = useNavigate();
+
+  const navigate = useNavigate();
 
   const handleBackClick = () => {
     navigate(-1);
@@ -104,13 +101,12 @@ const HotelsPage = () => {
     <>
       <Navbar />
       <div className="p-4 space-y-4 px-8 md:px-[4rem] mt-[4.5rem]">
-        <button 
-        onClick={handleBackClick}
-        className="top-24 left-4 md:left-8 z-50 flex items-center gap-2 "
-      >
-        <ArrowLeft />
-        
-      </button>
+        <button
+          onClick={handleBackClick}
+          className="top-24 left-4 md:left-8 z-50 flex items-center gap-2 "
+        >
+          <ArrowLeft />
+        </button>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div className="relative">
             <input
@@ -147,24 +143,8 @@ const HotelsPage = () => {
           </button>
         </div>
 
-       
         <div className="flex flex-col md:flex-row gap-4">
-       
           <div className="w-full md:w-1/4 space-y-4">
-            <div>
-              <h2 className="font-bold mb-2">Price Range</h2>
-              {["₹100 - ₹500", "₹300 - ₹500", "₹500+"].map((range) => (
-                <label key={range} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={filters.priceRanges.includes(range)}
-                    onChange={() => handleCheckboxChange('priceRanges', range)}
-                  />
-                  {range}
-                </label>
-              ))}
-            </div>
-
             <div>
               <h2 className="font-bold mb-2">Hotel Type</h2>
               {["Standard", "Luxury", "Deluxe"].map((type) => (
@@ -172,7 +152,7 @@ const HotelsPage = () => {
                   <input
                     type="checkbox"
                     checked={filters.types.includes(type)}
-                    onChange={() => handleCheckboxChange('types', type)}
+                    onChange={() => handleCheckboxChange("types", type)}
                   />
                   {type}
                 </label>
@@ -186,9 +166,11 @@ const HotelsPage = () => {
                   <input
                     type="checkbox"
                     checked={filters.ratings.includes(String(rating))}
-                    onChange={() => handleCheckboxChange('ratings', String(rating))}
+                    onChange={() =>
+                      handleCheckboxChange("ratings", String(rating))
+                    }
                   />
-                  {Array(rating).fill('⭐').join('')}
+                  {Array(rating).fill("⭐").join("")}
                 </label>
               ))}
             </div>
@@ -212,19 +194,31 @@ const HotelsPage = () => {
 
             {totalPages > 1 && (
               <div className="flex justify-center mt-6 space-x-2">
-                <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1}>
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  disabled={currentPage === 1}
+                >
                   Prev
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => (
                   <button
                     key={i}
                     onClick={() => setCurrentPage(i + 1)}
-                    className={`px-3 py-1 rounded ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                    className={`px-3 py-1 rounded ${
+                      currentPage === i + 1
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200"
+                    }`}
                   >
                     {i + 1}
                   </button>
                 ))}
-                <button onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(p + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                >
                   Next
                 </button>
               </div>
@@ -237,10 +231,3 @@ const HotelsPage = () => {
 };
 
 export default HotelsPage;
-
-
-
-
-
-
-
