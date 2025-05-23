@@ -581,9 +581,9 @@ const BookingCoponent = ({
   handlesubmit,
   componentType,
 }) => {
-  // useEffect(() => {
-  //   console.log("create data", data);
-  // }, [data]);
+  useEffect(() => {
+    console.log("edit data", data);
+  }, [data]);
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <form
@@ -633,11 +633,11 @@ const BookingCoponent = ({
           )}
         </div>
         <div>
-          <label className="block text-sm font-semibold">User ID</label>
+          <label className="block text-sm font-semibold">User name</label>
           <input
             type="text"
             name="userId"
-            value={data.userId}
+            value={data.username}
             onChange={handlechage}
             className="w-full border rounded px-3 py-2"
             placeholder="Enter User ID"

@@ -3,10 +3,9 @@ import { Mail, Lock, Eye, EyeOff, LogIn, Key } from "lucide-react";
 import { AuthContext } from "../context/Auth";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const { setAuth } = useContext(AuthContext);
+  const { setauth } = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -46,7 +45,7 @@ function Login() {
 
       if (response.data?.success) {
         localStorage.setItem("admin", JSON.stringify(response.data.admin));
-        setAuth((prev) => ({
+        setauth((prev) => ({
           ...prev,
           islogin: true,
           admin: response.data.admin,

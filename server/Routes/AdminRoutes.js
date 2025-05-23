@@ -10,6 +10,7 @@ const Booking = require("../controllers/BookingController.js");
 const feedbackController = require("../controllers/feedbackController.js");
 
 router.post("/login", adminController.adminLogin);
+router.put("/update/:id", adminController.updateAdmin);
 
 router.post("/create-banner", bannerController.createBanner);
 router.put("/update-banner", bannerController.updateBanner);

@@ -27,3 +27,28 @@ exports.adminLogin = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+exports.updateAdmin = async (req, res) => {
+  const { id } = req.params;
+  const { name, email, gender, password } = req.body;
+
+  try {
+    const admin = await Admin.findById(id);
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+    if (name) admin.name = name;
+    if (email) admin.email = email;
+    if (gender) admin.gender = gender;
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      admin.password = await bcrypt.hash(password, salt);
+    }
+    await admin.save();
+
+    res.status(200).json({ message: "Admin updated successfully", admin });
+  } catch (error) {
+    console.error("Error updating admin:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};

@@ -3,7 +3,7 @@ import React, { createContext, useEffect, useState } from "react";
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [auth, setAuth] = useState({
+  const [auth, setauth] = useState({
     islogin: false,
     admin: null,
   });
@@ -11,17 +11,26 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem("admin");
     if (storedUser) {
-      setAuth({ islogin: true, adminuser: JSON.parse(storedUser) });
+      setauth({ islogin: true, admin: JSON.parse(storedUser) });
     }
   }, []);
 
   const logout = () => {
     localStorage.removeItem("admin");
-    setAuth({ islogin: false, admin: null });
+    setauth({ islogin: false, admin: null });
+  };
+
+  const updateAdmin = (updatedAdmin) => {
+    const newAuth = {
+      ...auth,
+      admin: updatedAdmin,
+    };
+    setauth(newAuth);
+    localStorage.setItem("admin", JSON.stringify(updatedAdmin));
   };
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth, logout }}>
+    <AuthContext.Provider value={{ auth, setauth, logout, updateAdmin }}>
       {children}
     </AuthContext.Provider>
   );
