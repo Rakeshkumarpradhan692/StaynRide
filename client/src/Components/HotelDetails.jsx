@@ -33,12 +33,11 @@ const HotelDetails = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
     checkIn: "",
     checkOut: "",
-    roomType: "",
+    roomNumber: [],
     guests: 1,
+    price: 0,
   });
 
   useEffect(() => {
@@ -71,7 +70,15 @@ const HotelDetails = () => {
 
     fetchHotelAndRooms();
   }, [id]);
-
+  const handleRoomselect = (room) => {
+    const No = room.roomNumber;
+    const price = room.price;
+    setFormData((prev) => ({
+      ...prev,
+      roomNumber: [formData.roomNumber, No],
+      price: formData.price + price,
+    }));
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -112,7 +119,6 @@ const HotelDetails = () => {
         prefill: { name: formData.name, email: formData.email },
         theme: { color: "#8C5B3F" },
       };
-
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
@@ -120,14 +126,11 @@ const HotelDetails = () => {
       alert("Payment initiation failed.");
     }
   };
-
   const resetForm = () => {
     setFormData({
-      name: "",
-      email: "",
       checkIn: "",
       checkOut: "",
-      roomType: "",
+      roomNumber: "",
       guests: 1,
     });
     setStep(1);
@@ -327,7 +330,11 @@ const HotelDetails = () => {
               onClick={() => setIsModalOpen(false)}
               className="absolute top-4 right-4 text-2xl text-gray-600 hover:text-black"
             >
-              <IoCloseSharp />
+              <IoCloseSharp
+                onClick={() => {
+                  resetForm();
+                }}
+              />
             </button>
 
             <h2 className="text-2xl text-center font-bold text-[#8C5B3F] mb-4">
@@ -344,12 +351,20 @@ const HotelDetails = () => {
             {step === 1 && (
               <form onSubmit={handleSubmitDetails} className="space-y-4">
                 <p>Choose rooms</p>
-                <div className=" flex flex-wrap">
-                  {rooms.map((room, i) => (
-                    <div className=" bg-gray-400 px-4 py-1 rounded-md" key={i}>
-                      {room.roomNumber}
-                    </div>
-                  ))}
+                <div className=" flex flex-wrap gap-2">
+                  {rooms.length > 0 ? (
+                    rooms.map((room, i) => (
+                      <div
+                        onClick={() => handleRoomselect(room)}
+                        className=" bg-gray-400 px-4 py-1 rounded-md"
+                        key={i}
+                      >
+                        {room.roomNumber}
+                      </div>
+                    ))
+                  ) : (
+                    <div className=" text-red-500 ml-5 "> no room avilable</div>
+                  )}
                 </div>
                 <Input
                   name="checkIn"
@@ -418,7 +433,7 @@ const HotelDetails = () => {
 
             {step === 3 && (
               <div className="text-center">
-                <p className="mb-4">Total: ₹{hotel.price}</p>
+                <p className="mb-4">Total: ₹{formData.price}</p>
                 <button
                   onClick={openRazorpayCheckout}
                   className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
