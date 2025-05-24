@@ -167,7 +167,7 @@ const HotelDetails = () => {
           style={{ backgroundImage: `url(${hotel.images[0]})` }}
         >
           <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center px-4 text-center text-white">
-            <div className="max-w-4xl">
+            <div className="w-full">
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
                 {hotel.name}
               </h1>
