@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Pencil, Trash2, Plus, Minus } from "lucide-react";
+import { Pencil, Trash2, Plus, Minus, RotateCcw } from "lucide-react";
 import Swal from "sweetalert2";
 import TableSkeliton from "../component/TableSkeliton";
 import axios from "axios";
@@ -111,8 +111,6 @@ function Booking() {
       ) {
         return false;
       }
-
-      // Filter by search text
       if (updatedFilters.search) {
         const searchTerm = updatedFilters.search.toLowerCase();
         const matchesName = booking.userId.name
@@ -341,7 +339,7 @@ function Booking() {
   };
 
   return (
-    <div className=" relative p-4 w-full h-full overflow-hidden">
+    <div className="p-4 w-full h-full overflow-hidden">
       {isloading === true ? (
         <TableSkeliton />
       ) : (
@@ -425,12 +423,12 @@ function Booking() {
                 className="flex-1 min-w-[200px] rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
               />
 
-              {/* Reset Button */}
               <button
                 onClick={resetFilters}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-sm font-medium rounded-md whitespace-nowrap"
+                className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
               >
-                Reset
+                <RotateCcw className="w-5 h-5" />
+                Reset Filters
               </button>
             </div>
           </div>
@@ -475,7 +473,7 @@ function Booking() {
                             )}
                           </button>
                         </td>
-                        <td className="p-2">{booking?.userId.name}</td>
+                        <td className="p-2">{booking?.userId?.name}</td>
                         <td className="p-2">{booking?.userId?.email}</td>
                         <td className="p-2">{type}</td>
                         <td className="p-2">₹{booking?.totalPrice}</td>
@@ -583,14 +581,14 @@ const BookingCoponent = ({
   handlesubmit,
   componentType,
 }) => {
-  // useEffect(() => {
-  //   console.log("create data", data);
-  // }, [data]);
+  useEffect(() => {
+    console.log("edit data", data);
+  }, [data]);
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <form
         onSubmit={handlesubmit}
-        className="bg-white  p-6 px-10 rounded-lg w-[80%] lg:w-1/2 h-[80%] overflow-hidden overflow-y-scroll  space-y-4 hide-scrollbar"
+        className="bg-white  p-6 px-10 rounded-lg w-[80%] lg:w-1/2 h-max overflow-hidden overflow-y-scroll  space-y-4 hide-scrollbar"
       >
         <div className=" flex justify-between items-center">
           <h2 className="text-xl font-bold text-center">Booking Form</h2>
@@ -635,11 +633,11 @@ const BookingCoponent = ({
           )}
         </div>
         <div>
-          <label className="block text-sm font-semibold">User ID</label>
+          <label className="block text-sm font-semibold">User name</label>
           <input
             type="text"
             name="userId"
-            value={data.userId}
+            value={data.username}
             onChange={handlechage}
             className="w-full border rounded px-3 py-2"
             placeholder="Enter User ID"

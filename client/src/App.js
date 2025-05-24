@@ -1,5 +1,5 @@
-import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import React from "react";
+import { Route, Routes } from "react-router-dom";
 
 import LoginPage from './Components/LoginPage';
 import RegisterPage from './Components/RegisterPage';
@@ -18,7 +18,6 @@ import ProfilePage from './Components/Profilepage';
 function App() {
   return (
     <div>
-     
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/hotels' element={<HotelsPage />} />

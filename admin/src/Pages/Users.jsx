@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Plus, Minus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Minus, Pencil, Trash2, RotateCcw } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import Swal from "sweetalert2";
 import TableSkeliton from "../component/TableSkeliton";
+import CloudinaryUpload from "../utils/UploadCloudinary"; // adjust path if needed
+
 function Users() {
   const [users, setUsers] = useState([]);
   const [editUserId, setEditUserId] = useState(null);
@@ -17,7 +19,9 @@ function Users() {
     state: "",
     district: "",
   });
+  const { uploadImage } = CloudinaryUpload();
   const [formData, setFormData] = useState({
+    image: "",
     name: "",
     email: "",
     number: "",
@@ -27,6 +31,7 @@ function Users() {
     district: "",
     city: "",
     address: "",
+    Gender: "",
   });
   // const handlefilterinput = (e) => {
   //   const { name, value } = e.target;
@@ -64,21 +69,43 @@ function Users() {
   }, [fetchUser]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, files } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "image" ? files[0] : value,
+    }));
   };
 
-  const handleEditChange = (e) => {
-    const { name, value } = e.target;
-    setEditFormData((prev) => ({ ...prev, [name]: value }));
+  const handleEditInputChange = (e) => {
+    const { name, value, files } = e.target;
+    setEditFormData((prev) => ({
+      ...prev,
+      [name]: name === "image" ? files[0] : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      let dataToSubmit = { ...formData };
+
+      if (formData.image instanceof File) {
+        const imageUrl = await uploadImage(formData.image);
+        if (imageUrl) {
+          console.log("image url", imageUrl);
+          dataToSubmit.image = imageUrl;
+        } else {
+          toast.error("Image upload failed. Update aborted.");
+          return;
+        }
+      }
+
+      console.log("formdata", dataToSubmit);
+
       const res = await axios.post(`${server_url}admin/create-user`, {
-        formData,
+        formData: dataToSubmit,
       });
+
       if (res.data?.success) {
         toast.success("User created");
         fetchUser();
@@ -93,6 +120,7 @@ function Users() {
         district: "",
         city: "",
         address: "",
+        image: "",
       });
       setShowForm(false);
     } catch (error) {
@@ -163,10 +191,22 @@ function Users() {
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     try {
+      let updatedData = { ...editFormData };
+      if (editFormData.image instanceof File) {
+        const imageUrl = await uploadImage(editFormData.image);
+        if (imageUrl) {
+          updatedData.image = imageUrl;
+        } else {
+          toast.error("Image upload failed. Update aborted.");
+          return;
+        }
+      }
+
       const res = await axios.put(`${server_url}admin/update-user`, {
         id: editUserId,
-        ...editFormData,
+        ...updatedData,
       });
+
       if (res.data?.success) {
         toast.success("User updated successfully");
         fetchUser();
@@ -235,7 +275,7 @@ function Users() {
     setUsers(tempdata);
   };
   return (
-    <div className="relative p-4 w-full">
+    <div className=" p-4 w-full">
       {isloading === true ? (
         <TableSkeliton />
       ) : (
@@ -253,68 +293,68 @@ function Users() {
             </div>
           </div>
           <div className=" w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-            <div className="p-4 flex items-center gap-3">
+            <div className=" my-4 grid  grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-2">
               <input
                 type="text"
                 value={filterData.searchTerm}
                 name="searchTerm"
                 placeholder="Name/Email/Phone"
                 onChange={handlefilterinput}
-                className="w-60 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
+                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
               />
               <select
                 value={filterData.country}
                 name="country"
                 onChange={handlefilterinput}
-                className="w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
+                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
               >
                 <option value="">Country</option>
-                {[...new Set(users.map((user) => user.country))].map(
-                  (country, i) => (
-                    <option key={i} value={country}>
-                      {country}
-                    </option>
-                  )
-                )}
+                {[
+                  ...new Set(users.map((user) => user.country.toLowerCase())),
+                ].map((country, i) => (
+                  <option key={i} value={country}>
+                    {country}
+                  </option>
+                ))}
               </select>
 
               <select
                 value={filterData.state}
                 name="state"
                 onChange={handlefilterinput}
-                className="w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
+                className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
               >
                 <option value="">State</option>
-                {[...new Set(users.map((user) => user.state))].map(
-                  (state, i) => (
-                    <option key={i} value={state}>
-                      {state}
-                    </option>
-                  )
-                )}
+                {[
+                  ...new Set(users.map((user) => user.state.toLowerCase())),
+                ].map((state, i) => (
+                  <option key={i} value={state}>
+                    {state}
+                  </option>
+                ))}
               </select>
 
               <select
                 value={filterData.district}
                 name="district"
                 onChange={handlefilterinput}
-                className="w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
+                className=" rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 text-sm border"
               >
                 <option value="">District</option>
-                {[...new Set(users.map((user) => user.district))].map(
-                  (district, i) => (
-                    <option key={i} value={district}>
-                      {district}
-                    </option>
-                  )
-                )}
+                {[
+                  ...new Set(users.map((user) => user.district.toLowerCase())),
+                ].map((district, i) => (
+                  <option key={i} value={district}>
+                    {district}
+                  </option>
+                ))}
               </select>
-
               <button
                 onClick={clearFilter}
-                className="px-4 py-2 text-sm font-medium bg-blue-500  text-white hover:text-gray-900 rounded-md whitespace-nowrap"
+                className="flex items-center text-nowrap gap-1 text-blue-600 hover:text-blue-800"
               >
-                Reset
+                <RotateCcw className="w-5 h-5" />
+                Reset Filters
               </button>
             </div>
           </div>
@@ -439,7 +479,7 @@ function Users() {
       {showEditForm && (
         <UserForm
           formData={editFormData}
-          handleInputChange={handleEditChange}
+          handleInputChange={handleEditInputChange}
           handleSubmit={handleUpdateUser}
           onClose={() => {
             setShowEditForm(false);
@@ -479,16 +519,44 @@ function UserForm({
             "state",
             "district",
             "city",
+            "image",
+            "Gender",
           ].map((field) => (
-            <input
-              key={field}
-              type={field === "email" ? "email" : "text"}
-              name={field}
-              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-              required
-              value={formData[field] || ""}
-              onChange={handleInputChange}
-            />
+            <div key={field} className="flex flex-col gap-1">
+              <input
+                type={field === "image" ? "file" : "text"}
+                name={field}
+                placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                required={!formData.image}
+                {...(field !== "image" && { value: formData[field] || "" })}
+                onChange={handleInputChange}
+              />
+
+              {field === "image" && formData.image && (
+                <div className="flex flex-col gap-2">
+                  <img
+                    src={
+                      typeof formData.image === "string"
+                        ? formData.image
+                        : URL.createObjectURL(formData.image)
+                    }
+                    alt="Preview"
+                    className="h-32 w-32 object-cover rounded shadow"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleInputChange({
+                        target: { name: "image", value: "", files: [] },
+                      })
+                    }
+                    className="text-sm text-red-500 underline self-start"
+                  >
+                    Remove Image
+                  </button>
+                </div>
+              )}
+            </div>
           ))}
         </div>
         <textarea

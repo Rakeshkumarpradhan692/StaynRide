@@ -113,9 +113,12 @@ function Cabs() {
   useEffect(() => {
     console.log(cabs);
   }, [cabs]);
-  const openEditModal = (cab) => {
+
+  const openEditModal = (e, cab) => {
+    e.stopPropagation();
     setEditMode(true);
     setFormData({
+      image: cab.image,
       id: cab._id,
       name: cab.name || "",
       model: cab.model || "",
@@ -307,7 +310,7 @@ function Cabs() {
                   <p className="text-sm text-gray-600">Price: ₹{cab.price}</p>
                   <div className=" flex justify-between items-center">
                     <button
-                      onClick={() => openEditModal(cab)}
+                      onClick={(e) => openEditModal(e, cab)}
                       className="px-4 py-1 bg-gray-400 rounded text-sm text-white"
                       aria-label="Edit"
                     >
@@ -380,9 +383,10 @@ function Cabs() {
           </div>
         </div>
       )}
+
       {formModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white w-full max-w-xl rounded-lg shadow-lg p-6 relative">
+          <div className="bg-white w-full max-w-xl h-[70%] overflow-hidden overflow-y-scroll hide-scrollbar rounded-lg shadow-lg p-6 relative">
             <button
               onClick={() => setFormModalOpen(false)}
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"

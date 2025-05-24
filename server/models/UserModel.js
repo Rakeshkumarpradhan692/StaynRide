@@ -2,6 +2,15 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
+    image: {
+      type: String,
+      default: null,
+    },
+    Gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+      default: null,
+    },
     name: {
       type: String,
       required: [true, "Name is required"],

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const adminController = require("../Controllers/AdminController.js");
+const adminController = require("../controllers/AdminController.js");
 const hotelController = require("../controllers/HotelsController.js");
 const cabController = require("../controllers/CabController.js");
 const bannerController = require("../controllers/BannerController.js");
@@ -10,6 +10,7 @@ const Booking = require("../controllers/BookingController.js");
 const feedbackController = require("../controllers/feedbackController.js");
 
 router.post("/login", adminController.adminLogin);
+router.put("/update/:id", adminController.updateAdmin);
 
 router.post("/create-banner", bannerController.createBanner);
 router.put("/update-banner", bannerController.updateBanner);

@@ -74,16 +74,8 @@ export default function CabDetail() {
       name: "Cab Booking",
       description: `Booking for ${cab.name}`,
       handler: async function (response) {
-        alert(`Payment successful!\nPayment ID: ${response.razorpay_payment_id}`);
+      alert(`Payment successful!\nPayment ID: ${response.razorpay_payment_id}`);
 
-        // Example: post booking to backend
-        /*
-        await axios.post('/api/bookings', {
-          cabId: id,
-          ...bookingData,
-          paymentId: response.razorpay_payment_id
-        });
-        */
 
         setShowBooking(false);
         setBookingData({
