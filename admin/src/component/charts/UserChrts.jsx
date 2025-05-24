@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
-
+import { SkeletonChartBoxTwo } from "../Loader/dashboard";
 const BookingPieChart = () => {
   const [loading, setLoading] = useState(true);
   const [bookingData, setBookingData] = useState([]);
@@ -64,11 +64,7 @@ const BookingPieChart = () => {
   }, [bookingData]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
+    return <SkeletonChartBoxTwo />;
   }
 
   if (!bookingData.length) {
@@ -85,7 +81,10 @@ const BookingPieChart = () => {
 
   return (
     <div className="container mx-auto px-4 ">
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-lg ">
+        <h4 className="text-lg font-semibold text-gray-700 mb-4">
+          Bokking status
+        </h4>
         <div className="flex flex-col justify-center  items-center mb-6 gap-4">
           <div className="flex justify-center flex-wrap gap-2">
             <button

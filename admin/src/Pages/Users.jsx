@@ -4,10 +4,11 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import Swal from "sweetalert2";
 import TableSkeliton from "../component/TableSkeliton";
-import CloudinaryUpload from "../utils/UploadCloudinary"; // adjust path if needed
+import CloudinaryUpload from "../utils/UploadCloudinary";
 
 function Users() {
   const [users, setUsers] = useState([]);
+  const [formLoading, setformLoading] = useState(false);
   const [editUserId, setEditUserId] = useState(null);
   const [editFormData, setEditFormData] = useState({});
   const [tempdata, settempdata] = useState([]);
@@ -58,6 +59,7 @@ function Users() {
         settempdata(results.data.users);
       }
       setisloading(false);
+      setformLoading(false);
     } catch (err) {
       setisloading(false);
       console.log("Error occurred while fetching user details", err);
@@ -86,6 +88,7 @@ function Users() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setformLoading(true);
     try {
       let dataToSubmit = { ...formData };
 
@@ -108,6 +111,7 @@ function Users() {
 
       if (res.data?.success) {
         toast.success("User created");
+        setformLoading(false);
         fetchUser();
       }
       setFormData({
@@ -124,6 +128,7 @@ function Users() {
       });
       setShowForm(false);
     } catch (error) {
+      setformLoading(false);
       console.log(
         "Failed to create user: " +
           (error.response?.data?.message || error.message)
@@ -190,6 +195,7 @@ function Users() {
 
   const handleUpdateUser = async (e) => {
     e.preventDefault();
+    setformLoading(true);
     try {
       let updatedData = { ...editFormData };
       if (editFormData.image instanceof File) {
@@ -209,11 +215,13 @@ function Users() {
 
       if (res.data?.success) {
         toast.success("User updated successfully");
+        setformLoading(false);
         fetchUser();
         setEditUserId(null);
         setShowEditForm(false);
       }
     } catch (err) {
+      setformLoading(false);
       console.error("Update failed:", err);
       toast.error("Failed to update user");
     }
@@ -472,6 +480,7 @@ function Users() {
           formData={formData}
           handleInputChange={handleInputChange}
           handleSubmit={handleSubmit}
+          formLoading={formLoading}
           onClose={() => setShowForm(false)}
           title="Create New User"
         />
@@ -481,6 +490,7 @@ function Users() {
           formData={editFormData}
           handleInputChange={handleEditInputChange}
           handleSubmit={handleUpdateUser}
+          formLoading={formLoading}
           onClose={() => {
             setShowEditForm(false);
             setEditUserId(null);
@@ -498,6 +508,7 @@ function UserForm({
   handleSubmit,
   onClose,
   title,
+  formLoading,
 }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
@@ -571,10 +582,42 @@ function UserForm({
         <div className="flex justify-between items-center mt-4">
           <button
             type="submit"
-            className="bg-blue-600 text-white font-semibold px-6 py-2 rounded hover:bg-blue-700"
+            disabled={formLoading}
+            className={`flex items-center justify-center gap-2 font-semibold px-6 py-2 rounded transition-colors ${
+              formLoading
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 text-white"
+            }`}
           >
-            Submit
+            {formLoading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  />
+                </svg>
+                Loading...
+              </>
+            ) : (
+              "Submit"
+            )}
           </button>
+
           <button
             type="button"
             onClick={onClose}

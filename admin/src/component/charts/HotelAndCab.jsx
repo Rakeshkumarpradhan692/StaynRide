@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
-
+import { SkeletonChartBoxOne } from "../Loader/dashboard";
 function HotelAndCab() {
+  const [loading, setloading] = useState(false);
   const [chartData, setChartData] = useState({
     series: [
       {
@@ -67,7 +68,6 @@ function HotelAndCab() {
     for (let i = 5; i >= 0; i--) {
       const date = new Date(today);
       date.setMonth(today.getMonth() - i);
-      // Set to first day of month for consistent grouping
       date.setDate(1);
       date.setHours(0, 0, 0, 0);
       months.push(date.toISOString());
@@ -82,11 +82,7 @@ function HotelAndCab() {
           "http://localhost:5000/api/admin/all-booking"
         );
         const bookings = response.data.data;
-
-        // Get the last 6 months dates (first day of each month)
         const monthKeys = getLastSixMonthsAsKeys();
-
-        // Initialize counters for hotel and cab bookings
         const hotelCounts = {};
         const cabCounts = {};
 
@@ -94,31 +90,22 @@ function HotelAndCab() {
           hotelCounts[month] = 0;
           cabCounts[month] = 0;
         });
-
-        // Process each booking
         bookings.forEach((booking) => {
           const bookingDate = new Date(booking.createdAt);
-          // Create a key in format "YYYY-MM" for grouping
           const monthKey = `${bookingDate.getFullYear()}-${String(
             bookingDate.getMonth() + 1
           ).padStart(2, "0")}`;
-
-          // Count hotel bookings
           if (booking.hotelBooking.isHotelBooked) {
             if (monthKeys.includes(monthKey)) {
               hotelCounts[monthKey]++;
             }
           }
-
-          // Count cab bookings
           if (booking.cabBooking.isCabBooked) {
             if (monthKeys.includes(monthKey)) {
               cabCounts[monthKey]++;
             }
           }
         });
-
-        // Prepare data for chart
         const hotelData = monthKeys.map((key) => hotelCounts[key]);
         const cabData = monthKeys.map((key) => cabCounts[key]);
 
@@ -136,8 +123,6 @@ function HotelAndCab() {
 
     fetchBookingData();
   }, []);
-
-  // Helper function to get last 6 months in "YYYY-MM" format
   function getLastSixMonthsAsKeys() {
     const keys = [];
     const today = new Date();
@@ -151,6 +136,9 @@ function HotelAndCab() {
     return keys;
   }
 
+  if (loading) {
+    return <SkeletonChartBoxOne />;
+  }
   return (
     <div className="chart-container">
       <ReactApexChart
