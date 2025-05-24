@@ -15,12 +15,14 @@ import {
   FaTv,
   FaSnowflake,
 } from "react-icons/fa";
+import { IoIosHome } from "react-icons/io";
 import { AuthContext } from "../context/authContext";
 import { IoCloseSharp } from "react-icons/io5";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
 import img from "../Components/Photo/bed.jpg";
 import { ArrowLeft } from "lucide-react";
+
 const HotelDetails = () => {
   const { Auth } = useContext(AuthContext);
   const { id } = useParams();
@@ -52,12 +54,8 @@ const HotelDetails = () => {
         const roomsRes = await axios.get(
           `http://localhost:5000/api/admin/roomBy-HotelId/${id}`
         );
-        console.log("Rooms API Response:", roomsRes.data);
-
-        const responseData = roomsRes.data.data;
-        setRooms(responseData);
+        setRooms(roomsRes.data.data);
       } catch (err) {
-        console.error(err);
         if (err.response?.config?.url.includes("/roomBy-HotelId/")) {
           setRoomError("Failed to load rooms");
         } else {
@@ -70,15 +68,21 @@ const HotelDetails = () => {
 
     fetchHotelAndRooms();
   }, [id]);
+
   const handleRoomselect = (room) => {
-    const No = room.roomNumber;
+    const roomNo = room.roomNumber;
     const price = room.price;
+    const alreadySelected = formData.roomNumber.includes(roomNo);
+
     setFormData((prev) => ({
       ...prev,
-      roomNumber: [formData.roomNumber, No],
-      price: formData.price + price,
+      roomNumber: alreadySelected
+        ? prev.roomNumber.filter((num) => num !== roomNo)
+        : [...prev.roomNumber, roomNo],
+      price: alreadySelected ? prev.price - price : prev.price + price,
     }));
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -90,6 +94,10 @@ const HotelDetails = () => {
       alert("Check-out must be after check-in.");
       return;
     }
+    if (formData.roomNumber.length === 0) {
+      alert("Please select at least one room.");
+      return;
+    }
     setStep(2);
   };
 
@@ -98,18 +106,18 @@ const HotelDetails = () => {
   const openRazorpayCheckout = async () => {
     try {
       const res = await fetch(
-        "http://localhost:5000/api/payment/create-order",
+        "http://localhost:5000/api/public/create-booking",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount: hotel.price * 100 }),
+          body: JSON.stringify({ amount: formData.price * 100 }),
         }
       );
       const data = await res.json();
 
       const options = {
-        key: "YOUR_RAZORPAY_KEY_ID",
-        amount: data.amount,
+        key: "rzp_test_gW8KHeBaMm089M",
+        amount: formData.price * 100, 
         currency: data.currency,
         name: hotel.name,
         description: "Hotel Room Booking",
@@ -122,22 +130,22 @@ const HotelDetails = () => {
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
-      console.error(err);
       alert("Payment initiation failed.");
     }
   };
+
   const resetForm = () => {
     setFormData({
       checkIn: "",
       checkOut: "",
-      roomNumber: "",
+      roomNumber: [],
       guests: 1,
+      price: 0,
     });
     setStep(1);
     setIsModalOpen(false);
   };
-
-  const SkeletonCard = () => (
+    const SkeletonCard = () => (
     <div className="bg-white rounded-xl overflow-hidden shadow-lg animate-pulse">
       <div className="w-full h-64 bg-gray-300"></div>
       <div className="p-6 space-y-4">
@@ -149,21 +157,17 @@ const HotelDetails = () => {
     </div>
   );
 
+  const handleBackClick = () => navigate("/");
+
   if (loading) return <p className="text-center py-20">Loading...</p>;
   if (error) return <p className="text-center py-20 text-red-500">{error}</p>;
   if (!hotel) return <p className="text-center py-20">No hotel found.</p>;
 
-  const handleBackClick = () => {
-    navigate("/");
-  };
-
   return (
     <>
       <Navbar />
-
       <div className="font-serif text-gray-800 bg-white mt-[5rem]">
-        <div
-          className="relative h-[80vh] bg-cover bg-center"
+        <div className="relative h-[80vh] bg-cover bg-center"
           style={{ backgroundImage: `url(${hotel.images[0]})` }}
         >
           <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center px-4 text-center text-white">
@@ -180,15 +184,14 @@ const HotelDetails = () => {
 
         <div className="w-full mx-auto px-4 sm:px-6 lg:px-[4rem] py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-cent">
           <div className="order-2 md:order-1 px-6">
-            <div className="">
-              <button
-                onClick={handleBackClick}
-                className="top-24 left-4 md:left-8 z-50 flex items-center gap-2 "
-              >
-                <ArrowLeft />
-                <span></span>
-              </button>
-            </div>
+           <div className="w-10 h-8 bg-blue-600 text-white rounded-md flex items-center justify-center">
+                       <button
+                         onClick={handleBackClick}
+                         className="flex items-center justify-center"
+                       >
+                         <ArrowLeft size={20} />
+                       </button>
+                     </div>
             <h2 className="text-4xl font-semibold text-[#8C5B3F] mb-6">
               {hotel.name}
             </h2>
@@ -244,45 +247,48 @@ const HotelDetails = () => {
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 px-8">
               {loading
                 ? Array.from({ length: 4 }).map((_, i) => (
-                    <SkeletonCard key={i} />
-                  ))
+                  <SkeletonCard key={i} />
+                ))
                 : Array.isArray(rooms) &&
-                  rooms.map((room) => (
-                    <div
-                      key={room._id}
-                      className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
-                    >
-                      <img
-                        src={room.images}
-                        alt={room.roomType}
-                        className="w-full h-64 object-cover"
-                      />
-                      <div className="p-6">
-                        <h4 className="text-2xl font-semibold text-[#8C5B3F] mb-3">
-                          {room.roomType}
-                        </h4>
-                        <div className="space-y-2 text-gray-700">
-                          <p className="flex items-center">
-                            <FaRupeeSign className="mr-2 text-[#8C5B3F]" />
-                            <strong>Price:</strong> ${room.price}
-                          </p>
-                          <p className="flex items-center">
-                            <FaUserFriends className="mr-2 text-[#8C5B3F]" />
-                            <strong>Max Guests:</strong> {room.capacity}
-                          </p>
-                          <p
-                            className={`flex items-center ${
-                              room.available ? "text-red-600" : "text-green-600"
+                rooms.map((room) => (
+                  <div
+                    key={room._id}
+                    className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <img
+                      src={room.images}
+                      alt={room.roomType}
+                      className="w-full h-64 object-cover"
+                    />
+                    <div className="p-6">
+                      <h4 className="text-2xl font-semibold text-[#8C5B3F] mb-3">
+                        {room.roomType}
+                      </h4>
+                      <div className="space-y-2 text-gray-700">
+                        <p className="flex items-center">
+                          <IoIosHome className="mr-2 text-[#8C5B3F]" />
+                          <strong>roomNo:</strong> {room.roomNumber}
+                        </p>
+                        <p className="flex items-center">
+                          <FaRupeeSign className="mr-2 text-[#8C5B3F]" />
+                          <strong>Price:</strong> ${room.price}
+                        </p>
+                        <p className="flex items-center">
+                          <FaUserFriends className="mr-2 text-[#8C5B3F]" />
+                          <strong>Max Guests:</strong>4 {room.capacity}
+                        </p>
+                        <p
+                          className={`flex items-center ${room.available ? "text-red-600" : "text-green-600"
                             }`}
-                          >
-                            <FaCalendarCheck className="mr-2" />
-                            <strong>Available:</strong>{" "}
-                            {room.available ? "No" : "Yes"}
-                          </p>
-                        </div>
+                        >
+                          <FaCalendarCheck className="mr-2" />
+                          <strong>Available:</strong>{" "}
+                          {room.available ? "No" : "Yes"}
+                        </p>
                       </div>
                     </div>
-                  ))}
+                  </div>
+                ))}
             </div>
           </div>
         </div>
@@ -323,18 +329,15 @@ const HotelDetails = () => {
         </div>
       </div>
 
+
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-lg rounded-xl shadow-xl p-6 relative overflow-y-auto max-h-[90vh]">
             <button
-              onClick={() => setIsModalOpen(false)}
+              onClick={resetForm}
               className="absolute top-4 right-4 text-2xl text-gray-600 hover:text-black"
             >
-              <IoCloseSharp
-                onClick={() => {
-                  resetForm();
-                }}
-              />
+              <IoCloseSharp />
             </button>
 
             <h2 className="text-2xl text-center font-bold text-[#8C5B3F] mb-4">
@@ -350,22 +353,26 @@ const HotelDetails = () => {
 
             {step === 1 && (
               <form onSubmit={handleSubmitDetails} className="space-y-4">
-                <p>Choose rooms</p>
-                <div className=" flex flex-wrap gap-2">
+                <p>Select Rooms</p>
+                <div className="flex flex-wrap gap-2">
                   {rooms.length > 0 ? (
                     rooms.map((room, i) => (
                       <div
-                        onClick={() => handleRoomselect(room)}
-                        className=" bg-gray-400 px-4 py-1 rounded-md"
                         key={i}
+                        onClick={() => handleRoomselect(room)}
+                        className={`cursor-pointer px-4 py-1 rounded-md border ${formData.roomNumber.includes(room.roomNumber)
+                            ? "bg-green-600 text-white"
+                            : "bg-gray-300 text-black"
+                          }`}
                       >
                         {room.roomNumber}
                       </div>
                     ))
                   ) : (
-                    <div className=" text-red-500 ml-5 "> no room avilable</div>
+                    <div className="text-red-500 ml-5">No rooms available</div>
                   )}
                 </div>
+
                 <Input
                   name="checkIn"
                   value={formData.checkIn}
@@ -384,25 +391,13 @@ const HotelDetails = () => {
                   }
                   required
                 />
-                {/* <select
-                  name="roomType"
-                  required
-                  value={formData.roomType}
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded"
-                >
-                  <option value="">Select Room Type</option>
-                  <option>Single</option>
-                  <option>Double</option>
-                  <option>Room</option>
-                </select> */}
                 <Input
                   name="guests"
                   value={formData.guests}
                   onChange={handleChange}
-                  placeholder="total guests"
+                  placeholder="Total guests"
                   type="number"
-                  min="1"
+                
                   required
                 />
                 <button
@@ -416,12 +411,11 @@ const HotelDetails = () => {
 
             {step === 2 && (
               <div className="space-y-3">
-                {Object.entries(formData).map(([key, val]) => (
-                  <p key={key}>
-                    <strong>{key[0].toUpperCase() + key.slice(1)}:</strong>{" "}
-                    {val}
-                  </p>
-                ))}
+                <p><strong>Rooms:</strong> {formData.roomNumber.join(", ")}</p>
+                <p><strong>Guests:</strong> {formData.guests}</p>
+                <p><strong>Check-in:</strong> {formData.checkIn}</p>
+                <p><strong>Check-out:</strong> {formData.checkOut}</p>
+                <p><strong>Total Price:</strong> ${formData.price}</p>
                 <button
                   onClick={handleBookingConfirm}
                   className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
@@ -433,7 +427,7 @@ const HotelDetails = () => {
 
             {step === 3 && (
               <div className="text-center">
-                <p className="mb-4">Total: ₹{formData.price}</p>
+                <p className="mb-4">Total: ${formData.price}</p>
                 <button
                   onClick={openRazorpayCheckout}
                   className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
@@ -448,7 +442,7 @@ const HotelDetails = () => {
                 <p className="text-green-600 text-lg font-semibold">
                   Booking Confirmed!
                 </p>
-                <p>Thank you, {formData.name}. Your booking is complete.</p>
+                <p>Thank you. Your booking is complete.</p>
                 <button
                   onClick={resetForm}
                   className="bg-[#8C5B3F] text-white px-4 py-2 rounded hover:bg-[#a96b4f]"
