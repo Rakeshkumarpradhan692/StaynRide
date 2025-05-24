@@ -72,7 +72,16 @@ exports.getAllUsers = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+exports.getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
 
+    const users = await Users.find({ _id: id });
+    res.status(200).json({ sucess: true, users: users });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 exports.updateUser = async (req, res) => {
   try {
     const { id, password, ...rest } = req.body;
