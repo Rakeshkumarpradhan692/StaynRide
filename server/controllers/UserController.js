@@ -85,21 +85,17 @@ exports.getUserById = async (req, res) => {
 };
 exports.updateUser = async (req, res) => {
   try {
-    const { id, password, ...rest } = req.body;
+    const { id, ...updateData } = req.body;
 
-    const updateData = { ...rest };
-
-    if (password) {
-      updateData.password = await bcrypt.hash(password, 10);
-    }
-
+    // Password will be stored as plain text (not recommended)
     const updatedUser = await Users.findByIdAndUpdate(id, updateData, {
       new: true,
       runValidators: true,
     });
 
-    if (!updatedUser)
+    if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
+    }
 
     res.status(200).json({
       success: true,
@@ -110,6 +106,7 @@ exports.updateUser = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 exports.deleteUser = async (req, res) => {
   try {

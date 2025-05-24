@@ -305,12 +305,14 @@ export default function CabsPage() {
 
         {/* Filters */}
         <div className="lg:w-1/4 w-full mb-6 lg:mb-0 lg:pr-4">
-        <button
-          onClick={handleBackClick}
-          className="top-24 left-4 md:left-8 z-50 flex items-center gap-2"
-        >
-          <ArrowLeft />
-        </button>
+        <div className="w-10 h-8 bg-blue-600 text-white rounded-md flex items-center justify-center">
+          <button
+            onClick={handleBackClick}
+            className="flex items-center justify-center"
+          >
+            <ArrowLeft size={20} />
+          </button>
+        </div>
           <h3 className="text-xl font-bold mb-4">Filter by:</h3>
 
           <div className="mb-4">
