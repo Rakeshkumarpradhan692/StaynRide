@@ -123,6 +123,7 @@ function HotelAndCab() {
 
     fetchBookingData();
   }, []);
+
   function getLastSixMonthsAsKeys() {
     const keys = [];
     const today = new Date();

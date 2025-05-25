@@ -86,7 +86,12 @@ exports.getUserById = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     console.log(req.body);
+
     const { id, ...updateData } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
 
     const updatedUser = await Users.findByIdAndUpdate(id, updateData, {
       new: true,
