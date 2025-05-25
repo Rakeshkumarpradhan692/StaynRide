@@ -162,6 +162,24 @@ const HotelDetails = () => {
   if (loading) return <p className="text-center py-20">Loading...</p>;
   if (error) return <p className="text-center py-20 text-red-500">{error}</p>;
   if (!hotel) return <p className="text-center py-20">No hotel found.</p>;
+  
+   const services = [
+    {
+      id: 1,
+      title: "Service 01",
+      description: "A presentation is a formal talk, often delivered in front of an audience, aimed at conveying information, persuading others, or sharing insights on a particular topic. Presentations can take various forms, such as verbal speeches, slideshows, demonstrations, or multimedia displays."
+    },
+    {
+      id: 2,
+      title: "Service 02",
+      description: "A presentation is a formal talk, often delivered in front of an audience, aimed at conveying information, persuading others, or sharing insights on a particular topic. Presentations can take various forms, such as verbal speeches, slideshows, demonstrations, or multimedia displays."
+    },
+    {
+      id: 3,
+      title: "Service 03",
+      description: "A presentation is a formal talk, often delivered in front of an audience, aimed at conveying information, persuading others, or sharing insights on a particular topic. Presentations can take various forms, such as verbal speeches, slideshows, demonstrations, or multimedia displays."
+    }
+  ];
 
   return (
     <>
@@ -210,7 +228,7 @@ const HotelDetails = () => {
               </li>
               <li className="flex items-center">
                 <FaTag className="mr-3 text-[#8C5B3F]" />
-                <strong className="w-24">Price:</strong> $20{hotel.price}/night
+                <strong className="w-24">Price:</strong> ₹20{hotel.price}/night
               </li>
             </ul>
             <button
@@ -271,7 +289,7 @@ const HotelDetails = () => {
                         </p>
                         <p className="flex items-center">
                           <FaRupeeSign className="mr-2 text-[#8C5B3F]" />
-                          <strong>Price:</strong> ${room.price}
+                          <strong>Price:</strong> ₹{room.price}
                         </p>
                         <p className="flex items-center">
                           <FaUserFriends className="mr-2 text-[#8C5B3F]" />
@@ -415,7 +433,7 @@ const HotelDetails = () => {
                 <p><strong>Guests:</strong> {formData.guests}</p>
                 <p><strong>Check-in:</strong> {formData.checkIn}</p>
                 <p><strong>Check-out:</strong> {formData.checkOut}</p>
-                <p><strong>Total Price:</strong> ${formData.price}</p>
+                <p><strong>Total Price:</strong> ₹{formData.price}</p>
                 <button
                   onClick={handleBookingConfirm}
                   className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
@@ -427,7 +445,7 @@ const HotelDetails = () => {
 
             {step === 3 && (
               <div className="text-center">
-                <p className="mb-4">Total: ${formData.price}</p>
+                <p className="mb-4">Total: ₹{formData.price}</p>
                 <button
                   onClick={openRazorpayCheckout}
                   className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
@@ -454,7 +472,23 @@ const HotelDetails = () => {
           </div>
         </div>
       )}
-
+      <div className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <div className="max-w-7xl mx-auto">
+        <h2 className="text-3xl font-bold text-center  text-[#8C5B3F] mb-12">Our Best Service</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {services.map((service) => (
+            <div 
+              key={service.id}
+              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+            >
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">{service.title}</h3>
+              <p className="text-gray-600">{service.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
       <Footer />
     </>
   );
