@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, memo, useEffect, useState } from "react";
 
 export const AuthContext = createContext();
 
@@ -36,4 +36,4 @@ const AuthProvider = ({ children }) => {
   );
 };
 
-export default AuthProvider;
+export default memo(AuthProvider);

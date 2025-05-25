@@ -85,9 +85,14 @@ exports.getUserById = async (req, res) => {
 };
 exports.updateUser = async (req, res) => {
   try {
+    console.log(req.body);
+
     const { id, ...updateData } = req.body;
 
-    // Password will be stored as plain text (not recommended)
+    if (!id) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
     const updatedUser = await Users.findByIdAndUpdate(id, updateData, {
       new: true,
       runValidators: true,
@@ -106,7 +111,6 @@ exports.updateUser = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 
 exports.deleteUser = async (req, res) => {
   try {

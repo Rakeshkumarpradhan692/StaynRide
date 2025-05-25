@@ -9,6 +9,7 @@ function Booking() {
   const [expandedRows, setExpandedRows] = useState([]);
   const [bookingdata, setbookingdata] = useState([]);
   const [isloading, setisloading] = useState(false);
+  const [submitLoading, setsubmitLoading] = useState(false);
   const [tempdata, settempdata] = useState([]);
   const [isactiveedit, setisactiveedit] = useState(false);
   const [isactivecreate, setisactivecreate] = useState(false);
@@ -207,6 +208,7 @@ function Booking() {
     e.preventDefault();
     const payload = convertToMongooseFormat();
     try {
+      setsubmitLoading(true);
       const request = isactivecreate
         ? axios.post(`${server_url}public/create-booking`, { payload })
         : axios.put(`${server_url}admin/update-booking`, { payload });
@@ -217,6 +219,7 @@ function Booking() {
         toast.success(
           isactivecreate ? "Created successfully" : "Updated successfully"
         );
+        setsubmitLoading(false);
 
         setisactivecreate(false);
         setisactiveedit(false);
@@ -244,6 +247,7 @@ function Booking() {
         }
       }
     } catch (err) {
+      setsubmitLoading(false);
       toast.error(err?.response?.data?.message || "Something went wrong");
       console.log(err);
     }
@@ -557,6 +561,7 @@ function Booking() {
           setisactive={setisactiveedit}
           handlesubmit={handlesubmit}
           componentType="Edit"
+          formLoading={submitLoading}
         />
       )}
       {isactivecreate && (
@@ -566,6 +571,7 @@ function Booking() {
           setisactive={setisactivecreate}
           handlesubmit={handlesubmit}
           componentType="Create"
+          formLoading={submitLoading}
         />
       )}
     </div>
@@ -580,6 +586,7 @@ const BookingCoponent = ({
   setisactive,
   handlesubmit,
   componentType,
+  formLoading,
 }) => {
   useEffect(() => {
     console.log("edit data", data);
@@ -763,9 +770,40 @@ const BookingCoponent = ({
         <div className="flex justify-end">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700"
+            disabled={formLoading}
+            className={`flex items-center justify-center gap-2 font-semibold px-6 py-2 rounded transition-colors ${
+              formLoading
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 text-white"
+            }`}
           >
-            Submit
+            {formLoading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  />
+                </svg>
+                Loading...
+              </>
+            ) : (
+              "Submit"
+            )}
           </button>
         </div>
       </form>

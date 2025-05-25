@@ -5,6 +5,14 @@ const SkelitonLoader = () => {
         <div className="h-6 w-48 bg-gray-300 rounded"></div>
         <div className="h-8 w-32 bg-gray-300 rounded"></div>
       </div>
+      <div className="w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div className="my-4 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-2 animate-pulse">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="h-9 bg-gray-300 rounded-md" />
+          ))}
+          <div className="h-9 w-28 bg-gray-300 rounded-md" />
+        </div>
+      </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {[...Array(6)].map((_, index) => (
           <div
