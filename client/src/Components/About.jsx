@@ -217,7 +217,7 @@ const AboutPage = () => {
       <Navbar />
       <div className="font-sans text-gray-800 bg-white">
 
-        {/* Hero Section */}
+       
         <section
           className="h-[60vh] bg-cover bg-center flex items-center justify-center text-white relative"
           style={{ backgroundImage: `url(${aboutBg})` }}
@@ -232,7 +232,7 @@ const AboutPage = () => {
         </section>
 
         {/* Mission Section */}
-        <section className="py-20 md:px-[4rem] bg-white">
+        <section className="py-6 md:px-[4rem] bg-white">
           <div className="container mx-auto px-6  w-full text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-blue-700 mb-6">Our Mission</h2>
             <div className="w-20 h-1 bg-blue-500 mx-auto mb-10"></div>
@@ -245,7 +245,7 @@ const AboutPage = () => {
         </section>
 
         {/* Vision Section */}
-        <section className="py-20 md:px-[4rem] bg-gray-50">
+        <section className="py-6 md:px-[4rem] bg-gray-50">
           <div className="container mx-auto px-6 w-full">
             <div className="flex flex-col md:flex-row items-center gap-12">
               <div className="md:w-1/2">
@@ -282,8 +282,8 @@ const AboutPage = () => {
           </div>
         </section>
 
-        {/* Why Choose Us */}
-        <section className="py-20 md:px-[4rem] bg-white">
+
+        <section className="py-6 md:px-[4rem] bg-white">
           <div className="container mx-auto px-6 w-full">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-16">Why Travel With Us</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -300,8 +300,8 @@ const AboutPage = () => {
           </div>
         </section>
 
-        {/* Meet Our Team */}
-        <section className="py-20 md:px-[4rem] bg-gray-50">
+       
+        <section className="py-6 md:px-[4rem] bg-gray-50">
           <div className="container mx-auto px-6 w-full">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Meet Our Team</h2>
             <p className="text-center text-gray-600 max-w-2xl mx-auto mb-12">
@@ -315,8 +315,8 @@ const AboutPage = () => {
           </div>
         </section>
 
-        {/* Testimonials */}
-        <section className="py-20 md:px-[4rem] bg-blue-600 text-white">
+     
+        <section className="py-6  md:px-[4rem] bg-blue-600 text-white">
           <div className="container mx-auto px-6 w-full">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Traveler Stories</h2>
             <p className="text-center text-blue-100 w-full mx-auto mb-12">

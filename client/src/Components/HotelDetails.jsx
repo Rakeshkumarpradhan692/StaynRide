@@ -200,7 +200,7 @@ const HotelDetails = () => {
           </div>
         </div>
 
-        <div className="w-full mx-auto px-4 sm:px-6 lg:px-[4rem] py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-cent">
+        <div className="w-full mx-auto px-4 sm:px-6 lg:px-[4rem] py-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-cent">
           <div className="order-2 md:order-1 px-6">
            <div className="w-10 h-8 bg-blue-600 text-white rounded-md flex items-center justify-center">
                        <button
@@ -210,9 +210,9 @@ const HotelDetails = () => {
                          <ArrowLeft size={20} />
                        </button>
                      </div>
-            <h2 className="text-4xl font-semibold text-[#8C5B3F] mb-6">
+            <div><h2 className="text-4xl font-semibold text-[#8C5B3F] mb-6">
               {hotel.name}
-            </h2>
+            </h2></div>
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
               {hotel.description}
             </p>
@@ -238,6 +238,15 @@ const HotelDetails = () => {
             >
               Book Now
             </button>
+             <div className="w-full py-4 bg-white ">
+      <h2 className="text-3xl font-semibold text-[#8C5B3F] mb-4">Hotel Details</h2>
+      <p className="text-gray-600 text-base md:text-lg leading-relaxed">
+        Nestled in the heart of the city, our hotel offers a blend of luxury and comfort.
+        Enjoy stunning views, top-notch amenities, and exceptional service just steps
+        away from the city's best attractions. Whether you're here for business or leisure,
+        our dedicated staff ensures a memorable stay.
+      </p>
+    </div>
           </div>
           <div className="order-1 md:order-2 p-4">
             <img
@@ -248,7 +257,7 @@ const HotelDetails = () => {
           </div>
         </div>
 
-        <div className="bg-gray-50 py-16 px-4 sm:px-6 lg:px-[2rem]">
+        <div className="bg-gray-50 py-2 px-4 sm:px-6 lg:px-[2rem]">
           <div className="w-full mx-auto">
             <h3 className="text-3xl font-bold text-[#8C5B3F] mb-2 text-center">
               Available Rooms
@@ -472,8 +481,8 @@ const HotelDetails = () => {
           </div>
         </div>
       )}
-      <div className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-      <div className="max-w-7xl mx-auto">
+      <div className="pb-8 px-4 sm:px-6 lg:px-[4rem] bg-gray-50">
+      <div className="w-full mx-auto">
         <h2 className="text-3xl font-bold text-center  text-[#8C5B3F] mb-12">Our Best Service</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
