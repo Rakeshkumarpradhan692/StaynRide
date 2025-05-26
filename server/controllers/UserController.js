@@ -85,7 +85,7 @@ exports.getUserById = async (req, res) => {
 };
 exports.updateUser = async (req, res) => {
   try {
-    console.log(req.body);
+    console.log("update requst data", req.body);
 
     const { id, ...updateData } = req.body;
 

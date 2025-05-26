@@ -6,9 +6,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    Gender: {
+    gender: {
       type: String,
-      enum: ["male", "female", "other"],
+      enum: ["Male", "Female", "other"],
       default: null,
     },
     name: {
@@ -31,7 +31,6 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-      minlength: 6,
     },
     country: {
       type: String,

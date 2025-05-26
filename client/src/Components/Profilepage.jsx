@@ -41,7 +41,7 @@ const ProfilePage = () => {
         state: Auth.user.state || "",
         country: Auth.user.country || "",
         address: Auth.user.address || "",
-        password: "",
+        password: Auth.user.password || "",
       });
     }
   }, [Auth]);
@@ -75,8 +75,9 @@ const ProfilePage = () => {
           district: formData.district,
           city: formData.city,
           address: formData.address,
-          Gender: formData.Gender,
+          gender: formData.gender,
           image: formData.image,
+          password: formData.password,
         }
       );
 
@@ -209,16 +210,11 @@ const ProfilePage = () => {
               address: formData.address,
             },
             {
-              label: "Member Since",
-              icon: <Calendar size={18} />,
-              readonly: true,
-              value: formatDate(user?.createdAt),
-            },
-            {
               label: "Change Password",
               icon: <Lock size={18} />,
               field: "password",
               type: "password",
+              value: `${formData.password}`,
               placeholder: "Enter new password",
             },
           ].map(

@@ -20,7 +20,7 @@ function Dashboard() {
     try {
       const [uRes, bRes, hRes, cRes] = await Promise.all([
         axios.get(`${server_url}admin/all-users`),
-        axios.get(`${server_url}admin/booking-history`),
+        axios.get(`${server_url}admin/all-booking`),
         axios.get(`${server_url}public/all-hotels`),
         axios.get(`${server_url}public/all-cabs`),
       ]);

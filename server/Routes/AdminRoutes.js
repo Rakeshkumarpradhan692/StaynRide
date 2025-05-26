@@ -4,7 +4,7 @@ const adminController = require("../controllers/AdminController.js");
 const hotelController = require("../controllers/HotelsController.js");
 const cabController = require("../controllers/CabController.js");
 const bannerController = require("../controllers/BannerController.js");
-const bookingHistory = require("../controllers/BookingHistroy.js");
+
 const userController = require("../controllers/UserController.js");
 const roomController = require("../controllers/RoomeController.js");
 const Booking = require("../controllers/BookingController.js");
@@ -35,7 +35,6 @@ router.get("/all-users", userController.getAllUsers);
 router.put("/update-user", userController.updateUser);
 router.delete("/delete-user", userController.deleteUser);
 
-router.get("/booking-history", bookingHistory.getAllBookings);
 router.put("/update-booking", Booking.updateBooking);
 router.get("/all-booking", Booking.getAllBookings);
 router.get("/one-booking/:id", Booking.getBookingById);

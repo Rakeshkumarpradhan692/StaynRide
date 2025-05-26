@@ -1,10 +1,7 @@
 const Booking = require("../models/Bookingmodel.js");
-const BookingHistory = require("../models/BookingHistory.js");
 exports.createBooking = async (req, res) => {
   try {
     console.log(req.body);
-    const bookingHistory = new BookingHistory(req.body.payload);
-    await bookingHistory.save();
     const booking = new Booking(req.body.payload);
     await booking.save();
 

@@ -16,9 +16,12 @@ const bookingSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Hotel",
       },
-      roomID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Room",
+      // roomID: {
+      //   type: mongoose.Schema.Types.ObjectId,
+      //   ref: "Room",
+      // },
+      roomNo: {
+        type: [String],
       },
       totalGuests: Number,
     },
