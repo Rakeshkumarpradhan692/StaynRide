@@ -225,6 +225,7 @@ const ProfilePage = () => {
               icon: <Lock size={18} />,
               field: "password",
               type: "password",
+              value: `${formData.password}`,
               placeholder: "Enter new password",
             },
           ].map(

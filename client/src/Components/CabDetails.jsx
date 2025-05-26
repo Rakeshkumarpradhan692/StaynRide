@@ -1,11 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/authContext";
+
 import axios from "axios";
-import { Star,  Calendar, Home, Navigation, CircleChevronLeft } from "lucide-react";
+import {
+  Star,
+  Calendar,
+  Home,
+  Navigation,
+  CircleChevronLeft,
+} from "lucide-react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 export default function CabDetail() {
+  const { Auth } = useContext(AuthContext);
+
   const { id } = useParams();
   const navigate = useNavigate();
   const [cab, setCab] = useState(null);
@@ -72,38 +82,38 @@ export default function CabDetail() {
       description: `Booking for ${cab.name}`,
       handler: async function (response) {
         try {
-          const bookingPayload = {
-            cabId: id,
-            date: bookingData.date,
-            pickupAddress: bookingData.pickupAddress,
-            dropAddress: bookingData.dropAddress,
-            paymentId: response.razorpay_payment_id,
-            amount: cab.price,
+          const payload = {
+            userId: Auth.user._id,
+            cabBooking: {
+              isCabBooked: true,
+              cabId: id,
+              pickupLocation: bookingData.pickupAddress,
+              dropLocation: bookingData.dropAddress,
+              travelDate: bookingData.date,
+            },
+            totalPrice: cab.price,
+            status: "pending",
           };
 
           const bookingResponse = await axios.post(
             "http://localhost:5000/api/public/create-booking",
-            bookingPayload
+            { payload }
           );
 
           if (bookingResponse.data.success) {
-            alert(
-              `Booking confirmed! Payment ID: ${response.razorpay_payment_id}`
-            );
           } else {
             alert("Payment succeeded but booking failed.");
           }
         } catch (err) {
-  console.error("Booking error:", err);
+          console.error("Booking error:", err);
 
-  Swal.fire({
-    title: 'Booking Confirmed!',
-    text: 'Your booking was successful.',
-    icon: 'success',
-    confirmButtonText: 'OK',
-  });
-}
-
+          Swal.fire({
+            title: "Booking Confirmed!",
+            text: "Your booking was successful.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+        }
 
         setShowBooking(false);
         setBookingData({
@@ -176,18 +186,22 @@ export default function CabDetail() {
               </div>
 
               <div className="p-6 md:p-8 lg:p-10">
-                
                 <div className="flex flex-col h-full">
                   <div className="mb-6">
                     <div className="flex items-start justify-between">
-                      <div><div className=" text-blue-600 ">
-                  <button onClick={() => navigate("/")}>
-                    <CircleChevronLeft size={20} />
-                  </button>
-                </div><span> <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-                          {cab.name}
-                        </h1></span>
-                        
+                      <div>
+                        <div className=" text-blue-600 ">
+                          <button onClick={() => navigate("/")}>
+                            <CircleChevronLeft size={20} />
+                          </button>
+                        </div>
+                        <span>
+                          {" "}
+                          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                            {cab.name}
+                          </h1>
+                        </span>
+
                         <div className="flex items-center mt-2 space-x-2">
                           <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                             {cab.model}
