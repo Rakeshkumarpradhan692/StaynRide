@@ -6,7 +6,7 @@ const feedbackController = require("../controllers/feedbackController.js");
 
 router.post("/signup", userController.signup);
 router.post("/login", userController.login);
-
+router.put("/forgetpass", userController.forgetPassword);
 router.put("/update-user", userController.updateUser);
 router.get("/get-booking/:id", Booking.getBookingByUserId);
 router.get("/get-user/:id", userController.getUserById);

@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 exports.signup = async (req, res) => {
-  console.log("requested data is :-",req.body);
+  console.log("requested data is :-", req.body);
   try {
     const {
       image,
@@ -122,5 +122,37 @@ exports.deleteUser = async (req, res) => {
       .json({ success: true, message: "User deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+exports.forgetPassword = async (req, res) => {
+  try {
+    const { id, newpass } = req.body;
+    console.log(req.body);
+    const hashedPassword = await bcrypt.hash(newpass, 10);
+    const updatedUser = await Users.findByIdAndUpdate(
+      id,
+      { password: hashedPassword },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Password updated successfully",
+      user: updatedUser,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while updating the password",
+    });
   }
 };
