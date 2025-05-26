@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 exports.signup = async (req, res) => {
-  console.log(req.body.formData);
+  console.log("requested data is :-",req.body);
   try {
     const {
       image,
@@ -17,7 +17,6 @@ exports.signup = async (req, res) => {
       city,
       address,
     } = req.body.formData;
-    console.log(req.body);
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new Users({
