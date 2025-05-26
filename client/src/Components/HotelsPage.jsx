@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import HotelCard from "./HotelCard";
 import Navbar from "./Navbar";
+import Skelitonhotelcab from "./skeliton/skelitonhotelcab";
 import { FaSearch, FaFilter } from "react-icons/fa";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -101,14 +102,14 @@ const HotelsPage = () => {
     <>
       <Navbar />
       <div className="p-4 space-y-4 px-8 md:px-[4rem] mt-[4.5rem]">
-       <div className="w-10 h-8 bg-blue-600 text-white rounded-md flex items-center justify-center">
-  <button
-    onClick={handleBackClick}
-    className="flex items-center justify-center"
-  >
-    <ArrowLeft size={20} />
-  </button>
-</div>
+        <div className="w-10 h-8 bg-blue-600 text-white rounded-md flex items-center justify-center">
+          <button
+            onClick={handleBackClick}
+            className="flex items-center justify-center"
+          >
+            <ArrowLeft size={20} />
+          </button>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div className="relative">
             <input
@@ -181,7 +182,7 @@ const HotelsPage = () => {
           {/* Results */}
           <div className="flex-1">
             {loading ? (
-              <p>Loading hotels...</p>
+              <Skelitonhotelcab />
             ) : error ? (
               <p className="text-red-500">{error}</p>
             ) : currentHotels.length === 0 ? (
