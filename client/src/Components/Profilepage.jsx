@@ -1,13 +1,21 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/authContext";
 import axios from "axios";
-import { User, Mail, Phone, MapPin, Calendar, Edit, Lock } from "lucide-react";
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Edit,
+  Lock,
+} from "lucide-react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AiOutlineClose } from "react-icons/ai";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 const ProfilePage = () => {
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -25,6 +33,7 @@ const ProfilePage = () => {
     country: "",
     address: "",
     password: "",
+    image: "",
   });
 
   useEffect(() => {
@@ -41,7 +50,8 @@ const ProfilePage = () => {
         state: Auth.user.state || "",
         country: Auth.user.country || "",
         address: Auth.user.address || "",
-        password: "",
+        password: Auth.user.password ||"",
+        image: Auth.user.image || "",
       });
     }
   }, [Auth]);
@@ -54,6 +64,20 @@ const ProfilePage = () => {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prev) => ({
+          ...prev,
+          image: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -63,22 +87,19 @@ const ProfilePage = () => {
         throw new Error("Name and email are required");
       }
 
-      const res = await axios.put(
-        `http://localhost:5000/api/users/update-user/`,
-        {
-          id: formData.id,
-          name: formData.name,
-          email: formData.email,
-          number: formData.number,
-          country: formData.country,
-          state: formData.state,
-          district: formData.district,
-          city: formData.city,
-          address: formData.address,
-          Gender: formData.Gender,
-          image: formData.image,
-        }
-      );
+      const res = await axios.put(`http://localhost:5000/api/users/update-user/`, {
+        id: formData.id,
+        name: formData.name,
+        email: formData.email,
+        number: formData.number,
+        country: formData.country,
+        state: formData.state,
+        district: formData.district,
+        city: formData.city,
+        address: formData.address,
+        gender: formData.gender,
+        image: formData.image,
+      });
 
       setUser(res.data.user);
       updateUser(res.data.user);
@@ -96,34 +117,24 @@ const ProfilePage = () => {
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-IN", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
   const handleClose = () => {
-    Navigate("/");
+    navigate("/");
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-indigo-50 to-blue-50 flex items-start md:items-center justify-start md:justify-center p-4 md:p-8">
-      <div className="bg-white shadow-xl rounded-2xl p-6 w-full max-w-2xl space-y-6">
+      <div className="bg-white shadow-xl rounded-2xl p-6 w-full max-w-2xl space-y-6 relative">
         <button
           type="button"
           onClick={handleClose}
           className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 transition-colors"
-          aria-label="Close login"
+          aria-label="Close profile"
         >
           <AiOutlineClose className="text-gray-500 text-xl" />
         </button>
+
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
-            My Profile
-          </h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">My Profile</h2>
           <div className="flex gap-2 w-full md:w-auto">
             <button
               onClick={() => setEditMode(!editMode)}
@@ -150,18 +161,29 @@ const ProfilePage = () => {
           <div className="relative">
             <img
               src={
-                user?.profilePhoto ||
-                `https://api.dicebear.com/8.x/initials/svg?seed=${
-                  user?.name || "User"
-                }`
+                formData.image ||
+                user?.image ||
+                `https://api.dicebear.com/8.x/initials/svg?seed=${user?.name || "User"}`
               }
               alt="User Avatar"
-              className="w-28 h-28 rounded-full border-4 border-indigo-200 shadow-md"
+              className="w-28 h-28 rounded-full border-4 border-indigo-200 shadow-md object-cover"
             />
             {editMode && (
-              <button className="absolute bottom-0 right-0 bg-indigo-500 text-white p-2 rounded-full hover:bg-indigo-600 transition-colors">
-                <Edit size={16} />
-              </button>
+              <>
+                <label
+                  htmlFor="image-upload"
+                  className="absolute bottom-0 right-0 bg-indigo-500 text-white p-2 rounded-full cursor-pointer hover:bg-indigo-600 transition-colors"
+                >
+                  <Edit size={16} />
+                </label>
+                <input
+                  id="image-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </>
             )}
           </div>
           <h3 className="text-xl font-semibold text-gray-800">{user?.name}</h3>
@@ -171,18 +193,8 @@ const ProfilePage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[
             { label: "Full Name", icon: <User size={18} />, field: "name" },
-            {
-              label: "Email Address",
-              icon: <Mail size={18} />,
-              field: "email",
-              type: "email",
-            },
-            {
-              label: "Phone Number",
-              icon: <Phone size={18} />,
-              field: "number",
-              type: "tel",
-            },
+            { label: "Email Address", icon: <Mail size={18} />, field: "email", type: "email" },
+            { label: "Phone Number", icon: <Phone size={18} />, field: "number", type: "tel" },
             {
               label: "Gender",
               icon: <User size={18} />,
@@ -209,12 +221,6 @@ const ProfilePage = () => {
               address: formData.address,
             },
             {
-              label: "Member Since",
-              icon: <Calendar size={18} />,
-              readonly: true,
-              value: formatDate(user?.createdAt),
-            },
-            {
               label: "Change Password",
               icon: <Lock size={18} />,
               field: "password",
@@ -236,9 +242,7 @@ const ProfilePage = () => {
             }) => (
               <div
                 key={field || label}
-                className={`bg-gray-50 p-4 rounded-lg ${
-                  multiline ? "md:col-span-2" : ""
-                }`}
+                className={`bg-gray-50 p-4 rounded-lg ${multiline ? "md:col-span-2" : ""}`}
               >
                 <div className="flex items-start gap-3">
                   <div className="mt-1 text-indigo-500">{icon}</div>
@@ -249,38 +253,17 @@ const ProfilePage = () => {
                         editComponent
                       ) : multiline ? (
                         <div className="space-y-2">
-                          <input
-                            type="text"
-                            name="city"
-                            value={formData.city}
-                            onChange={handleChange}
-                            placeholder="City"
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                          />
-                          <input
-                            type="text"
-                            name="district"
-                            value={formData.district}
-                            onChange={handleChange}
-                            placeholder="District"
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                          />
-                          <input
-                            type="text"
-                            name="state"
-                            value={formData.state}
-                            onChange={handleChange}
-                            placeholder="State"
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                          />
-                          <input
-                            type="text"
-                            name="country"
-                            value={formData.country}
-                            onChange={handleChange}
-                            placeholder="Country"
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                          />
+                          {["city", "district", "state", "country"].map((fieldName) => (
+                            <input
+                              key={fieldName}
+                              type="text"
+                              name={fieldName}
+                              value={formData[fieldName]}
+                              onChange={handleChange}
+                              placeholder={fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}
+                              className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                          ))}
                           <textarea
                             name="address"
                             value={formData.address}
@@ -305,11 +288,7 @@ const ProfilePage = () => {
                         <p className="text-base font-medium">
                           {value || formData[field] || "Not provided"}
                         </p>
-                        {address && (
-                          <p className="text-sm text-gray-600 mt-1">
-                            {address}
-                          </p>
-                        )}
+                        {address && <p className="text-sm text-gray-600 mt-1">{address}</p>}
                       </div>
                     )}
                   </div>
@@ -330,5 +309,3 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
-
