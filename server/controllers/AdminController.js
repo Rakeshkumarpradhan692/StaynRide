@@ -1,5 +1,5 @@
 const Admin = require("../models/AdminModel.js");
-
+const bcrypt = require("bcrypt");
 exports.adminLogin = async (req, res) => {
   console.log(req.body);
   const { email, password } = req.body;
@@ -30,7 +30,7 @@ exports.adminLogin = async (req, res) => {
 
 exports.updateAdmin = async (req, res) => {
   const { id } = req.params;
-  const { name, email, gender, password } = req.body;
+  const { name, email, gender, password, profilePhoto } = req.body;
 
   try {
     const admin = await Admin.findById(id);
@@ -40,10 +40,8 @@ exports.updateAdmin = async (req, res) => {
     if (name) admin.name = name;
     if (email) admin.email = email;
     if (gender) admin.gender = gender;
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      admin.password = await bcrypt.hash(password, salt);
-    }
+    if (password) admin.password = password;
+    if (profilePhoto) admin.profilePhoto = profilePhoto;
     await admin.save();
 
     res.status(200).json({ message: "Admin updated successfully", admin });

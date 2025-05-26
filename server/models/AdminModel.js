@@ -23,6 +23,9 @@ const adminSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
     },
+    profilePhoto: {
+      type: String,
+    },
     createdAt: {
       type: Date,
       default: Date.now,
