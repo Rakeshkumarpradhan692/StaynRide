@@ -3,10 +3,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 
 import axios from "axios";
-import { Star, ArrowLeft, Calendar, Home, Navigation } from "lucide-react";
+import {
+  Star,
+  Calendar,
+  Home,
+  Navigation,
+  CircleChevronLeft,
+} from "lucide-react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-
+import Swal from "sweetalert2";
 export default function CabDetail() {
   const { Auth } = useContext(AuthContext);
 
@@ -95,15 +101,18 @@ export default function CabDetail() {
           );
 
           if (bookingResponse.data.success) {
-            alert(
-              `Booking confirmed! Payment ID: ${response.razorpay_payment_id}`
-            );
           } else {
             alert("Payment succeeded but booking failed.");
           }
         } catch (err) {
           console.error("Booking error:", err);
-          alert("Something went wrong while saving your booking.");
+
+          Swal.fire({
+            title: "Booking Confirmed!",
+            text: "Your booking was successful.",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
         }
 
         setShowBooking(false);
@@ -181,9 +190,9 @@ export default function CabDetail() {
                   <div className="mb-6">
                     <div className="flex items-start justify-between">
                       <div>
-                        <div className="w-10 h-8 bg-blue-600 text-white rounded-md flex items-center justify-center">
+                        <div className=" text-blue-600 ">
                           <button onClick={() => navigate("/")}>
-                            <ArrowLeft size={20} />
+                            <CircleChevronLeft size={20} />
                           </button>
                         </div>
                         <span>

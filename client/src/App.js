@@ -14,10 +14,12 @@ import PrivateRoute from './Components/PrivateRoute';
 
 import CabDetail from './Components/CabDetails';
 import ProfilePage from './Components/Profilepage';
+// import CloudinaryUpload from "./Components/CloudinaryUpload";
 
 function App() {
   return (
     <div>
+       {/* <CloudinaryUpload /> */}
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/hotels' element={<HotelsPage />} />
