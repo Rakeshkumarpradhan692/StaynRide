@@ -3,7 +3,7 @@ import axios from "axios";
 import HotelCard from "./HotelCard";
 import Navbar from "./Navbar";
 import { FaSearch, FaFilter } from "react-icons/fa";
-import { ArrowLeft } from "lucide-react";
+import {  CircleChevronLeft } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 
 const HotelsPage = () => {
@@ -101,12 +101,12 @@ const HotelsPage = () => {
     <>
       <Navbar />
       <div className="p-4 space-y-4 px-8 md:px-[4rem] mt-[4.5rem]">
-       <div className="w-10 h-8 bg-blue-600 text-white rounded-md flex items-center justify-center">
+       <div className="w-10 h-8 text-blue-600">
   <button
     onClick={handleBackClick}
     className="flex items-center justify-center"
   >
-    <ArrowLeft size={20} />
+    <CircleChevronLeft size={20} />
   </button>
 </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
