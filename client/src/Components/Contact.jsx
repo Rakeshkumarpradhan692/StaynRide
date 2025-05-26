@@ -1,10 +1,32 @@
-import React from "react";
+import React, { useRef } from "react";
 import Navbar from './Navbar';
 import About from '../Components/Photo/AboutBanner.jpg';
 import Footer from "./Footer";
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import emailjs from '@emailjs/browser';
 
 const Contact = () => {
+  const form = useRef();
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs.sendForm(
+      'service_wfkcz4h',       
+      'template_dqywf7s',      
+      form.current,
+      'UtDIqoK-Alo0cNXuP'        
+    )
+    .then(() => {
+      alert("Message sent successfully!");
+      form.current.reset();
+    })
+    .catch((error) => {
+      console.error("EmailJS Error:", error.text);
+      alert("Failed to send message. Please try again.");
+    });
+  };
+
   return (
     <div className="font-sans bg-white">
       <Navbar />
@@ -24,11 +46,9 @@ const Contact = () => {
         </div>
       </div>
 
-     
       <section className="py-6 md:py-8 px-4 sm:px-6 lg:px-[4rem] bg-gradient-to-b from-gray-50 to-white">
         <div className="w-full mx-auto">
           <div className="flex flex-col lg:flex-row gap-12">
-           
             <div className="w-full lg:w-1/2 relative bg-white rounded-xl shadow-xl overflow-hidden">
               <iframe
                 title="India Map"
@@ -38,7 +58,7 @@ const Contact = () => {
                 allowFullScreen
                 loading="lazy"
               />
-              <div className="absolute inset-0 flex items-end justify-start p-6  bg-gradient-to-t from-white via-white/90 to-transparent">
+              <div className="absolute inset-0 flex items-end justify-start p-6 bg-gradient-to-t from-white via-white/90 to-transparent">
                 <div className="space-y-2">
                   <h2 className="text-2xl font-bold text-gray-800">Our India Offices</h2>
                   <div className="flex items-start gap-3">
@@ -59,18 +79,18 @@ const Contact = () => {
               </div>
             </div>
 
-            
             <div className="w-full lg:w-1/2 bg-white rounded-xl shadow-lg p-4 md:p-8 space-y-6">
               <h2 className="text-3xl font-bold text-blue-700">Send Us a Message</h2>
               <p className="text-gray-600">
                 Have questions about your trip? Need custom itinerary suggestions? Reach out to our travel experts.
               </p>
 
-              <form className="space-y-5">
+              <form ref={form} onSubmit={sendEmail} className="space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">First Name*</label>
                     <input
+                      name="first_name"
                       type="text"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                       required
@@ -79,6 +99,7 @@ const Contact = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
                     <input
+                      name="last_name"
                       type="text"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                     />
@@ -87,6 +108,7 @@ const Contact = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Email*</label>
                   <input
+                    name="user_email"
                     type="email"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                     required
@@ -95,6 +117,7 @@ const Contact = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                   <input
+                    name="user_phone"
                     type="tel"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent"
                   />
@@ -102,6 +125,7 @@ const Contact = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Message*</label>
                   <textarea
+                    name="message"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent h-36"
                     required
                   ></textarea>
@@ -124,7 +148,7 @@ const Contact = () => {
           <p className="text-gray-600 w-full mx-auto text-lg mb-12">
             We're committed to providing exceptional service to travelers exploring India's incredible diversity.
           </p>
-          
+
           <div className="grid md:grid-cols-3 gap-8 text-left">
             <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition">
               <div className="text-blue-600 text-4xl mb-4">📞</div>
@@ -149,7 +173,6 @@ const Contact = () => {
             </div>
           </div>
 
-         
           <div className="mt-16 grid sm:grid-cols-3 gap-8 w-full mx-auto">
             <div className="bg-white p-6 rounded-lg shadow-sm flex items-start gap-4">
               <div className="bg-blue-100 p-3 rounded-full">
@@ -183,22 +206,13 @@ const Contact = () => {
             </div>
           </div>
 
-         
           <div className="mt-16">
             <h3 className="text-xl font-semibold text-gray-800 mb-6">Connect With Us</h3>
             <div className="flex justify-center gap-6 text-2xl text-blue-600">
-              <a href="#" className="hover:text-blue-800 transition">
-                <FaFacebook />
-              </a>
-              <a href="#" className="hover:text-blue-400 transition">
-                <FaTwitter />
-              </a>
-              <a href="#" className="hover:text-pink-600 transition">
-                <FaInstagram />
-              </a>
-              <a href="#" className="hover:text-blue-700 transition">
-                <FaLinkedin />
-              </a>
+              <a href="#" className="hover:text-blue-800 transition"><FaFacebook /></a>
+              <a href="#" className="hover:text-blue-400 transition"><FaTwitter /></a>
+              <a href="#" className="hover:text-pink-600 transition"><FaInstagram /></a>
+              <a href="#" className="hover:text-blue-700 transition"><FaLinkedin /></a>
             </div>
           </div>
         </div>

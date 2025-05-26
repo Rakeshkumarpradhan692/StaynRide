@@ -1,18 +1,281 @@
+// import React, { useContext, useState, useEffect } from "react";
+// import { AuthContext } from "../context/authContext";
+// import axios from "axios";
+// import { Edit, Lock, Mail, MapPin, Phone, User } from "lucide-react";
+// import { AiOutlineClose } from "react-icons/ai";
+// import { useNavigate } from "react-router-dom";
+// import { toast } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
+
+// const ProfilePage = () => {
+//   const navigate = useNavigate();
+//   const { Auth, updateUser } = useContext(AuthContext);
+
+//   const [user, setUser] = useState(null);
+//   const [editMode, setEditMode] = useState(false);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
+
+//   const [formData, setFormData] = useState({
+//     id: "",
+//     name: "",
+//     email: "",
+//     number: "",
+//     gender: "",
+//     city: "",
+//     district: "",
+//     state: "",
+//     country: "",
+//     address: "",
+//     password: "",
+//     image: "",
+//   });
+
+//   useEffect(() => {
+//     if (Auth?.user) {
+//       const {
+//         _id,
+//         name,
+//         email,
+//         number,
+//         gender,
+//         Gender ,
+//         city,
+//         district,
+//         state,
+//         country,
+//         address,
+//         password,
+//         image,
+//       } = Auth.user;
+
+//       setUser(Auth.user);
+//       setFormData({
+//         id: _id || "",
+//         name: name || "",
+//         email: email || "",
+//         number: number || "",
+//         gender: gender || Gender ||  "",
+//         city: city || "",
+//         district: district || "",
+//         state: state || "",
+//         country: country || "",
+//         address: address || "",
+//         password: password || "",
+//         image: image || "",
+//       });
+//     }
+//   }, [Auth]);
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData((prev) => ({ ...prev, [name]: value }));
+//   };
+
+//   const handleImageChange = (e) => {
+//     const file = e.target.files[0];
+//     if (!file) return;
+
+//     if (!file.type.startsWith("image/")) {
+//       toast.error("Please select a valid image file.");
+//       return;
+//     }
+
+//     if (file.size > 2 * 1024 * 1024) {
+//       toast.error("Image size should be less than 2MB.");
+//       return;
+//     }
+
+//     const reader = new FileReader();
+//     reader.onloadend = () => {
+//       setFormData((prev) => ({ ...prev, image: reader.result }));
+//     };
+//     reader.readAsDataURL(file);
+//   };
+
+//   const handleSubmit = async () => {
+//     try {
+//       setLoading(true);
+//       setError("");
+
+//       if (!formData.name || !formData.email) {
+//         throw new Error("Name and email are required");
+//       }
+
+//       const res = await axios.put(
+//         "http://localhost:5000/api/users/update-user/",
+//         formData
+//       );
+
+//       setUser(res.data.user);
+//       updateUser(res.data.user);
+//       setEditMode(false);
+//       toast.success("Profile updated successfully!");
+//     } catch (err) {
+//       const errorMessage =
+//         err.response?.data?.message || err.message || "Update failed";
+//       setError(errorMessage);
+//       toast.error(errorMessage);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleClose = () => {
+//     navigate("/");
+//   };
+
+//   const profileImage =
+//     formData.image ||
+//     user?.image ||
+//     `https://api.dicebear.com/8.x/initials/svg?seed=${user?.name || "User"}`;
+
+//   return (
+//     <div className="min-h-screen md:p-[4rem] bg-gradient-to-br from-indigo-100 to-white px-6 flex justify-center">
+//        <button
+//           type="button"
+//           onClick={handleClose}
+//           className="absolute top-4 right-4 rounded-full hover:bg-gray-100 transition-colors"
+//           aria-label="Close profile"
+//         >
+//           <AiOutlineClose className="text-gray-500 text-xl" />
+//         </button>
+//       <div className="w-full  bg-white rounded-xl shadow-lg p-6 md:px-[4rem] relative space-y-6">
+       
+//         <button
+//           onClick={() => setEditMode(!editMode)}
+//           className="absolute top-4 right-4 bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white font-semibold px-4 py-2 rounded-md shadow"
+//         >
+//           {editMode ? "Cancel" : "Edit Profile"}
+//         </button>
+
+//         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+//           <div className="relative">
+//             <img
+//               src={profileImage}
+//               alt="Profile"
+//               className="w-32 h-32 rounded-full border-4 border-indigo-200 shadow-md object-cover"
+//             />
+//             {editMode && (
+//               <>
+//                 <label
+//                   htmlFor="image-upload"
+//                   className="absolute bottom-0 right-0 bg-indigo-500 text-white p-2 rounded-full cursor-pointer hover:bg-indigo-600 transition"
+//                 >
+//                   <Edit size={16} />
+//                 </label>
+//                 <input
+//                   id="image-upload"
+//                   type="file"
+//                   accept="image/*"
+//                   onChange={handleImageChange}
+//                   className="hidden"
+//                 />
+//               </>
+//             )}
+//           </div>
+
+//           <div className="flex-1 space-y-2">
+//             {editMode ? (
+//               <input
+//                 name="name"
+//                 value={formData.name}
+//                 onChange={handleChange}
+//                 className="text-xl font-bold text-gray-800 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
+//               />
+//             ) : (
+//               <h2 className="text-2xl font-bold text-gray-800">{user?.name}</h2>
+//             )}
+//             <p className="text-sm text-gray-500">{user?.email}</p>
+//             <p className="text-indigo-600 text-sm font-medium">– User –</p>
+//           </div>
+//         </div>
+
+//         <div className="border-t pt-4">
+//           <h3 className="text-lg font-semibold text-gray-700 mb-2">About</h3>
+//           <p className="text-sm text-gray-600">
+//             The Admin of the BricksNBar E-Commerce platform is responsible for overseeing and managing all aspects of the online store. As the central authority, the Admin ensures smooth business operations, efficient product management, and seamless customer experiences.
+//           </p>
+//         </div>
+
+//         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//           {[
+//             { label: "Email", field: "email", type: "email" },
+//             { label: "Phone", field: "number", type: "text" },
+//             { label: "Gender", field: "gender", type: "text" },
+//             { label: "City", field: "city", type: "text" },
+//     { label: "District", field: "district", type: "text" },
+//     { label: "State", field: "state", type: "text" },
+//     { label: "Country", field: "country", type: "text" },
+//     { label: "Address", field: "address", type: "textarea" },
+    
+//           ].map(({ label, field, type, value, readOnly }) => (
+//             <div key={label} className="bg-pink-100 rounded-md p-4">
+//               <p className="text-sm font-semibold text-gray-600">{label}</p>
+//               {editMode && !readOnly ? (
+//                 <input
+//                   type={type}
+//                   name={field}
+//                   value={formData[field]}
+//                   onChange={handleChange}
+//                   className="w-full bg-white mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+//                 />
+//               ) : (
+//                 <p className="text-base font-medium text-gray-800">
+//                   {value || formData[field] || "Not provided"}
+//                 </p>
+//               )}
+//             </div>
+//           ))}
+//         </div>
+
+      
+
+//         {editMode && (
+//           <div className="flex justify-end pt-4">
+//             <button
+//               onClick={handleSubmit}
+//               disabled={loading}
+//               className={`bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded-md shadow transition ${
+//                 loading ? "opacity-60 cursor-not-allowed" : ""
+//               }`}
+//             >
+//               {loading ? "Saving..." : "Save Changes"}
+//             </button>
+//           </div>
+//         )}
+
+//         {error && (
+//           <div className="bg-red-100 text-red-700 p-4 rounded mt-4">
+//             {error}
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ProfilePage;
+
+
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/authContext";
 import axios from "axios";
-import { User, Mail, Phone, MapPin, Calendar, Edit, Lock } from "lucide-react";
+import { Edit } from "lucide-react";
+import { AiOutlineClose } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { AiOutlineClose } from "react-icons/ai";
-import { Navigate, useNavigate } from "react-router-dom";
+
 const ProfilePage = () => {
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
+  const { Auth, updateUser } = useContext(AuthContext);
+
   const [user, setUser] = useState(null);
+  const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { Auth, updateUser } = useContext(AuthContext);
-  const [editMode, setEditMode] = useState(false);
+
   const [formData, setFormData] = useState({
     id: "",
     name: "",
@@ -25,33 +288,73 @@ const ProfilePage = () => {
     country: "",
     address: "",
     password: "",
+    image: "",
   });
+
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
     if (Auth?.user) {
+      const {
+        _id,
+        name,
+        email,
+        number,
+        gender,
+        Gender,
+        city,
+        district,
+        state,
+        country,
+        address,
+        password,
+        image,
+      } = Auth.user;
+
       setUser(Auth.user);
       setFormData({
-        id: Auth.user._id || "",
-        name: Auth.user.name || "",
-        email: Auth.user.email || "",
-        number: Auth.user.number || "",
-        gender: Auth.user.gender || Auth.user.Gender || "",
-        city: Auth.user.city || "",
-        district: Auth.user.district || "",
-        state: Auth.user.state || "",
-        country: Auth.user.country || "",
-        address: Auth.user.address || "",
-        password: Auth.user.password || "",
+        id: _id || "",
+        name: name || "",
+        email: email || "",
+        number: number || "",
+        gender: gender || Gender || "",
+        city: city || "",
+        district: district || "",
+        state: state || "",
+        country: country || "",
+        address: address || "",
+        password: password || "",
+        image: image || "",
       });
     }
   }, [Auth]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file.");
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image size should be less than 2MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData((prev) => ({ ...prev, image: reader.result }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async () => {
@@ -64,21 +367,8 @@ const ProfilePage = () => {
       }
 
       const res = await axios.put(
-        `http://localhost:5000/api/users/update-user/`,
-        {
-          id: formData.id,
-          name: formData.name,
-          email: formData.email,
-          number: formData.number,
-          country: formData.country,
-          state: formData.state,
-          district: formData.district,
-          city: formData.city,
-          address: formData.address,
-          gender: formData.gender,
-          image: formData.image,
-          password: formData.password,
-        }
+        "http://localhost:5000/api/users/update-user/",
+        formData
       );
 
       setUser(res.data.user);
@@ -87,9 +377,7 @@ const ProfilePage = () => {
       toast.success("Profile updated successfully!");
     } catch (err) {
       const errorMessage =
-        err.response?.data?.message ||
-        err.message ||
-        "Update failed. Please try again.";
+        err.response?.data?.message || err.message || "Update failed";
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -97,234 +385,214 @@ const ProfilePage = () => {
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-IN", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+  const handlePasswordChange = async () => {
+    if (!newPassword || !confirmPassword) {
+      toast.error("Please fill out both fields.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await axios.put("http://localhost:5000/api/users/change-password", {
+        id: formData.id,
+        password: newPassword,
+      });
+      toast.success("Password updated successfully!");
+      setShowPasswordModal(false);
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err) {
+      const msg = err.response?.data?.message || "Password change failed";
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
   };
+
   const handleClose = () => {
-    Navigate("/");
+    navigate("/");
   };
+
+  const profileImage =
+    formData.image ||
+    user?.image ||
+    `https://api.dicebear.com/8.x/initials/svg?seed=${user?.name || "User"}`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-indigo-50 to-blue-50 flex items-start md:items-center justify-start md:justify-center p-4 md:p-8">
-      <div className="bg-white shadow-xl rounded-2xl p-6 w-full max-w-2xl space-y-6">
-        <button
-          type="button"
-          onClick={handleClose}
-          className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 transition-colors"
-          aria-label="Close login"
-        >
-          <AiOutlineClose className="text-gray-500 text-xl" />
-        </button>
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
-            My Profile
-          </h2>
-          <div className="flex gap-2 w-full md:w-auto">
-            <button
-              onClick={() => setEditMode(!editMode)}
-              className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              <Edit size={18} />
-              {editMode ? "Cancel" : "Edit Profile"}
-            </button>
-            {editMode && (
-              <button
-                onClick={handleSubmit}
-                disabled={loading}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                  loading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
-                } text-white`}
-              >
-                {loading ? "Saving..." : "Save Changes"}
-              </button>
-            )}
-          </div>
-        </div>
+    <div className="min-h-screen md:p-[4rem] bg-gradient-to-br from-indigo-100 to-white px-6 flex justify-center">
+      <button
+        type="button"
+        onClick={handleClose}
+        className="absolute top-4 right-4 rounded-full hover:bg-gray-100 transition-colors"
+        aria-label="Close profile"
+      >
+        <AiOutlineClose className="text-gray-500 text-xl" />
+      </button>
 
-        <div className="flex flex-col items-center gap-4">
+      <div className="w-full bg-white rounded-xl shadow-lg p-6 md:px-[4rem] relative space-y-6">
+        <button
+          onClick={() => setEditMode(!editMode)}
+          className="absolute top-4 right-4 bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white font-semibold px-4 py-2 rounded-md shadow"
+        >
+          {editMode ? "Cancel" : "Edit Profile"}
+        </button>
+
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
           <div className="relative">
             <img
-              src={
-                user?.profilePhoto ||
-                `https://api.dicebear.com/8.x/initials/svg?seed=${
-                  user?.name || "User"
-                }`
-              }
-              alt="User Avatar"
-              className="w-28 h-28 rounded-full border-4 border-indigo-200 shadow-md"
+              src={profileImage}
+              alt="Profile"
+              className="w-32 h-32 rounded-full border-4 border-indigo-200 shadow-md object-cover"
             />
             {editMode && (
-              <button className="absolute bottom-0 right-0 bg-indigo-500 text-white p-2 rounded-full hover:bg-indigo-600 transition-colors">
-                <Edit size={16} />
-              </button>
+              <>
+                <label
+                  htmlFor="image-upload"
+                  className="absolute bottom-0 right-0 bg-indigo-500 text-white p-2 rounded-full cursor-pointer hover:bg-indigo-600 transition"
+                >
+                  <Edit size={16} />
+                </label>
+                <input
+                  id="image-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </>
             )}
           </div>
-          <h3 className="text-xl font-semibold text-gray-800">{user?.name}</h3>
-          <p className="text-gray-500 text-sm">{user?.email}</p>
+
+          <div className="flex-1 space-y-2">
+            {editMode ? (
+              <input
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="text-xl font-bold text-gray-800 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
+              />
+            ) : (
+              <h2 className="text-2xl font-bold text-gray-800">{user?.name}</h2>
+            )}
+            <p className="text-sm text-gray-500">{user?.email}</p>
+            <p className="text-indigo-600 text-sm font-medium">– User –</p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {[
-            { label: "Full Name", icon: <User size={18} />, field: "name" },
-            {
-              label: "Email Address",
-              icon: <Mail size={18} />,
-              field: "email",
-              type: "email",
-            },
-            {
-              label: "Phone Number",
-              icon: <Phone size={18} />,
-              field: "number",
-              type: "tel",
-            },
-            {
-              label: "Gender",
-              icon: <User size={18} />,
-              field: "gender",
-              editComponent: (
-                <select
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              ),
-            },
-            {
-              label: "Location",
-              icon: <MapPin size={18} />,
-              multiline: true,
-              value: `${formData.city}, ${formData.district}, ${formData.state}, ${formData.country}`,
-              address: formData.address,
-            },
-            {
-              label: "Change Password",
-              icon: <Lock size={18} />,
-              field: "password",
-              type: "password",
-              value: `${formData.password}`,
-              placeholder: "Enter new password",
-            },
-          ].map(
-            ({
-              label,
-              icon,
-              field,
-              multiline,
-              readonly,
-              value,
-              type,
-              placeholder,
-              editComponent,
-              address,
-            }) => (
-              <div
-                key={field || label}
-                className={`bg-gray-50 p-4 rounded-lg ${
-                  multiline ? "md:col-span-2" : ""
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="mt-1 text-indigo-500">{icon}</div>
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium text-gray-500">{label}</p>
-                    {editMode && !readonly ? (
-                      editComponent ? (
-                        editComponent
-                      ) : multiline ? (
-                        <div className="space-y-2">
-                          <input
-                            type="text"
-                            name="city"
-                            value={formData.city}
-                            onChange={handleChange}
-                            placeholder="City"
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                          />
-                          <input
-                            type="text"
-                            name="district"
-                            value={formData.district}
-                            onChange={handleChange}
-                            placeholder="District"
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                          />
-                          <input
-                            type="text"
-                            name="state"
-                            value={formData.state}
-                            onChange={handleChange}
-                            placeholder="State"
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                          />
-                          <input
-                            type="text"
-                            name="country"
-                            value={formData.country}
-                            onChange={handleChange}
-                            placeholder="Country"
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                          />
-                          <textarea
-                            name="address"
-                            value={formData.address}
-                            onChange={handleChange}
-                            placeholder="Full Address"
-                            rows={3}
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                          />
-                        </div>
-                      ) : (
-                        <input
-                          type={type || "text"}
-                          name={field}
-                          value={formData[field]}
-                          onChange={handleChange}
-                          placeholder={placeholder}
-                          className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        />
-                      )
-                    ) : (
-                      <div>
-                        <p className="text-base font-medium">
-                          {value || formData[field] || "Not provided"}
-                        </p>
-                        {address && (
-                          <p className="text-sm text-gray-600 mt-1">
-                            {address}
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )
-          )}
+        <div className="border-t pt-4">
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">About</h3>
+          <p className="text-sm text-gray-600">
+            The Admin of the BricksNBar E-Commerce platform is responsible for overseeing and managing all aspects of the online store. As the central authority, the Admin ensures smooth business operations, efficient product management, and seamless customer experiences.
+          </p>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            { label: "Email", field: "email", type: "email" },
+            { label: "Phone", field: "number", type: "text" },
+            { label: "Gender", field: "gender", type: "text" },
+            { label: "City", field: "city", type: "text" },
+            { label: "District", field: "district", type: "text" },
+            { label: "State", field: "state", type: "text" },
+            { label: "Country", field: "country", type: "text" },
+            { label: "Address", field: "address", type: "textarea" },
+          ].map(({ label, field, type, value, readOnly }) => (
+            <div key={label} className="bg-pink-100 rounded-md p-4">
+              <p className="text-sm font-semibold text-gray-600">{label}</p>
+              {editMode && !readOnly ? (
+                <input
+                  type={type}
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  className="w-full bg-white mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              ) : (
+                <p className="text-base font-medium text-gray-800">
+                  {value || formData[field] || "Not provided"}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {editMode && (
+          <div className="flex justify-end gap-4 pt-4">
+            <button
+              onClick={() => setShowPasswordModal(true)}
+              className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-6 py-2 rounded-md shadow transition"
+            >
+              Change Password
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className={`bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded-md shadow transition ${
+                loading ? "opacity-60 cursor-not-allowed" : ""
+              }`}
+            >
+              {loading ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        )}
 
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-            <p className="text-red-600 font-medium">{error}</p>
+          <div className="bg-red-100 text-red-700 p-4 rounded mt-4">
+            {error}
           </div>
         )}
       </div>
+
+      {/* Password Change Modal */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg relative">
+            <h2 className="text-xl font-semibold mb-4">Change Password</h2>
+
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+              New Password
+            </label>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md mb-4"
+            />
+
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md mb-4"
+            />
+
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setShowPasswordModal(false)}
+                className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handlePasswordChange}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default ProfilePage;
-
-
