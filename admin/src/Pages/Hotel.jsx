@@ -245,8 +245,7 @@ export default function Hotels() {
       {isloading === true ? (
         <SkelitonLoader />
       ) : (
-        <div className=" relative">
-          {" "}
+        <div className="">
           <div className="flex items-center justify-between mb-4">
             <div className=" ">
               <h1 className="text-3xl font-semibold">Hotels</h1>
@@ -302,7 +301,7 @@ export default function Hotels() {
               Reset Filters
             </button>
           </div>
-          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-14">
             {hotels.map((hotel) => (
               <div
                 key={hotel._id}

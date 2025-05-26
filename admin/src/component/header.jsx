@@ -28,15 +28,8 @@ function Header(props) {
   };
 
   const handleLogout = () => {
-    // Add your logout logic here
     logout();
     console.log("Logging out...");
-    setIsDropdownOpen(false);
-  };
-
-  const handleSettings = () => {
-    // Add your settings navigation logic here
-    console.log("Navigate to settings");
     setIsDropdownOpen(false);
   };
 
@@ -64,7 +57,7 @@ function Header(props) {
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           <img
-            src={people}
+            src={auth.admin.profilePhoto || people}
             alt="User"
             className="w-10 h-10 rounded-full object-cover border-2 border-gray-200 hover:border-blue-400 transition-all"
           />
@@ -74,7 +67,6 @@ function Header(props) {
             }`}
           />
         </div>
-
         {isDropdownOpen && (
           <div className="origin-top-right z-50 absolute right-0 top-10 w-56 rounded-lg shadow-xl bg-white  focus:outline-none overflow-hidden animate-fade-in">
             <div className="py-1">
