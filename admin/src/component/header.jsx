@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import people from "../assets/images/people.jpg";
 import Logo from "../assets/images/logo.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/Auth";
 import { Menu, User, LogOut, ChevronDown } from "lucide-react";
 
@@ -9,6 +9,7 @@ function Header(props) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { auth, logout } = useContext(AuthContext);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -31,6 +32,7 @@ function Header(props) {
     logout();
     console.log("Logging out...");
     setIsDropdownOpen(false);
+    navigate("/");
   };
 
   return (
