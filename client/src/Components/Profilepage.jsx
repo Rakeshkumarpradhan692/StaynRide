@@ -1,16 +1,17 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/authContext";
+import Swal from "sweetalert2";
 import axios from "axios";
 import { Edit } from "lucide-react";
 import { AiOutlineClose } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import CloudinaryUpload from "./CloudinaryUpload";
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { Auth, updateUser } = useContext(AuthContext);
-
+  const { uploadImage } = CloudinaryUpload();
   const [user, setUser] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -76,7 +77,7 @@ const ProfilePage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -85,16 +86,18 @@ const ProfilePage = () => {
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024) {
       toast.error("Image size should be less than 2MB.");
       return;
     }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData((prev) => ({ ...prev, image: reader.result }));
-    };
-    reader.readAsDataURL(file);
+    const res = await uploadImage(file);
+    if (res) {
+      setFormData((prev) => ({
+        ...prev,
+        image: res,
+      }));
+      toast.success("Image uploaded successfully");
+    }
   };
 
   const handleSubmit = async () => {
@@ -125,24 +128,30 @@ const ProfilePage = () => {
     }
   };
 
-  const handlePasswordChange = async () => {
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+
     if (!newPassword || !confirmPassword) {
-      toast.error("Please fill out both fields.");
+      Swal.fire("Error", "Please fill out both fields.", "warning");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error("Passwords do not match.");
+      Swal.fire("Error", "Passwords do not match.", "error");
       return;
     }
 
     try {
       setLoading(true);
-      await axios.put("http://localhost:5000/api/users/change-password", {
+      await axios.put("http://localhost:5000/api/users/forgetpass", {
         id: formData.id,
-        password: newPassword,
+        newpass: newPassword,
       });
-      toast.success("Password updated successfully!");
+      Swal.fire({
+        title: "password update successfully",
+        icon: "success",
+        draggable: true,
+      });
       setShowPasswordModal(false);
       setNewPassword("");
       setConfirmPassword("");
@@ -152,6 +161,7 @@ const ProfilePage = () => {
     } finally {
       setLoading(false);
     }
+    return;
   };
 
   const handleClose = () => {
@@ -185,7 +195,8 @@ const ProfilePage = () => {
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
           <div className="relative">
             <img
-              src={profileImage}
+              src={formData.image}
+              name="image"
               alt="Profile"
               className="w-32 h-32 rounded-full border-4 border-indigo-200 shadow-md object-cover"
             />
@@ -227,7 +238,10 @@ const ProfilePage = () => {
         <div className="border-t pt-4">
           <h3 className="text-lg font-semibold text-gray-700 mb-2">About</h3>
           <p className="text-sm text-gray-600">
-            The Admin of the BricksNBar E-Commerce platform is responsible for overseeing and managing all aspects of the online store. As the central authority, the Admin ensures smooth business operations, efficient product management, and seamless customer experiences.
+            The Admin of the BricksNBar E-Commerce platform is responsible for
+            overseeing and managing all aspects of the online store. As the
+            central authority, the Admin ensures smooth business operations,
+            efficient product management, and seamless customer experiences.
           </p>
         </div>
 

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import HotelCard from "./HotelCard";
 import Navbar from "./Navbar";
+import Skelitonhotelcab from "./skeliton/skelitonhotelcab";
 import { FaSearch, FaFilter } from "react-icons/fa";
-import {  CircleChevronLeft } from 'lucide-react';
+import { CircleChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const HotelsPage = () => {
@@ -19,8 +20,13 @@ const HotelsPage = () => {
     ratings: [],
   });
 
+  const [allStates, setAllStates] = useState([]);
+  const [allCities, setAllCities] = useState([]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const hotelsPerPage = 6;
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAllHotels = async () => {
@@ -28,8 +34,14 @@ const HotelsPage = () => {
         const response = await axios.get(
           "http://localhost:5000/api/public/all-hotels"
         );
-        setHotels(Array.isArray(response.data) ? response.data : []);
-        console.log("hotels", response.data);
+        const hotelsData = Array.isArray(response.data) ? response.data : [];
+        setHotels(hotelsData);
+
+        // Extract unique states and cities
+        const states = [...new Set(hotelsData.map((hotel) => hotel.state))];
+        const cities = [...new Set(hotelsData.map((hotel) => hotel.city))];
+        setAllStates(states);
+        setAllCities(cities);
       } catch (err) {
         console.error(err);
         setError("Failed to fetch hotels.");
@@ -46,7 +58,6 @@ const HotelsPage = () => {
       name: "",
       state: "",
       city: "",
-
       types: [],
       ratings: [],
     });
@@ -91,8 +102,6 @@ const HotelsPage = () => {
   const currentHotels = filteredHotels.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredHotels.length / hotelsPerPage);
 
-  const navigate = useNavigate();
-
   const handleBackClick = () => {
     navigate(-1);
   };
@@ -101,14 +110,16 @@ const HotelsPage = () => {
     <>
       <Navbar />
       <div className="p-4 space-y-4 px-8 md:px-[4rem] mt-[4.5rem]">
-       <div className="w-10 h-8 text-blue-600">
-  <button
-    onClick={handleBackClick}
-    className="flex items-center justify-center"
-  >
-    <CircleChevronLeft size={20} />
-  </button>
-</div>
+        <div className="w-10 h-8 text-blue-600">
+          <button
+            onClick={handleBackClick}
+            className="flex items-center justify-center"
+          >
+            <CircleChevronLeft size={20} />
+          </button>
+        </div>
+
+        {/* Search and Filter Inputs */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div className="relative">
             <input
@@ -121,22 +132,35 @@ const HotelsPage = () => {
             />
             <FaSearch className="absolute left-3 top-3 text-gray-400" />
           </div>
-          <input
-            type="text"
+
+          <select
             name="state"
-            placeholder="State"
             value={filters.state}
             onChange={handleInputChange}
             className="w-full border p-2 rounded"
-          />
-          <input
-            type="text"
+          >
+            <option value="">All States</option>
+            {allStates.map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
+
+          <select
             name="city"
-            placeholder="City"
             value={filters.city}
             onChange={handleInputChange}
             className="w-full border p-2 rounded"
-          />
+          >
+            <option value="">All Cities</option>
+            {allCities.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
+
           <button
             onClick={clearFilters}
             className="bg-gray-200 hover:bg-gray-300 p-2 rounded flex items-center justify-center gap-2"
@@ -146,6 +170,7 @@ const HotelsPage = () => {
         </div>
 
         <div className="flex flex-col md:flex-row gap-4">
+          {/* Filters */}
           <div className="w-full md:w-1/4 space-y-4">
             <div>
               <h2 className="font-bold mb-2">Hotel Type</h2>
@@ -178,10 +203,10 @@ const HotelsPage = () => {
             </div>
           </div>
 
-          {/* Results */}
+         
           <div className="flex-1">
             {loading ? (
-              <p>Loading hotels...</p>
+              <Skelitonhotelcab />
             ) : error ? (
               <p className="text-red-500">{error}</p>
             ) : currentHotels.length === 0 ? (

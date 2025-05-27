@@ -21,7 +21,7 @@ import { IoCloseSharp } from "react-icons/io5";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
 import img from "../Components/Photo/bed.jpg";
-import { ArrowLeft, CircleChevronLeft } from "lucide-react";
+import {  CircleChevronLeft } from "lucide-react";
 
 const HotelDetails = () => {
   const { Auth } = useContext(AuthContext);
