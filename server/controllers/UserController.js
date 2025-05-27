@@ -170,14 +170,10 @@ exports.forgetPasswordLogin = async (req, res) => {
 
     user.password = hashedPassword;
     await user.save();
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
 
     res.status(200).json({
       success: true,
       message: "Password updated successfully",
-      user: updatedUser,
     });
   } catch (err) {
     console.error(err);
