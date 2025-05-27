@@ -367,7 +367,7 @@ const RegisterPage = () => {
             ></textarea>
           </div>
 
-          {/* Profile Photo Upload */}
+         
           <div className="mt-6 text-center">
             {formData.image && (
               <img

@@ -202,17 +202,17 @@ const HotelDetails = () => {
 
         <div className="w-full mx-auto px-4 sm:px-6 lg:px-[4rem] py-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-cent">
           <div className="order-2 md:order-1 px-6">
-            <div className="w-10 h-8 text-blue-600 ">
+           
+            <div className="flex items-center text-center"> <div className="w-10 h-8 text-blue-600 ">
               <button
                 onClick={handleBackClick}
                 className="flex items-center justify-center"
               >
                 <CircleChevronLeft size={20} />
               </button>
-            </div>
-            <div><h2 className="text-4xl font-semibold text-[#8C5B3F] mb-6">
+            </div><span className="text-4xl font-semibold text-[#8C5B3F] mb-6">
               {hotel.name}
-            </h2></div>
+            </span></div>
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
               {hotel.description}
             </p>

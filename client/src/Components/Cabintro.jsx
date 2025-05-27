@@ -9,7 +9,7 @@ function Cabintro() {
     { name: "Laundry & Ironing", value: 73 },
   ];
 
-  // Animation variants
+ 
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -35,7 +35,7 @@ function Cabintro() {
           viewport={{ once: true }}
           variants={container}
         >
-          {/* Image Section */}
+         
           <motion.div 
             className="w-full lg:w-1/2 rounded-xl overflow-hidden shadow-xl"
             variants={item}
@@ -47,7 +47,7 @@ function Cabintro() {
             />
           </motion.div>
 
-          {/* Content Section */}
+       
           <motion.div 
             className="w-full lg:w-1/2 space-y-8"
             variants={item}

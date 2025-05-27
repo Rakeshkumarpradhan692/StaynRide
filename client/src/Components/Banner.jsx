@@ -42,7 +42,7 @@ const Banner = () => {
 
   return (
     <div className="relative w-full h-64 sm:h-[50vw] lg:h-screen mt-[5rem]  bg-black overflow-hidden">
-      {/* Image container */}
+      
       <div className="relative w-full h-full">
         {images.map((banner, index) => (
           <img
@@ -56,7 +56,7 @@ const Banner = () => {
         ))}
       </div>
 
-      {/* Navigation buttons */}
+     
       <button
         onClick={goToPrevious}
         className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 z-20"
@@ -73,7 +73,7 @@ const Banner = () => {
         <FaChevronRight size={20} />
       </button>
 
-      {/* Dot indicators */}
+     
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
         {images.map((_, i) => (
           <span

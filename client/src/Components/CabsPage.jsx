@@ -1,11 +1,5 @@
-// import { useEffect, useState } from "react";
-// import CabCard from "./CabCard";
-import Skelitonhotelcab from "./skeliton/skelitonhotelcab";
-// import axios from "axios";
-// import Navbar from "./Navbar";
-// import { Navigate, useNavigate } from "react-router-dom";
-// import { ArrowLeft } from "lucide-react";
 import React, { useEffect, useState } from 'react';
+import Skelitonhotelcab from "./skeliton/skelitonhotelcab";
 import CabCard from './CabCard';
 import axios from 'axios';
 import Navbar from './Navbar';
@@ -204,9 +198,9 @@ export default function CabsPage() {
 
        
         <div className="lg:w-3/4 w-full">
-          <h2 className="text-2xl font-bold mb-6 text-center">
+          {/* <h2 className="text-2xl font-bold mb-6 text-center">
             All Available Cabs
-          </h2>
+          </h2> */}
 
           {filteredCabs.length === 0 ? (
             <p className="text-center text-gray-500">

@@ -12,9 +12,9 @@ import {
   FaChevronDown,
   
 } from "react-icons/fa";
-import { GiCarKey } from "react-icons/gi";
-import { FaCar } from "react-icons/fa";
 
+import { FaCar } from "react-icons/fa";
+import { RiHotelFill } from "react-icons/ri";
 const Navbar = () => {
   const { setAuth } = useContext(AuthContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -133,7 +133,7 @@ const Navbar = () => {
               
               className="gap-1 flex  items-center flex-col  cursor-pointer"
             >
-              <div className='rounded-full text-center bg-[#b0bc88] p-2'><GiCarKey className="w-6 h-6" /> </div>
+              <div className='rounded-full text-center bg-[#b0bc88] p-2'><RiHotelFill className="w-6 h-6" /> </div>
               <div className='font-bold text-center  w-full  text-[0.7rem]'>Hotel Booking</div>
             </NavLink>
             <NavLink
@@ -205,7 +205,6 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -258,7 +257,7 @@ const Navbar = () => {
               
               className="gap-1 flex  items-center flex-col  cursor-pointer"
             >
-              <div className='rounded-full text-center bg-[#b0bc88] p-2'><GiCarKey className="w-6 h-6" /> </div>
+              <div className='rounded-full text-center bg-[#b0bc88] p-2'><RiHotelFill className="w-6 h-6" /> </div>
               <div className='font-bold text-center  w-full  text-[0.7rem]'>Hotel Booking</div>
             </NavLink>
             <NavLink

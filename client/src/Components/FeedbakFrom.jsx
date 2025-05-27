@@ -267,54 +267,32 @@ const FeedbackPage = () => {
 
         {showForm && <FeedbackPopup onClose={() => setShowForm(false)} />}
 
-        {/* Feedback Cards */}
+      
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {currentFeedbacks.map((fb, i) => (
             <FeedbackCard key={i} feedback={fb} />
           ))}
         </div>
 
-        {/* Pagination */}
-        {/* {totalPages > 1 && (
-          <div className="flex justify-center">
-            <div className="inline-flex rounded-md shadow-sm">
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={`px-4 py-2 text-sm font-medium border border-gray-300 ${
-                    currentPage === i + 1 
-                      ? "bg-blue-600 text-white border-blue-600" 
-                      : "bg-white text-gray-700 hover:bg-gray-50"
-                  } ${i === 0 ? "rounded-l-lg" : ""} ${
-                    i === totalPages - 1 ? "rounded-r-lg" : ""
-                  }`}
-                >
-                  {i + 1}
-                </button>
-              ))}
-            </div>
-          </div>
-        )} */}
+        
 
           
       {totalPages > 1 && (
       <div className="flex justify-center mt-4">
         <div className="inline-flex shadow-sm">
-          {/* Previous Button - No border */}
+         
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
             className={`px-4 py-2 text-sm font-medium rounde ${
               currentPage === 1
-                // ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                // : "bg-white text-gray-700 hover:bg-gray-100"
+              
             }`}
           >
             Prev
           </button>
 
-          {/* Page Number Buttons */}
+         
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i}
@@ -329,7 +307,7 @@ const FeedbackPage = () => {
             </button>
           ))}
 
-          {/* Next Button - No border */}
+         
           <button
             onClick={() =>
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
@@ -337,8 +315,7 @@ const FeedbackPage = () => {
             disabled={currentPage === totalPages}
             className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
               currentPage === totalPages
-                // ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                // : "bg-white text-gray-700 hover:bg-gray-100"
+              
             }`}
           >
             Next

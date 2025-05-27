@@ -6,7 +6,7 @@ const HotelIntroSection = () => {
   return (
     <section className="bg-gradient-to-b from-white to-blue-50 pb-4 px-4 sm:px-6 lg:px-8">
       <div className="w-full mx-auto">
-        {/* Header Section */}
+     
         <motion.div 
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
@@ -41,7 +41,7 @@ const HotelIntroSection = () => {
           />
         </motion.div>
 
-        {/* Content Sections */}
+       
         <div className="grid md:grid-cols-2 gap-12 mb-16">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -78,7 +78,6 @@ const HotelIntroSection = () => {
           </motion.div>
         </div>
 
-        {/* Signature Section */}
         <motion.div 
           className="grid md:grid-cols-2 items-center gap-8 bg-white w-full p-8 rounded-xl shadow-lg"
           initial={{ opacity: 0, y: 20 }}
@@ -86,7 +85,7 @@ const HotelIntroSection = () => {
           viewport={{ once: true }}
           transition={{ delay: 0.2, duration: 0.8 }}
         >
-          {/* Manager Profile */}
+     
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
             <div className="relative">
               <img
@@ -107,7 +106,7 @@ const HotelIntroSection = () => {
             </div>
           </div>
 
-          {/* Signature */}
+         
           <div className="flex justify-center md:justify-end">
             <div className="relative">
               <FaSignature className="absolute -left-6 -top-6 text-4xl text-blue-200 opacity-70" />

@@ -37,7 +37,7 @@ const HotelsPage = () => {
         const hotelsData = Array.isArray(response.data) ? response.data : [];
         setHotels(hotelsData);
 
-        // Extract unique states and cities
+      
         const states = [...new Set(hotelsData.map((hotel) => hotel.state))];
         const cities = [...new Set(hotelsData.map((hotel) => hotel.city))];
         setAllStates(states);
@@ -110,16 +110,22 @@ const HotelsPage = () => {
     <>
       <Navbar />
       <div className="p-4 space-y-4 px-8 md:px-[4rem] mt-[4.5rem]">
-        <div className="w-10 h-8 text-blue-600">
-          <button
-            onClick={handleBackClick}
-            className="flex items-center justify-center"
-          >
-            <CircleChevronLeft size={20} />
-          </button>
-        </div>
+       
 
-        {/* Search and Filter Inputs */}
+        <div className="flex items-center text-center px-6 py-2  ">
+                    
+                    <div className="w-10 h-8 gap-4 flex justify-center text-blue-600"> <button
+                    onClick={handleBackClick}
+                    className="flex items-center justify-center"
+                  >
+                    <CircleChevronLeft size={20} />
+                  </button><span><h2 className="text-2xl font-bold mb-6 text-center">Filters</h2></span>
+                 
+                </div>
+                
+                  </div>
+
+      
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div className="relative">
             <input
@@ -170,7 +176,7 @@ const HotelsPage = () => {
         </div>
 
         <div className="flex flex-col md:flex-row gap-4">
-          {/* Filters */}
+         
           <div className="w-full md:w-1/4 space-y-4">
             <div>
               <h2 className="font-bold mb-2">Hotel Type</h2>
