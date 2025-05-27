@@ -1,48 +1,57 @@
 import React from "react";
-import TeamMember from "./TeamMember"; 
-import aboutBg from "../Components/Photo/Header.png"; 
-import Navbar from './Navbar';
+import TeamMember from "./TeamMember";
+import aboutBg from "../Components/Photo/Header.png";
+import Navbar from "./Navbar";
 import Footer from "./Footer";
-import img from '../Components/Photo/logoone.png';
-import ver from '../Components/Photo/verson.avif';
-import { FaStar, FaHandshake, FaHeadset, FaWallet, FaMobileAlt } from 'react-icons/fa';
+import img from "../Components/Photo/logoone.png";
+import ver from "../Components/Photo/verson.avif";
+import {
+  FaStar,
+  FaHandshake,
+  FaHeadset,
+  FaWallet,
+  FaMobileAlt,
+} from "react-icons/fa";
 
 const team = [
   {
     name: "Diwakar Sharma",
     role: "Founder & CEO",
     image: img,
-    social: { linkedin: "#", twitter: "#" }
+    social: { linkedin: "#", twitter: "#" },
   },
   {
     name: "Preeti Thakur",
     role: "Travel Consultant",
     image: img,
-    social: { linkedin: "#", twitter: "#" }
+    social: { linkedin: "#", twitter: "#" },
   },
   {
     name: "Bipin Bisht",
     role: "Operations Manager",
     image: img,
-    social: { linkedin: "#", twitter: "#" }
+    social: { linkedin: "#", twitter: "#" },
   },
 ];
 
 const testimonials = [
   {
     name: "Anjali Mehta",
-    feedback: "StaynRide made my trip unforgettable. Excellent service and stress-free planning!",
-    rating: 5
+    feedback:
+      "StaynRide made my trip unforgettable. Excellent service and stress-free planning!",
+    rating: 5,
   },
   {
     name: "Rahul Verma",
-    feedback: "Highly recommend! Their hotel and cab packages are top-notch and affordable.",
-    rating: 4
+    feedback:
+      "Highly recommend! Their hotel and cab packages are top-notch and affordable.",
+    rating: 4,
   },
   {
     name: "Sonal Rajput",
-    feedback: "Professional, reliable, and friendly team. Loved my whole travel experience!",
-    rating: 5
+    feedback:
+      "Professional, reliable, and friendly team. Loved my whole travel experience!",
+    rating: 5,
   },
 ];
 
@@ -50,23 +59,23 @@ const features = [
   {
     icon: <FaWallet className="text-3xl text-blue-600" />,
     title: "Affordable Packages",
-    desc: "Tailored options for every budget without compromising comfort"
+    desc: "Tailored options for every budget without compromising comfort",
   },
   {
     icon: <FaHeadset className="text-3xl text-blue-600" />,
     title: "24/7 Support",
-    desc: "Our team is here to assist you anytime, anywhere"
+    desc: "Our team is here to assist you anytime, anywhere",
   },
   {
     icon: <FaHandshake className="text-3xl text-blue-600" />,
     title: "Trusted Network",
-    desc: "Verified hotels and drivers for your safety"
+    desc: "Verified hotels and drivers for your safety",
   },
   {
     icon: <FaMobileAlt className="text-3xl text-blue-600" />,
     title: "Easy Booking",
-    desc: "Book cabs and stays in just a few clicks"
-  }
+    desc: "Book cabs and stays in just a few clicks",
+  },
 ];
 
 const AboutPage = () => {
@@ -74,35 +83,40 @@ const AboutPage = () => {
     <>
       <Navbar />
       <div className="font-sans text-gray-800 bg-white">
-
-       
         <section
           className="h-[60vh] bg-cover bg-center flex items-center justify-center text-white relative"
           style={{ backgroundImage: `url(${aboutBg})` }}
         >
           <div className="absolute inset-0 bg-black bg-opacity-50"></div>
           <div className="relative z-10 text-center px-6">
-            <h1 className="text-4xl md:text-5xl font-extrabold mb-4">About Us</h1>
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+              About Us
+            </h1>
             <p className="text-lg w-full mx-auto">
-              We are passionate travel planners helping you explore the world stress-free.
+              We are passionate travel planners helping you explore the world
+              stress-free.
             </p>
           </div>
         </section>
 
-       
         <section className="py-6 md:px-[4rem] bg-white">
           <div className="container mx-auto px-6  w-full text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-blue-700 mb-6">Our Mission</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-blue-700 mb-6">
+              Our Mission
+            </h2>
             <div className="w-20 h-1 bg-blue-500 mx-auto mb-10"></div>
             <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
-              At <span className="font-bold text-blue-600">StaynRide</span>, we're committed to removing the stress from travel planning by 
-              offering <span className="text-blue-600">curated experiences</span> that combine affordability with exceptional quality. 
-              We believe every journey should create <span className="text-blue-600">lasting memories</span>.
+              At <span className="font-bold text-blue-600">StaynRide</span>,
+              we're committed to removing the stress from travel planning by
+              offering{" "}
+              <span className="text-blue-600">curated experiences</span> that
+              combine affordability with exceptional quality. We believe every
+              journey should create{" "}
+              <span className="text-blue-600">lasting memories</span>.
             </p>
           </div>
         </section>
 
-     
         <section className="py-6 md:px-[4rem] bg-gray-50">
           <div className="container mx-auto px-6 w-full">
             <div className="flex flex-col md:flex-row items-center gap-12">
@@ -114,12 +128,17 @@ const AboutPage = () => {
                 />
               </div>
               <div className="md:w-1/2">
-                <h3 className="text-3xl font-bold text-blue-700 mb-6">Our Vision</h3>
+                <h3 className="text-3xl font-bold text-blue-700 mb-6">
+                  Our Vision
+                </h3>
                 <div className="w-16 h-1 bg-blue-500 mb-8"></div>
                 <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                  We envision a travel ecosystem where technology meets human touch—where every 
-                  traveler enjoys <span className="font-semibold">seamless, authentic experiences</span> supported by our 
-                  network of trusted partners.
+                  We envision a travel ecosystem where technology meets human
+                  touch—where every traveler enjoys{" "}
+                  <span className="font-semibold">
+                    seamless, authentic experiences
+                  </span>{" "}
+                  supported by our network of trusted partners.
                 </p>
                 <ul className="space-y-3 text-gray-700">
                   <li className="flex items-start">
@@ -140,17 +159,21 @@ const AboutPage = () => {
           </div>
         </section>
 
-
         <section className="py-6 md:px-[4rem] bg-white">
           <div className="container mx-auto px-6 w-full">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-16">Why Travel With Us</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-16">
+              Why Travel With Us
+            </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {features.map((feature, index) => (
-                <div key={index} className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-2 text-center">
-                  <div className="flex justify-center mb-4">
-                    {feature.icon}
-                  </div>
-                  <h4 className="text-xl font-semibold mb-3 text-gray-800">{feature.title}</h4>
+                <div
+                  key={index}
+                  className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-2 text-center"
+                >
+                  <div className="flex justify-center mb-4">{feature.icon}</div>
+                  <h4 className="text-xl font-semibold mb-3 text-gray-800">
+                    {feature.title}
+                  </h4>
                   <p className="text-gray-600">{feature.desc}</p>
                 </div>
               ))}
@@ -158,10 +181,11 @@ const AboutPage = () => {
           </div>
         </section>
 
-       
         <section className="py-6 md:px-[4rem] bg-gray-50">
           <div className="container mx-auto px-6 w-full">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">Meet Our Team</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-blue-700 mb-4">
+              Meet Our Team
+            </h2>
             <p className="text-center text-gray-600 max-w-2xl mx-auto mb-12">
               The passionate individuals who make your travel dreams come true
             </p>
@@ -173,32 +197,39 @@ const AboutPage = () => {
           </div>
         </section>
 
-     
         <section className="py-6  md:px-[4rem] bg-blue-600 text-white">
           <div className="container mx-auto px-6 w-full">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Traveler Stories</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+              Traveler Stories
+            </h2>
             <p className="text-center text-blue-100 w-full mx-auto mb-12">
               Don't just take our word for it - hear from our happy travelers
             </p>
             <div className="grid md:grid-cols-3 gap-8">
               {testimonials.map((t, idx) => (
-                <div key={idx} className="bg-white p-8 rounded-xl shadow-lg text-gray-800">
+                <div
+                  key={idx}
+                  className="bg-white p-8 rounded-xl shadow-lg text-gray-800"
+                >
                   <div className="flex mb-4">
                     {[...Array(5)].map((_, i) => (
-                      <FaStar 
-                        key={i} 
-                        className={i < t.rating ? "text-yellow-400" : "text-gray-300"} 
+                      <FaStar
+                        key={i}
+                        className={
+                          i < t.rating ? "text-yellow-400" : "text-gray-300"
+                        }
                       />
                     ))}
                   </div>
                   <p className="italic text-lg mb-6">"{t.feedback}"</p>
-                  <h4 className="font-bold text-blue-600 text-right">— {t.name}</h4>
+                  <h4 className="font-bold text-blue-600 text-right">
+                    — {t.name}
+                  </h4>
                 </div>
               ))}
             </div>
           </div>
         </section>
-
       </div>
       <Footer />
     </>
