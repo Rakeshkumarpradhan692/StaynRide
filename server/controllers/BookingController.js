@@ -54,7 +54,6 @@ exports.getAllBookings = async (req, res) => {
     const bookings = await Booking.find()
       .populate("userId", "name email")
       .populate("hotelBooking.hotelId", "name city price")
-      .populate("hotelBooking.roomID", "roomNumber roomType price")
       .populate("cabBooking.cabId", "name model");
 
     res.status(200).json({ success: true, data: bookings });

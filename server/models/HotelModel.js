@@ -14,7 +14,6 @@ const hotelSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
     },
     country: {
       type: String,
@@ -26,7 +25,6 @@ const hotelSchema = new mongoose.Schema(
     },
     district: {
       type: String,
-      required: true,
     },
     city: {
       type: String,
@@ -34,11 +32,9 @@ const hotelSchema = new mongoose.Schema(
     },
     pincode: {
       type: String,
-      required: true,
     },
     address: {
       type: String,
-      required: true,
     },
     contactNumber: {
       type: String,
@@ -51,15 +47,12 @@ const hotelSchema = new mongoose.Schema(
     images: [String],
     checkInTime: {
       type: String,
-      required: true,
     },
     checkOutTime: {
       type: String,
-      required: true,
     },
     rating: {
       type: Number,
-      required: true,
       min: 1,
       max: 5,
     },

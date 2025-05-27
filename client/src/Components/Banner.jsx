@@ -9,7 +9,9 @@ const Banner = () => {
   useEffect(() => {
     const fetchBanners = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/public/all-banners");
+        const response = await axios.get(
+          "http://localhost:5000/api/public/all-banners"
+        );
         const fetchedImages = response.data?.banners || [];
         setImages(fetchedImages);
       } catch (error) {
@@ -31,18 +33,19 @@ const Banner = () => {
   const goToPrevious = () => {
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   };
-
   const goToNext = () => {
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
-
   if (images.length === 0) {
-    return <div className="text-center py-20 text-gray-500">No banners available</div>;
+    return (
+      <div className="text-center py-20 text-gray-500">
+        No banners available
+      </div>
+    );
   }
 
   return (
     <div className="relative w-full h-64 sm:h-[50vw] lg:h-screen mt-[5rem]  bg-black overflow-hidden">
-      {/* Image container */}
       <div className="relative w-full h-full">
         {images.map((banner, index) => (
           <img
@@ -90,5 +93,3 @@ const Banner = () => {
 };
 
 export default Banner;
-
-

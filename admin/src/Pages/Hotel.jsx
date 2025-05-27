@@ -159,7 +159,12 @@ export default function Hotels() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (
+      formData.contactNumber.length > 10 ||
+      formData.contactNumber.length < 10
+    ) {
+      return toast.error("Phone number must be 10 Digit");
+    }
     try {
       const uploaded = await Promise.all(
         formData.images.map((img) =>
@@ -672,8 +677,6 @@ export default function Hotels() {
                     </p>
                   </div>
                 </div>
-
-                {/* Full address */}
                 <div className="pt-4">
                   <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                     Full Address

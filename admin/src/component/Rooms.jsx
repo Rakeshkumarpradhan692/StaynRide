@@ -54,6 +54,17 @@ function Rooms(props) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("form data is:", formData);
+    if (!formData.roomNumber) {
+      return toast.error("enter the room number");
+    }
+    if (!formData.roomType) {
+      return toast.error("enter the room type");
+    }
+
+    if (!formData.price) {
+      return toast.error("enter the room price");
+    }
     const { _id, roomNumber, roomType, price, images } = formData;
     try {
       let uploadedImageUrls = [];
@@ -266,6 +277,7 @@ function Rooms(props) {
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       required
                     >
+                      <option value="">Room Type</option>
                       <option value="Single">Single</option>
                       <option value="Double">Double</option>
                       <option value="family">Family</option>

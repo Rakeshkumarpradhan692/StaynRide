@@ -21,7 +21,7 @@ import { IoCloseSharp } from "react-icons/io5";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
 import img from "../Components/Photo/bed.jpg";
-import {  CircleChevronLeft } from "lucide-react";
+import { CircleChevronLeft } from "lucide-react";
 
 const HotelDetails = () => {
   const { Auth } = useContext(AuthContext);
@@ -110,14 +110,14 @@ const HotelDetails = () => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount: formData.price * 100 }),
+          body: JSON.stringify({ amount: formData.price }),
         }
       );
       const data = await res.json();
 
       const options = {
         key: "rzp_test_gW8KHeBaMm089M",
-        amount: formData.price * 100,
+        amount: formData.price,
         currency: data.currency,
         name: hotel.name,
         description: "Hotel Room Booking",
@@ -167,25 +167,29 @@ const HotelDetails = () => {
     {
       id: 1,
       title: "Service 01",
-      description: "A presentation is a formal talk, often delivered in front of an audience, aimed at conveying information, persuading others, or sharing insights on a particular topic. Presentations can take various forms, such as verbal speeches, slideshows, demonstrations, or multimedia displays."
+      description:
+        "A presentation is a formal talk, often delivered in front of an audience, aimed at conveying information, persuading others, or sharing insights on a particular topic. Presentations can take various forms, such as verbal speeches, slideshows, demonstrations, or multimedia displays.",
     },
     {
       id: 2,
       title: "Service 02",
-      description: "A presentation is a formal talk, often delivered in front of an audience, aimed at conveying information, persuading others, or sharing insights on a particular topic. Presentations can take various forms, such as verbal speeches, slideshows, demonstrations, or multimedia displays."
+      description:
+        "A presentation is a formal talk, often delivered in front of an audience, aimed at conveying information, persuading others, or sharing insights on a particular topic. Presentations can take various forms, such as verbal speeches, slideshows, demonstrations, or multimedia displays.",
     },
     {
       id: 3,
       title: "Service 03",
-      description: "A presentation is a formal talk, often delivered in front of an audience, aimed at conveying information, persuading others, or sharing insights on a particular topic. Presentations can take various forms, such as verbal speeches, slideshows, demonstrations, or multimedia displays."
-    }
+      description:
+        "A presentation is a formal talk, often delivered in front of an audience, aimed at conveying information, persuading others, or sharing insights on a particular topic. Presentations can take various forms, such as verbal speeches, slideshows, demonstrations, or multimedia displays.",
+    },
   ];
 
   return (
     <>
       <Navbar />
       <div className="font-serif text-gray-800 bg-white mt-[5rem]">
-        <div className="relative h-[80vh] bg-cover bg-center"
+        <div
+          className="relative h-[80vh] bg-cover bg-center"
           style={{ backgroundImage: `url(${hotel.images[0]})` }}
         >
           <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center px-4 text-center text-white">
@@ -210,9 +214,11 @@ const HotelDetails = () => {
                 <CircleChevronLeft size={20} />
               </button>
             </div>
-            <div><h2 className="text-4xl font-semibold text-[#8C5B3F] mb-6">
-              {hotel.name}
-            </h2></div>
+            <div>
+              <h2 className="text-4xl font-semibold text-[#8C5B3F] mb-6">
+                {hotel.name}
+              </h2>
+            </div>
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
               {hotel.description}
             </p>
@@ -239,12 +245,15 @@ const HotelDetails = () => {
               Book Now
             </button>
             <div className="w-full py-4 bg-white ">
-              <h2 className="text-3xl font-semibold text-[#8C5B3F] mb-4">Hotel Details</h2>
+              <h2 className="text-3xl font-semibold text-[#8C5B3F] mb-4">
+                Hotel Details
+              </h2>
               <p className="text-gray-600 text-base md:text-lg leading-relaxed">
-                Nestled in the heart of the city, our hotel offers a blend of luxury and comfort.
-                Enjoy stunning views, top-notch amenities, and exceptional service just steps
-                away from the city's best attractions. Whether you're here for business or leisure,
-                our dedicated staff ensures a memorable stay.
+                Nestled in the heart of the city, our hotel offers a blend of
+                luxury and comfort. Enjoy stunning views, top-notch amenities,
+                and exceptional service just steps away from the city's best
+                attractions. Whether you're here for business or leisure, our
+                dedicated staff ensures a memorable stay.
               </p>
             </div>
           </div>
@@ -274,48 +283,49 @@ const HotelDetails = () => {
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 px-8">
               {loading
                 ? Array.from({ length: 4 }).map((_, i) => (
-                  <SkeletonCard key={i} />
-                ))
+                    <SkeletonCard key={i} />
+                  ))
                 : Array.isArray(rooms) &&
-                rooms.map((room) => (
-                  <div
-                    key={room._id}
-                    className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
-                    <img
-                      src={room.images}
-                      alt={room.roomType}
-                      className="w-full h-64 object-cover"
-                    />
-                    <div className="p-6">
-                      <h4 className="text-2xl font-semibold text-[#8C5B3F] mb-3">
-                        {room.roomType}
-                      </h4>
-                      <div className="space-y-2 text-gray-700">
-                        <p className="flex items-center">
-                          <IoIosHome className="mr-2 text-[#8C5B3F]" />
-                          <strong>roomNo:</strong> {room.roomNumber}
-                        </p>
-                        <p className="flex items-center">
-                          <FaRupeeSign className="mr-2 text-[#8C5B3F]" />
-                          <strong>Price:</strong> ₹{room.price}
-                        </p>
-                        <p className="flex items-center">
-                          <FaUserFriends className="mr-2 text-[#8C5B3F]" />
-                          <strong>Max Guests:</strong>4 {room.capacity}
-                        </p>
-                        <p
-                          className={`flex items-center ${room.available ? "text-red-600" : "text-green-600"
+                  rooms.map((room) => (
+                    <div
+                      key={room._id}
+                      className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      <img
+                        src={room.images}
+                        alt={room.roomType}
+                        className="w-full h-64 object-cover"
+                      />
+                      <div className="p-6">
+                        <h4 className="text-2xl font-semibold text-[#8C5B3F] mb-3">
+                          {room.roomType}
+                        </h4>
+                        <div className="space-y-2 text-gray-700">
+                          <p className="flex items-center">
+                            <IoIosHome className="mr-2 text-[#8C5B3F]" />
+                            <strong>roomNo:</strong> {room.roomNumber}
+                          </p>
+                          <p className="flex items-center">
+                            <FaRupeeSign className="mr-2 text-[#8C5B3F]" />
+                            <strong>Price:</strong> ₹{room.price}
+                          </p>
+                          <p className="flex items-center">
+                            <FaUserFriends className="mr-2 text-[#8C5B3F]" />
+                            <strong>Max Guests:</strong>4 {room.capacity}
+                          </p>
+                          <p
+                            className={`flex items-center ${
+                              room.available ? "text-red-600" : "text-green-600"
                             }`}
-                        >
-                          <FaCalendarCheck className="mr-2" />
-                          <strong>Available:</strong>{" "}
-                          {room.available ? "No" : "Yes"}
-                        </p>
+                          >
+                            <FaCalendarCheck className="mr-2" />
+                            <strong>Available:</strong>{" "}
+                            {room.available ? "No" : "Yes"}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
             </div>
           </div>
         </div>
@@ -356,7 +366,6 @@ const HotelDetails = () => {
         </div>
       </div>
 
-
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-lg rounded-xl shadow-xl p-6 relative overflow-y-auto max-h-[90vh]">
@@ -387,10 +396,11 @@ const HotelDetails = () => {
                       <div
                         key={i}
                         onClick={() => handleRoomselect(room)}
-                        className={`cursor-pointer px-4 py-1 rounded-md border ${formData.roomNumber.includes(room.roomNumber)
-                          ? "bg-green-600 text-white"
-                          : "bg-gray-300 text-black"
-                          }`}
+                        className={`cursor-pointer px-4 py-1 rounded-md border ${
+                          formData.roomNumber.includes(room.roomNumber)
+                            ? "bg-green-600 text-white"
+                            : "bg-gray-300 text-black"
+                        }`}
                       >
                         {room.roomNumber}
                       </div>
@@ -424,7 +434,6 @@ const HotelDetails = () => {
                   onChange={handleChange}
                   placeholder="Total guests"
                   type="number"
-
                   required
                 />
                 <button
@@ -438,11 +447,21 @@ const HotelDetails = () => {
 
             {step === 2 && (
               <div className="space-y-3">
-                <p><strong>Rooms:</strong> {formData.roomNumber.join(", ")}</p>
-                <p><strong>Guests:</strong> {formData.guests}</p>
-                <p><strong>Check-in:</strong> {formData.checkIn}</p>
-                <p><strong>Check-out:</strong> {formData.checkOut}</p>
-                <p><strong>Total Price:</strong> ₹{formData.price}</p>
+                <p>
+                  <strong>Rooms:</strong> {formData.roomNumber.join(", ")}
+                </p>
+                <p>
+                  <strong>Guests:</strong> {formData.guests}
+                </p>
+                <p>
+                  <strong>Check-in:</strong> {formData.checkIn}
+                </p>
+                <p>
+                  <strong>Check-out:</strong> {formData.checkOut}
+                </p>
+                <p>
+                  <strong>Total Price:</strong> ₹{formData.price}
+                </p>
                 <button
                   onClick={handleBookingConfirm}
                   className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
@@ -483,7 +502,9 @@ const HotelDetails = () => {
       )}
       <div className="pb-8 px-4 sm:px-6 lg:px-[4rem] bg-gray-50">
         <div className="w-full mx-auto">
-          <h2 className="text-3xl font-bold text-center  text-[#8C5B3F] mb-12">Our Best Service</h2>
+          <h2 className="text-3xl font-bold text-center  text-[#8C5B3F] mb-12">
+            Our Best Service
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service) => (
@@ -491,7 +512,9 @@ const HotelDetails = () => {
                 key={service.id}
                 className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
               >
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">{service.title}</h3>
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                  {service.title}
+                </h3>
                 <p className="text-gray-600">{service.description}</p>
               </div>
             ))}
