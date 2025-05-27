@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from "react";
-import CabCard from "./CabCard";
+// import { useEffect, useState } from "react";
+// import CabCard from "./CabCard";
 import Skelitonhotelcab from "./skeliton/skelitonhotelcab";
-import axios from "axios";
-import Navbar from "./Navbar";
-import { Navigate, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+// import axios from "axios";
+// import Navbar from "./Navbar";
+// import { Navigate, useNavigate } from "react-router-dom";
+// import { ArrowLeft } from "lucide-react";
+import React, { useEffect, useState } from 'react';
+import CabCard from './CabCard';
+import axios from 'axios';
+import Navbar from './Navbar';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { ArrowLeft, CircleChevronLeft } from 'lucide-react';
 
 export default function CabsPage() {
   const navigate = useNavigate();
@@ -92,17 +98,24 @@ export default function CabsPage() {
       <Navbar />
 
       <div className="flex flex-col lg:flex-row mt-[5rem] px-6 lg:px-[4rem] py-8">
-        {/* Filters */}
+        
+
+       
         <div className="lg:w-1/4 w-full mb-6 lg:mb-0 lg:pr-4">
-          <div className="w-10 h-8 bg-blue-600 text-white rounded-md flex items-center justify-center">
-            <button
-              onClick={handleBackClick}
-              className="flex items-center justify-center"
-            >
-              <ArrowLeft size={20} />
-            </button>
+        
+          
+          <div className="flex items-center text-center px-6 py-2  ">
+            
+            <div className="w-10 h-8 gap-4 flex justify-center text-blue-600"> <button
+            onClick={handleBackClick}
+            className="flex items-center justify-center"
+          >
+            <CircleChevronLeft size={20} />
+          </button><span><h2 className="text-2xl font-bold mb-6 text-center">Filters</h2></span>
+         
+        </div>
+        
           </div>
-          <h3 className="text-xl font-bold mb-4">Filter by:</h3>
 
           <div className="mb-4">
             <label className="block font-semibold mb-2">Car Type</label>
@@ -189,7 +202,7 @@ export default function CabsPage() {
           </button>
         </div>
 
-        {/* Results */}
+       
         <div className="lg:w-3/4 w-full">
           <h2 className="text-2xl font-bold mb-6 text-center">
             All Available Cabs
@@ -207,7 +220,7 @@ export default function CabsPage() {
                 ))}
               </div>
 
-              {/* Pagination */}
+             
               <div className="flex justify-center mt-8 space-x-2">
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
@@ -244,3 +257,5 @@ export default function CabsPage() {
     </>
   );
 }
+
+
