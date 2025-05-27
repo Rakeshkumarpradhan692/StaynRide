@@ -128,3 +128,55 @@ exports.getBookingByUserId = async (req, res) => {
     });
   }
 };
+
+exports.getBookingsByHotelId = async (req, res) => {
+  try {
+    const { hotelId } = req.params;
+
+    if (!hotelId) {
+      return res.status(400).json({ error: "Hotel ID is required" });
+    }
+    const bookings = await Booking.find({
+      "hotelBooking.isHotelBooked": true,
+      "hotelBooking.hotelId": hotelId,
+    })
+      .populate("userId", "name email")
+      .populate("hotelBooking.hotelId");
+
+    if (bookings.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No bookings found for this hotel" });
+    }
+
+    res.status(200).json({ bookings });
+  } catch (error) {
+    console.error("Error fetching hotel bookings:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+exports.getBookingsByCabId = async (req, res) => {
+  try {
+    const { cabId } = req.params;
+
+    if (!cabId) {
+      return res.status(400).json({ error: "Hotel ID is required" });
+    }
+    const bookings = await Booking.find({
+      "cabBooking.isCabBooked": true,
+      "cabBooking.cabId": hotelId,
+    }).populate("cabBooking");
+
+    if (bookings.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No bookings found for this hotel" });
+    }
+
+    res.status(200).json({ bookings });
+  } catch (error) {
+    console.error("Error fetching hotel bookings:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};

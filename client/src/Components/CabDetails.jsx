@@ -48,7 +48,9 @@ export default function CabDetail() {
 
     fetchCab();
   }, [id]);
-
+  useEffect(() => {
+    console.log("cab data is:", cab);
+  }, [cab]);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setBookingData((prev) => ({ ...prev, [name]: value }));
