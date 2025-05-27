@@ -156,3 +156,34 @@ exports.forgetPassword = async (req, res) => {
     });
   }
 };
+
+exports.forgetPasswordLogin = async (req, res) => {
+  try {
+    const { email, newpass } = req.body;
+    console.log(req.body);
+
+    const user = await Users.findOne({ email: email });
+    if (!user) {
+      res.status(404).json({ sucess: false, message: "user not found" });
+    }
+    const hashedPassword = await bcrypt.hash(newpass, 10);
+
+    user.password = hashedPassword;
+    await user.save();
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Password updated successfully",
+      user: updatedUser,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while updating the password",
+    });
+  }
+};
