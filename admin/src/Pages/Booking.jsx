@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Trash2, Plus, Minus, RotateCcw } from "lucide-react";
+import { Trash2, Plus, Minus, RotateCcw, X } from "lucide-react";
 import Swal from "sweetalert2";
 import TableSkeliton from "../component/TableSkeliton";
 import axios from "axios";
@@ -10,7 +10,7 @@ function Booking() {
   const [bookingdata, setbookingdata] = useState([]);
   const [isloading, setisloading] = useState(false);
   const [tempdata, settempdata] = useState([]);
-
+  const [edit, setedit] = useState(null);
   const [filters, setFilters] = useState({
     status: "",
     bookingType: "",
@@ -21,6 +21,28 @@ function Booking() {
     search: "",
   });
 
+  const changeStatus = (id) => {
+    setedit(id);
+  };
+  const handlesave = async (values) => {
+    try {
+      const res = await axios.put(`${server_url}admin/update-booking`, {
+        id: edit,
+        status: values,
+      });
+      if (res?.data?.success) {
+        toast.success(res.data?.message);
+        setedit(null);
+      }
+    } catch (err) {
+      if (err?.response?.data?.message) {
+        toast.error(err.response.data.message);
+      }
+      console.log(err);
+    }
+
+    fetchBooking();
+  };
   const handleFilterInput = (e) => {
     const { name, value } = e.target;
     const updatedFilters = {
@@ -194,7 +216,9 @@ function Booking() {
       return updated;
     });
   };
-
+  const handleEdit = (id) => {
+    setedit(id);
+  };
   return (
     <div className="p-4 w-full h-full overflow-hidden">
       {isloading === true ? (
@@ -281,7 +305,7 @@ function Booking() {
               </button>
             </div>
           </div>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto relative">
             <table className="min-w-full border border-gray-300 text-sm">
               <thead className="bg-gray-100">
                 <tr>
@@ -297,7 +321,7 @@ function Booking() {
                   <th className="p-2 text-left">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className=" ">
                 {bookingdata.map((booking) => {
                   const isExpanded = expandedRows.includes(booking?._id);
                   const isHotel = booking?.hotelBooking?.hotelId?._id != null;
@@ -311,7 +335,7 @@ function Booking() {
 
                   return (
                     <React.Fragment key={booking?._id}>
-                      <tr className="border-b bg-white hover:bg-gray-50">
+                      <tr className="border-b  bg-white hover:bg-gray-50">
                         <td className="p-2 lg:hidden">
                           <button onClick={() => toggleRow(booking?._id)}>
                             {isExpanded ? (
@@ -335,7 +359,22 @@ function Booking() {
                             : booking?.cabBooking?.cabId?.model}
                         </td>
                         <td className="p-2">₹{booking?.totalPrice}</td>
-                        <td className="p-2 capitalize">{booking.status}</td>
+                        <td>
+                          <button
+                            onClick={() => {
+                              changeStatus(booking?._id);
+                            }}
+                            className={`p-2 rounded w-20 ${
+                              booking?.status === "success"
+                                ? " bg-green-100 text-green-600 pointer-events-none "
+                                : booking?.status === "reject"
+                                ? "bg-red-100 text-red-600  pointer-events-none"
+                                : "bg-orange-100 text-orange-600"
+                            }`}
+                          >
+                            {booking?.status}
+                          </button>
+                        </td>
                         <td className="p-2">
                           {new Date(booking.createdAt).toLocaleDateString()}
                         </td>
@@ -385,6 +424,37 @@ function Booking() {
                             )}
                           </td>
                         </tr>
+                      )}
+                      {edit === booking?._id && (
+                        <div className="bg-white p-10 absolute top-0 left-[40%]  rounded shadow-md w-fit">
+                          <X
+                            className="absolute top-3 cursor-pointer right-3"
+                            onClick={() => {
+                              changeStatus(null);
+                            }}
+                          />
+                          <h2 className="text-lg font-semibold mb-4">
+                            Change the Status
+                          </h2>
+                          <div className="flex space-x-4">
+                            <button
+                              onClick={() => {
+                                handlesave("success");
+                              }}
+                              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+                            >
+                              Success
+                            </button>
+                            <button
+                              onClick={() => {
+                                handlesave("reject");
+                              }}
+                              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        </div>
                       )}
                     </React.Fragment>
                   );

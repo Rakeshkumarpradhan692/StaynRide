@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Plus, Minus, Pencil, Trash2, RotateCcw } from "lucide-react";
+import { Plus, Minus, Pencil, Trash2, RotateCcw, X } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -34,13 +34,6 @@ function Users() {
     address: "",
     Gender: "",
   });
-  // const handlefilterinput = (e) => {
-  //   const { name, value } = e.target;
-  //   setfilterData((prev) => ({
-  //     ...prev,
-  //     [name]: value,
-  //   }));
-  // };
   useEffect(() => {
     console.log(users);
   }, [users]);
@@ -514,12 +507,15 @@ function UserForm({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-3xl bg-white bg-opacity-90 backdrop-blur-lg shadow-xl rounded-3xl p-6 sm:p-8 space-y-4 overflow-y-auto max-h-[90vh]"
+        className="w-full max-w-3xl bg-white bg-opacity-90 backdrop-blur-lg shadow-xl rounded-3xl p-6 sm:p-8 space-y-4 hide-scrollbar overflow-y-auto max-h-[90vh]"
       >
+        <X
+          onClick={onClose}
+          className=" cursor-pointer absolute top-7 right-7"
+        />
         <h2 className="text-2xl sm:text-3xl font-extrabold text-center text-blue-700">
           {title}
         </h2>
-        <p className="text-center text-sm text-gray-500">Fill in the details</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 *:outline-none *:p-3 *:px-2 *:py-1 *:rounded-sm">
           {[
             "name",
@@ -541,6 +537,7 @@ function UserForm({
                 required={!formData.image}
                 {...(field !== "image" && { value: formData[field] || "" })}
                 onChange={handleInputChange}
+                className="py-1 px-1 rounded"
               />
 
               {field === "image" && formData.image && (

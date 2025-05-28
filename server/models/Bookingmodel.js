@@ -18,11 +18,9 @@ const bookingSchema = new mongoose.Schema(
       },
       stDate: {
         type: Date,
-        required: true,
       },
       endDate: {
         type: Date,
-        required: true,
       },
       roomNo: {
         type: [String],
@@ -52,7 +50,7 @@ const bookingSchema = new mongoose.Schema(
       type: String,
       enum: ["success", "pending", "reject"],
       default: "pending",
-      rrequired: [true, "status is required"],
+      required: [true, "status is required"],
     },
     createdAt: {
       type: Date,

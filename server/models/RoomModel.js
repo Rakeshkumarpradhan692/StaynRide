@@ -28,6 +28,5 @@ const roomSchema = new mongoose.Schema(
   },
   { collection: "rooms" }
 );
-roomSchema.index({ hotelId: 1, roomNumber: 1 }, { unique: true });
 
 module.exports = mongoose.model("Room", roomSchema);

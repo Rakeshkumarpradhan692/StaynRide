@@ -21,8 +21,8 @@ exports.createBooking = async (req, res) => {
 
 exports.updateBooking = async (req, res) => {
   try {
-    console.log(req.body.payload);
-    const { id, ...updatedata } = req.body.payload;
+    console.log(req.body);
+    const { id, ...updatedata } = req.body;
 
     const result = await Booking.findByIdAndUpdate(id, updatedata, {
       new: true,
@@ -116,7 +116,7 @@ exports.getBookingByUserId = async (req, res) => {
 
     const result = await Booking.find({ userId: id })
       .populate("hotelBooking.hotelId", "name city price")
-      .populate("hotelBooking.roomID", "roomNumber roomType price")
+      .populate("hotelBooking")
       .populate("cabBooking.cabId", "name model");
 
     res.status(200).json({ success: true, data: result });
@@ -165,18 +165,12 @@ exports.getBookingsByCabId = async (req, res) => {
     }
     const bookings = await Booking.find({
       "cabBooking.isCabBooked": true,
-      "cabBooking.cabId": hotelId,
+      "cabBooking.cabId": cabId,
     }).populate("cabBooking");
-
-    if (bookings.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No bookings found for this hotel" });
-    }
 
     res.status(200).json({ bookings });
   } catch (error) {
-    console.error("Error fetching hotel bookings:", error);
+    console.error("Error fetching hotel bookings:", error.message);
     res.status(500).json({ error: "Server error" });
   }
 };

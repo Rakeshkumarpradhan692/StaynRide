@@ -117,7 +117,7 @@ const HotelDetails = () => {
 
       const options = {
         key: "rzp_test_gW8KHeBaMm089M",
-        amount: formData.price,
+        amount: formData.price * 100,
         currency: data.currency,
         name: hotel.name,
         description: "Hotel Room Booking",
@@ -389,27 +389,6 @@ const HotelDetails = () => {
 
             {step === 1 && (
               <form onSubmit={handleSubmitDetails} className="space-y-4">
-                <p>Select Rooms</p>
-                <div className="flex flex-wrap gap-2">
-                  {rooms.length > 0 ? (
-                    rooms.map((room, i) => (
-                      <div
-                        key={i}
-                        onClick={() => handleRoomselect(room)}
-                        className={`cursor-pointer px-4 py-1 rounded-md border ${
-                          formData.roomNumber.includes(room.roomNumber)
-                            ? "bg-green-600 text-white"
-                            : "bg-gray-300 text-black"
-                        }`}
-                      >
-                        {room.roomNumber}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-red-500 ml-5">No rooms available</div>
-                  )}
-                </div>
-
                 <Input
                   name="checkIn"
                   value={formData.checkIn}
@@ -436,6 +415,26 @@ const HotelDetails = () => {
                   type="number"
                   required
                 />
+                <p>Select Rooms</p>
+                <div className="flex flex-wrap gap-2">
+                  {rooms.length > 0 ? (
+                    rooms.map((room, i) => (
+                      <div
+                        key={i}
+                        onClick={() => handleRoomselect(room)}
+                        className={`cursor-pointer px-4 py-1 rounded-md border ${
+                          formData.roomNumber.includes(room.roomNumber)
+                            ? "bg-green-600 text-white"
+                            : "bg-gray-300 text-black"
+                        }`}
+                      >
+                        {room.roomNumber}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-red-500 ml-5">No rooms available</div>
+                  )}
+                </div>
                 <button
                   type="submit"
                   className="w-full bg-[#8C5B3F] text-white py-2 rounded hover:bg-[#a96b4f]"

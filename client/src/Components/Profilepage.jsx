@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/authContext";
 import Swal from "sweetalert2";
 import axios from "axios";
+import { Star } from "lucide-react";
 import { Edit } from "lucide-react";
 import { AiOutlineClose } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
@@ -12,11 +13,11 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const { Auth, updateUser } = useContext(AuthContext);
   const { uploadImage } = CloudinaryUpload();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const [bookings, setbookings] = useState([]);
   const [formData, setFormData] = useState({
     id: "",
     name: "",
@@ -31,7 +32,8 @@ const ProfilePage = () => {
     password: "",
     image: "",
   });
-
+  const server_url =
+    process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -69,6 +71,7 @@ const ProfilePage = () => {
         password: password || "",
         image: image || "",
       });
+      fetchBookings();
     }
   }, [Auth]);
 
@@ -76,16 +79,23 @@ const ProfilePage = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
+  const fetchBookings = async () => {
+    try {
+      const ress = await axios.get(
+        `${server_url}users/get-booking/${Auth?.user?._id}`
+      );
+      setbookings(ress.data?.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     if (!file.type.startsWith("image/")) {
       toast.error("Please select a valid image file.");
       return;
     }
-
     if (file.size > 10 * 1024 * 1024) {
       toast.error("Image size should be less than 2MB.");
       return;
@@ -99,7 +109,6 @@ const ProfilePage = () => {
       toast.success("Image uploaded successfully");
     }
   };
-
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -300,9 +309,93 @@ const ProfilePage = () => {
             {error}
           </div>
         )}
-      </div>
+        <div className="histroy">
+          <h3 className=" text-2xl font-semibold">History</h3>
 
-      
+          <div className="overflow-x-auto p-4">
+            <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                    type
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                    Name
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 hidden lg:table-cell">
+                    Pickup Location
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700 hidden lg:table-cell">
+                    Drop Location
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                    Total Price
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                    Status
+                  </th>
+                  <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {bookings.map((item, key) => {
+                  const cab = item?.cabBooking;
+                  const hotel = item?.hotelBooking;
+
+                  if (hotel?.isHotelBooked) {
+                    return (
+                      <tr key={key} className="bg-red-50 text-red-600 italic">
+                        <td colSpan="5" className="px-4 py-2">
+                          No hotel data
+                        </td>
+                      </tr>
+                    );
+                  } else if (cab?.isCabBooked) {
+                    return (
+                      <tr key={key} className=" relative">
+                        <td className="px-4 py-2 text-sm">Cab</td>
+                        <td className="px-4 py-2 text-sm">
+                          {cab?.cabId?.name}
+                        </td>
+                        <td className="px-4 py-2 text-sm hidden lg:table-cell">
+                          {cab?.pickupLocation}
+                        </td>
+                        <td className="px-4 py-2 text-sm hidden lg:table-cell">
+                          {cab?.dropLocation}
+                        </td>
+                        <td className="px-4 py-2 text-sm">
+                          ₹{item?.totalPrice}
+                        </td>
+                        <td className="px-4 py-2 text-sm">{item?.status}</td>
+                        <td className="px-4 py-2 text-sm">
+                          <button className=" bg-gray-200 border px-2 py-1 rounded text-nowrap">
+                            add review
+                          </button>
+                        </td>
+                        <div className=" absolute right-0 top-0 bg-green-200 gap-1 rounded px-3 py-1 flex text-xs  *:w-5 *:h-5">
+                          {[...Array(5)].map((_, key) => (
+                            <Star className=" stroke-gray-500" />
+                          ))}
+                        </div>
+                      </tr>
+                    );
+                  } else {
+                    return (
+                      <tr key={key} className="bg-gray-50 text-gray-500 italic">
+                        <td colSpan="5" className="px-4 py-2">
+                          Nothing to display
+                        </td>
+                      </tr>
+                    );
+                  }
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
       {showPasswordModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg relative">

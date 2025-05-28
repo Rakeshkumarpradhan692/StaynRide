@@ -14,10 +14,11 @@ import Footer from "./Footer";
 import Swal from "sweetalert2";
 export default function CabDetail() {
   const { Auth } = useContext(AuthContext);
-
+  const [existingBookingDates, setExistingBookingDates] = useState([]);
   const { id } = useParams();
   const navigate = useNavigate();
   const [cab, setCab] = useState(null);
+  const [checkBooking, setcheckBooking] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showBooking, setShowBooking] = useState(false);
@@ -26,6 +27,60 @@ export default function CabDetail() {
     pickupAddress: "",
     dropAddress: "",
   });
+  const fetchBooking = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/users/getcabbooking/${id}`
+      );
+      const bookings = res?.data?.bookings;
+      if (!bookings || bookings.length === 0) {
+        setcheckBooking(false);
+        return;
+      }
+      const booking = bookings[0];
+      const cabBooking = booking?.cabBooking;
+      const bookingId = booking?._id;
+      if (cabBooking?.isCabBooked && cabBooking?.travelDate) {
+        const travelDate = new Date(cabBooking.travelDate);
+        const today = new Date();
+        travelDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+        const dates = bookings.map(
+          (booking) =>
+            new Date(booking.cabBooking.travelDate).toISOString().split("T")[0]
+        );
+        setExistingBookingDates(dates);
+        if (travelDate < today) {
+          await axios.delete(`http://localhost:5000/api/users/deletebooking`, {
+            data: { id: bookingId },
+          });
+          setcheckBooking(false);
+        } else if (travelDate.getTime() === today.getTime()) {
+          console.log("today date");
+          setcheckBooking(true);
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching or processing booking:", err);
+      setcheckBooking(false);
+    }
+  };
+  const isDateBooked = (selectedDate) => {
+    const formattedDate = new Date(selectedDate).toISOString().split("T")[0];
+    return existingBookingDates.includes(formattedDate);
+  };
+  const handleDateChange = (e) => {
+    const selectedDate = e.target.value;
+    if (isDateBooked(selectedDate)) {
+      Swal.fire({
+        title: "Date Already Booked",
+        text: "This date is already booked. Please select another date.",
+        icon: "warning",
+      });
+    } else {
+      setBookingData((prev) => ({ ...prev, date: selectedDate }));
+    }
+  };
 
   useEffect(() => {
     const fetchCab = async () => {
@@ -47,6 +102,7 @@ export default function CabDetail() {
     };
 
     fetchCab();
+    fetchBooking();
   }, [id]);
   useEffect(() => {
     console.log("cab data is:", cab);
@@ -288,7 +344,9 @@ export default function CabDetail() {
 
                   <button
                     onClick={() => setShowBooking(true)}
-                    className="mt-auto w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-6 rounded-lg shadow-lg"
+                    disabled={checkBooking}
+                    className={`mt-auto w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-6 rounded-lg shadow-lg
+    ${checkBooking ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     Book Now
                   </button>
@@ -317,7 +375,7 @@ export default function CabDetail() {
                     required
                     min={new Date().toISOString().split("T")[0]}
                     value={bookingData.date}
-                    onChange={handleInputChange}
+                    onChange={handleDateChange}
                     className="pl-10 w-full border border-gray-300 rounded-lg px-4 py-3"
                   />
                 </div>
